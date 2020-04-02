@@ -3,10 +3,8 @@ package cz.cvut.fukalhan.main.activity
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.view.View
-import android.widget.EditText
 import cz.cvut.fukalhan.R
-import cz.cvut.fukalhan.login.LoginActivity
+import cz.cvut.fukalhan.login.activity.LoginActivity
 
 class MainActivity : AppCompatActivity() {
 
@@ -20,7 +18,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun isUserLoggedIn() : Boolean {
-        // TODO everything
+        // TODO
         return false
     }
 }
