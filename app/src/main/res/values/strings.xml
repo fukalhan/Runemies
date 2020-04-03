@@ -1,6 +1,13 @@
 <resources>
-    <string name="app_name">Runemies</string>
+    <!--Common-->
+    <string name="appName">Runemies</string>
 
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <!--Sign in / sign up strings-->
+    <string name="signIn">Sign in</string>
+    <string name="signUp">Sign up</string>
+    <string name="hintUsername">Username</string>
+    <string name="hintEmail">Email</string>
+    <string name="hintUsernameOrEmail">Username or Email</string>
+    <string name="hintPassword">Password</string>
+    <string name="hintConfirmPassword">Confirm password</string>
 </resources>

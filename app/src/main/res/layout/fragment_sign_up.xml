@@ -1,14 +1,92 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".login.fragment.SignUpFragment">
+    tools:context=".login.fragment.SignUpFragment"
+    android:scrollbars="none">
 
-    <!-- TODO: Update blank fragment layout -->
-    <TextView
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:text="sign up" />
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:gravity="center">
+        <TextView
+            android:id="@+id/signUp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/signUp"
+            android:layout_marginTop="50dp"
+            android:textSize="30sp"
+            />
 
-</FrameLayout>
+        <com.google.android.material.textfield.TextInputLayout
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            android:paddingLeft="50dp"
+            android:paddingRight="50dp"
+            >
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/usernameSignUp"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:hint="@string/hintUsername"/>
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <com.google.android.material.textfield.TextInputLayout
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            android:paddingLeft="50dp"
+            android:paddingRight="50dp"
+            >
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/emailSignUp"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:hint="@string/hintEmail"/>
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <com.google.android.material.textfield.TextInputLayout
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            android:paddingLeft="50dp"
+            android:paddingRight="50dp"
+            >
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/passwordSignUp"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:hint="@string/hintPassword"/>
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <com.google.android.material.textfield.TextInputLayout
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            android:paddingLeft="50dp"
+            android:paddingRight="50dp"
+            >
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/confirmPasswordSignUp"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:hint="@string/hintConfirmPassword"/>
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <Button
+            android:id="@+id/loginButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/signIn"
+            android:layout_margin="50dp"
+            />
+    </LinearLayout>
+
+</ScrollView>
