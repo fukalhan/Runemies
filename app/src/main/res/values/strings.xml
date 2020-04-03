@@ -1,6 +1,7 @@
 <resources>
     <!--Common-->
     <string name="appName">Runemies</string>
+    <string name="maxLength">Max length</string>
 
     <!--Sign in / sign up strings-->
     <string name="signIn">Sign in</string>
