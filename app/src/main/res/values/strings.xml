@@ -3,7 +3,7 @@
     <string name="appName">Runemies</string>
     <string name="maxLength">Max length</string>
 
-    <!--Sign in / sign up strings-->
+    <!--Sign in and sign up screens-->
     <string name="signIn">Sign in</string>
     <string name="signUp">Sign up</string>
     <string name="hintUsername">Username</string>
@@ -11,4 +11,5 @@
     <string name="hintUsernameOrEmail">Username or Email</string>
     <string name="hintPassword">Password</string>
     <string name="hintConfirmPassword">Confirm password</string>
+    <string name="forgottenPassword">Forgotten password</string>
 </resources>

@@ -8,6 +8,7 @@ import android.view.ViewGroup
 import android.widget.Toast
 
 import cz.cvut.fukalhan.R
+import cz.cvut.fukalhan.login.activity.LoginActivity
 import kotlinx.android.synthetic.main.fragment_sign_in.*
 import kotlinx.android.synthetic.main.fragment_sign_up.*
 
@@ -28,6 +29,7 @@ class SignUpFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         signUpButton.setOnClickListener {
             Toast.makeText(context, usernameSignUp.text, Toast.LENGTH_SHORT).show()
+            (activity as LoginActivity).navigateToMainScreen()
         }
     }
 }
