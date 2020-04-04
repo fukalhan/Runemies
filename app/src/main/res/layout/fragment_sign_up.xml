@@ -89,6 +89,14 @@
             android:text="@string/signUp"
             android:layout_margin="50dp"
             />
-    </LinearLayout>
+        <include
+            android:id="@+id/signUpProgressBar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:visibility="gone"
+            tools:visibility="visible"
+            layout="@layout/loading">
+        </include>
 
+    </LinearLayout>
 </ScrollView>

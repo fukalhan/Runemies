@@ -10,8 +10,6 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 
 import cz.cvut.fukalhan.R
-import cz.cvut.fukalhan.login.activity.LoginActivity
-import cz.cvut.fukalhan.login.viewmodel.SignInViewModel
 import cz.cvut.fukalhan.login.viewmodel.SignUpViewModel
 import kotlinx.android.synthetic.main.fragment_sign_up.*
 
@@ -35,7 +33,7 @@ class SignUpFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         signUpButton.setOnClickListener {
-
+            signUpProgressBar.visibility = View.VISIBLE
             viewModel.signUp("${emailSignUp.text}", passwordSignUp.text.toString(), usernameSignUp.text.toString())
         }
 
@@ -44,6 +42,7 @@ class SignUpFragment : Fragment() {
                 true -> Toast.makeText(context, "Sign up", Toast.LENGTH_SHORT).show()
                 false -> Toast.makeText(context, "Sign up failed", Toast.LENGTH_SHORT).show()
             }
+            signUpProgressBar.visibility = View.GONE
         })
     }
 }
