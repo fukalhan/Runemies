@@ -6,10 +6,13 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProviders
 
 import cz.cvut.fukalhan.R
 import cz.cvut.fukalhan.login.activity.LoginActivity
-import kotlinx.android.synthetic.main.fragment_sign_in.*
+import cz.cvut.fukalhan.login.viewmodel.SignInViewModel
+import cz.cvut.fukalhan.login.viewmodel.SignUpViewModel
 import kotlinx.android.synthetic.main.fragment_sign_up.*
 
 /**
@@ -17,10 +20,14 @@ import kotlinx.android.synthetic.main.fragment_sign_up.*
  */
 class SignUpFragment : Fragment() {
 
+    private lateinit var viewModel: SignUpViewModel
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
+        viewModel = ViewModelProviders.of(this).get(SignUpViewModel::class.java)
+
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_sign_up, container, false)
     }
@@ -28,8 +35,15 @@ class SignUpFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         signUpButton.setOnClickListener {
-            Toast.makeText(context, usernameSignUp.text, Toast.LENGTH_SHORT).show()
-            (activity as LoginActivity).navigateToMainScreen()
+
+            viewModel.signUp("${emailSignUp.text}", passwordSignUp.text.toString(), usernameSignUp.text.toString())
         }
+
+        viewModel.signUpState.observe(viewLifecycleOwner, Observer {state ->
+            when (state) {
+                true -> Toast.makeText(context, "Sign up", Toast.LENGTH_SHORT).show()
+                false -> Toast.makeText(context, "Sign up failed", Toast.LENGTH_SHORT).show()
+            }
+        })
     }
 }

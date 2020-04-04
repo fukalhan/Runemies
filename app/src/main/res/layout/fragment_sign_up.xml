@@ -86,7 +86,7 @@
             android:id="@+id/signUpButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/signIn"
+            android:text="@string/signUp"
             android:layout_margin="50dp"
             />
     </LinearLayout>

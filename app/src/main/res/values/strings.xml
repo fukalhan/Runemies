@@ -8,7 +8,6 @@
     <string name="signUp">Sign up</string>
     <string name="hintUsername">Username</string>
     <string name="hintEmail">Email</string>
-    <string name="hintUsernameOrEmail">Username or Email</string>
     <string name="hintPassword">Password</string>
     <string name="hintConfirmPassword">Confirm password</string>
     <string name="forgottenPassword">Forgotten password</string>
