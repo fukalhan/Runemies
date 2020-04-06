@@ -21,6 +21,7 @@
             android:textSize="30sp"
             />
         <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/usernameSignUpLayout"
             style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -34,7 +35,7 @@
                 android:id="@+id/usernameSignUp"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:hint="@string/hintUsername"/>
+                android:hint="@string/hintUsername" />
         </com.google.android.material.textfield.TextInputLayout>
 
         <com.google.android.material.textfield.TextInputLayout

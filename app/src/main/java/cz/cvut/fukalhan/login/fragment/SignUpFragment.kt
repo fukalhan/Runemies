@@ -1,6 +1,8 @@
 package cz.cvut.fukalhan.login.fragment
 
 import android.os.Bundle
+import android.text.Editable
+import android.text.TextWatcher
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -25,18 +27,20 @@ class SignUpFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         viewModel = ViewModelProviders.of(this).get(SignUpViewModel::class.java)
-
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_sign_up, container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        // On Sign up button pressed sends user info to signUp view model
         signUpButton.setOnClickListener {
             signUpProgressBar.visibility = View.VISIBLE
             viewModel.signUp("${emailSignUp.text}", passwordSignUp.text.toString(), usernameSignUp.text.toString())
         }
 
+        // Observe data sent from view model
         viewModel.signUpState.observe(viewLifecycleOwner, Observer {state ->
             when (state) {
                 true -> Toast.makeText(context, "Sign up", Toast.LENGTH_SHORT).show()
