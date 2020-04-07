@@ -11,10 +11,12 @@ import cz.cvut.fukalhan.repository.entity.User
 import cz.cvut.fukalhan.repository.login.LoginFacade
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import org.koin.core.KoinComponent
+import org.koin.core.inject
 
-class SignUpViewModel: ViewModel() {
+class SignUpViewModel: ViewModel(), KoinComponent {
     val signUpState : MutableLiveData<SignUpState> by lazy { MutableLiveData<SignUpState>() }
-    val loginFacade = LoginFacade()
+    private val loginFacade by inject<LoginFacade>()
 
     fun signUp (username: String, email: String, password: String) {
         val user = User(email, password, username)
