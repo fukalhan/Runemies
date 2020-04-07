@@ -34,7 +34,7 @@ class SignUpFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         signUpButton.setOnClickListener {
             signUpProgressBar.visibility = View.VISIBLE
-            viewModel.signUp("${emailSignUp.text}", passwordSignUp.text.toString(), usernameSignUp.text.toString())
+            viewModel.signUp( usernameSignUp.text.toString(),"${emailSignUp.text}", passwordSignUp.text.toString())
         }
 
         viewModel.signUpState.observe(viewLifecycleOwner, Observer {state ->

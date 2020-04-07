@@ -19,6 +19,7 @@ import cz.cvut.fukalhan.login.activity.LoginActivity
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.app_bar_main.*
 import kotlinx.android.synthetic.main.content_main.*
+import kotlinx.android.synthetic.main.fragment_home.*
 
 class MainActivity : AppCompatActivity(), ILoginNavigation {
 
@@ -40,10 +41,6 @@ class MainActivity : AppCompatActivity(), ILoginNavigation {
         appBarConfiguration = AppBarConfiguration(setOf(R.id.nav_home, R.id.nav_activity, R.id.nav_challenges), drawerLayout)
         setupActionBarWithNavController(navController, appBarConfiguration)
         navView.setupWithNavController(navController)
-
-        signOutButton.setOnClickListener {
-            logOut()
-        }
     }
 
     override fun onSupportNavigateUp(): Boolean {
