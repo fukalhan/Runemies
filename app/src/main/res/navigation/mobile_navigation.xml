@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/mobile_navigation"
+    app:startDestination="@+id/nav_home">
+
+    <fragment
+        android:id="@+id/nav_home"
+        android:name="cz.cvut.fukalhan.main.fragment.HomeFragment"
+        android:label="Home"
+        tools:layout="@layout/fragment_home">
+    </fragment>
+
+    <fragment
+        android:id="@+id/nav_activity"
+        android:name="cz.cvut.fukalhan.main.fragment.ActivityFragment"
+        android:label="Activity"
+        tools:layout="@layout/fragment_activity" />
+
+    <fragment
+        android:id="@+id/nav_challenges"
+        android:name="cz.cvut.fukalhan.main.fragment.ChallengesFragment"
+        android:label="Challenges"
+        tools:layout="@layout/fragment_challenges" />
+</navigation>
