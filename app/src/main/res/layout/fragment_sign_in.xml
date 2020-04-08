@@ -68,6 +68,13 @@
             android:text="@string/signIn"
             android:layout_margin="50dp"
             />
+
+        <!--<com.jpardogo.android.googleprogressbar.library.GoogleProgressBar
+            android:id="@+id/google_progress"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_gravity="center"
+            app:type="folding_circles"/>-->
     </LinearLayout>
 
     

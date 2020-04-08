@@ -11,4 +11,12 @@
     <string name="hintPassword">Password</string>
     <string name="hintConfirmPassword">Confirm password</string>
     <string name="forgottenPassword">Forgotten password</string>
+    <string name="loading">Loading</string>
+    <string name="menuActivity">Activity</string>
+    <string name="menuChallenges">Challenges</string>
+    <string name="menuRanking">Ranking</string>
+    <string name="menuMap">Map</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>

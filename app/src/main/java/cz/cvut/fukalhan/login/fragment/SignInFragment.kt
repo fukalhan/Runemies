@@ -1,7 +1,6 @@
 package cz.cvut.fukalhan.login.fragment
 
 import android.os.Bundle
-import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -13,8 +12,8 @@ import androidx.lifecycle.ViewModelProviders
 import cz.cvut.fukalhan.R
 import cz.cvut.fukalhan.login.activity.LoginActivity
 import cz.cvut.fukalhan.login.viewmodel.SignInViewModel
+import cz.cvut.fukalhan.repository.entity.SignInState
 import kotlinx.android.synthetic.main.fragment_sign_in.*
-import java.lang.IllegalStateException
 
 /**
  * A simple [Fragment] subclass.
@@ -40,11 +39,11 @@ class SignInFragment : Fragment() {
 
         viewModel.signInState.observe(viewLifecycleOwner, Observer {state ->
             when (state) {
-                true -> {
+                SignInState.SUCCES -> {
                     Toast.makeText(context, "Sign in", Toast.LENGTH_SHORT).show()
                     (activity as LoginActivity).navigateToMainScreen()
                 }
-                false -> Toast.makeText(context, "Sign in failed", Toast.LENGTH_SHORT).show()
+                SignInState.FAIL -> Toast.makeText(context, "Sign in failed", Toast.LENGTH_SHORT).show()
             }
         })
     }

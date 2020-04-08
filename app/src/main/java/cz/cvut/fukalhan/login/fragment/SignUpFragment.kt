@@ -10,9 +10,8 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 
 import cz.cvut.fukalhan.R
-import cz.cvut.fukalhan.login.activity.LoginActivity
-import cz.cvut.fukalhan.login.viewmodel.SignInViewModel
 import cz.cvut.fukalhan.login.viewmodel.SignUpViewModel
+import cz.cvut.fukalhan.repository.entity.SignUpState
 import kotlinx.android.synthetic.main.fragment_sign_up.*
 
 /**
@@ -35,15 +34,17 @@ class SignUpFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         signUpButton.setOnClickListener {
-
-            viewModel.signUp("${emailSignUp.text}", passwordSignUp.text.toString(), usernameSignUp.text.toString())
+            signUpProgressBar.visibility = View.VISIBLE
+            viewModel.signUp( usernameSignUp.text.toString(),"${emailSignUp.text}", passwordSignUp.text.toString())
         }
 
         viewModel.signUpState.observe(viewLifecycleOwner, Observer {state ->
             when (state) {
-                true -> Toast.makeText(context, "Sign up", Toast.LENGTH_SHORT).show()
-                false -> Toast.makeText(context, "Sign up failed", Toast.LENGTH_SHORT).show()
+                SignUpState.SUCCESS -> Toast.makeText(context, "Sign up", Toast.LENGTH_SHORT).show()
+                SignUpState.FAIL -> Toast.makeText(context, "Sign up failed", Toast.LENGTH_SHORT).show()
+                SignUpState.WEAK_PASSWORD -> Toast.makeText(context, "Password must be at least 6", Toast.LENGTH_SHORT).show()
             }
+            signUpProgressBar.visibility = View.GONE
         })
     }
 }
