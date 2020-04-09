@@ -24,4 +24,6 @@ class SignInViewModel: ViewModel(), KoinComponent {
             Log.e(regState.toString(), regState.toString())
         }
     }
+
+
 }
