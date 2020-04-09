@@ -1,8 +1,10 @@
-package cz.cvut.fukalhan.main.fragment.useractivity
+package cz.cvut.fukalhan.main.useractivity.adapter
 
 import androidx.fragment.app.Fragment
 import androidx.viewpager2.adapter.FragmentStateAdapter
-import cz.cvut.fukalhan.main.fragment.ActivityFragment
+import cz.cvut.fukalhan.main.useractivity.fragment.ActivityCalendarFragment
+import cz.cvut.fukalhan.main.useractivity.fragment.ActivityFragment
+import cz.cvut.fukalhan.main.useractivity.fragment.ActivityOverviewFragment
 
 class UserActivityAdapter(activityFragment: ActivityFragment): FragmentStateAdapter(activityFragment) {
     override fun getItemCount(): Int = 2

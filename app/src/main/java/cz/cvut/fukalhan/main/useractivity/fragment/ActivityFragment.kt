@@ -1,4 +1,4 @@
-package cz.cvut.fukalhan.main.fragment
+package cz.cvut.fukalhan.main.useractivity.fragment
 
 import android.os.Bundle
 import androidx.fragment.app.Fragment
@@ -8,7 +8,7 @@ import android.view.ViewGroup
 import com.google.android.material.tabs.TabLayoutMediator
 
 import cz.cvut.fukalhan.R
-import cz.cvut.fukalhan.main.fragment.useractivity.UserActivityAdapter
+import cz.cvut.fukalhan.main.useractivity.adapter.UserActivityAdapter
 import kotlinx.android.synthetic.main.fragment_activity.*
 
 /**
@@ -21,8 +21,6 @@ class ActivityFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         // Inflate the layout for this fragment
-        val view: View = inflater.inflate(R.layout.fragment_activity, container, false)
-        view
         return inflater.inflate(R.layout.fragment_activity, container, false)
     }
 
@@ -32,7 +30,8 @@ class ActivityFragment : Fragment() {
     }
 
     private fun setView() {
-        activityViewPager.adapter = UserActivityAdapter(this)
+        activityViewPager.adapter =
+            UserActivityAdapter(this)
         TabLayoutMediator(activityTabLayout, activityViewPager) { tab, position ->
             tab.text = when(position){
                 0 -> "OVERVIEW"

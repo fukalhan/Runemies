@@ -12,7 +12,7 @@ import androidx.lifecycle.ViewModelProviders
 import cz.cvut.fukalhan.R
 import cz.cvut.fukalhan.login.activity.LoginActivity
 import cz.cvut.fukalhan.login.viewmodel.SignInViewModel
-import cz.cvut.fukalhan.repository.entity.SignInState
+import cz.cvut.fukalhan.repository.entity.states.SignInState
 import kotlinx.android.synthetic.main.fragment_sign_in.*
 
 /**

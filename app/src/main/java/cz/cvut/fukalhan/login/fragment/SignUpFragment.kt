@@ -1,8 +1,6 @@
 package cz.cvut.fukalhan.login.fragment
 
 import android.os.Bundle
-import android.text.Editable
-import android.text.TextWatcher
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -13,7 +11,7 @@ import androidx.lifecycle.ViewModelProviders
 
 import cz.cvut.fukalhan.R
 import cz.cvut.fukalhan.login.viewmodel.SignUpViewModel
-import cz.cvut.fukalhan.repository.entity.SignUpState
+import cz.cvut.fukalhan.repository.entity.states.SignUpState
 import kotlinx.android.synthetic.main.fragment_sign_up.*
 
 /**

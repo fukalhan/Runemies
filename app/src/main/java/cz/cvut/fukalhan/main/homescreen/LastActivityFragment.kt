@@ -1,4 +1,4 @@
-package cz.cvut.fukalhan.main.fragment
+package cz.cvut.fukalhan.main.homescreen
 
 import android.os.Bundle
 import androidx.fragment.app.Fragment

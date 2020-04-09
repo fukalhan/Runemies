@@ -12,6 +12,7 @@ class App: Application() {
         startKoin {
             androidContext(this@App)
             modules(Module.loginModule)
+            modules(Module.challengeModule)
         }
     }
 }

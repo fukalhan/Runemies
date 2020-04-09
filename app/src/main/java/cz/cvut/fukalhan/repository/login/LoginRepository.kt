@@ -4,10 +4,8 @@ import android.util.Log
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseAuthWeakPasswordException
 import com.google.firebase.firestore.FirebaseFirestore
-import com.google.firebase.firestore.ktx.firestore
-import com.google.firebase.ktx.Firebase
-import cz.cvut.fukalhan.repository.entity.SignInState
-import cz.cvut.fukalhan.repository.entity.SignUpState
+import cz.cvut.fukalhan.repository.entity.states.SignInState
+import cz.cvut.fukalhan.repository.entity.states.SignUpState
 import cz.cvut.fukalhan.repository.entity.User
 import cz.cvut.fukalhan.shared.Constants
 import kotlinx.coroutines.tasks.await

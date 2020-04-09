@@ -1,7 +1,7 @@
 package cz.cvut.fukalhan.repository.login
 
-import cz.cvut.fukalhan.repository.entity.SignInState
-import cz.cvut.fukalhan.repository.entity.SignUpState
+import cz.cvut.fukalhan.repository.entity.states.SignInState
+import cz.cvut.fukalhan.repository.entity.states.SignUpState
 import cz.cvut.fukalhan.repository.entity.User
 import org.koin.core.KoinComponent
 import org.koin.core.inject

@@ -1,4 +1,4 @@
-package cz.cvut.fukalhan.main.fragment.useractivity
+package cz.cvut.fukalhan.main.useractivity.fragment
 
 import android.os.Bundle
 import androidx.fragment.app.Fragment

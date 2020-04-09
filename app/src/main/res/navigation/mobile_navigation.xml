@@ -7,20 +7,20 @@
 
     <fragment
         android:id="@+id/nav_home"
-        android:name="cz.cvut.fukalhan.main.fragment.HomeFragment"
+        android:name="cz.cvut.fukalhan.main.homescreen.HomeFragment"
         android:label="Home"
         tools:layout="@layout/fragment_home">
     </fragment>
 
     <fragment
         android:id="@+id/nav_activity"
-        android:name="cz.cvut.fukalhan.main.fragment.ActivityFragment"
+        android:name="cz.cvut.fukalhan.main.useractivity.fragment.ActivityFragment"
         android:label="Activity"
         tools:layout="@layout/fragment_activity" />
 
     <fragment
         android:id="@+id/nav_challenges"
-        android:name="cz.cvut.fukalhan.main.fragment.ChallengesFragment"
+        android:name="cz.cvut.fukalhan.main.challenges.fragment.ChallengesFragment"
         android:label="Challenges"
         tools:layout="@layout/fragment_challenges" />
 </navigation>

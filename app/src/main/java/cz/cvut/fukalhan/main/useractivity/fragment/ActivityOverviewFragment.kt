@@ -1,4 +1,4 @@
-package cz.cvut.fukalhan.main.fragment
+package cz.cvut.fukalhan.main.useractivity.fragment
 
 import android.os.Bundle
 import androidx.fragment.app.Fragment
@@ -11,14 +11,14 @@ import cz.cvut.fukalhan.R
 /**
  * A simple [Fragment] subclass.
  */
-class ChallengesFragment : Fragment() {
+class ActivityOverviewFragment : Fragment() {
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_challenges, container, false)
+        return inflater.inflate(R.layout.fragment_activity_overview, container, false)
     }
 
 }
