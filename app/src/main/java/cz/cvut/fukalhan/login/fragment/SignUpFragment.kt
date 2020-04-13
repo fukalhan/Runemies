@@ -12,6 +12,7 @@ import androidx.lifecycle.ViewModelProviders
 import cz.cvut.fukalhan.R
 import cz.cvut.fukalhan.login.viewmodel.SignUpViewModel
 import cz.cvut.fukalhan.repository.entity.states.SignUpState
+import cz.cvut.fukalhan.shared.Settings
 import kotlinx.android.synthetic.main.fragment_sign_up.*
 
 /**
@@ -42,7 +43,10 @@ class SignUpFragment : Fragment() {
         // Observe data sent from view model
         viewModel.signUpState.observe(viewLifecycleOwner, Observer {state ->
             when (state) {
-                SignUpState.SUCCESS -> Toast.makeText(context, "Sign up", Toast.LENGTH_SHORT).show()
+                SignUpState.SUCCESS -> {
+                    Settings.username = usernameSignUp.text.toString()
+                    Toast.makeText(context, "Sign up", Toast.LENGTH_SHORT).show()
+                }
                 SignUpState.FAIL -> Toast.makeText(context, "Sign up failed", Toast.LENGTH_SHORT).show()
                 SignUpState.WEAK_PASSWORD -> Toast.makeText(context, "Password must be at least 6", Toast.LENGTH_SHORT).show()
             }

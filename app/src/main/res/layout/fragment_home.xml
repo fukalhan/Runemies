@@ -7,6 +7,10 @@
     android:orientation="vertical"
     android:gravity="center">
 
+    <TextView
+        android:id="@+id/homeScreenUsername"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"/>
     <Button
         android:id="@+id/signOutButton"
         android:layout_width="wrap_content"

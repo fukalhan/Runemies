@@ -1,6 +1,7 @@
 package cz.cvut.fukalhan.main.activity
 
 import android.content.Intent
+import android.content.IntentFilter
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
@@ -16,6 +17,7 @@ import com.google.android.material.navigation.NavigationView
 import cz.cvut.fukalhan.R
 import cz.cvut.fukalhan.common.ILoginNavigation
 import cz.cvut.fukalhan.login.activity.LoginActivity
+import cz.cvut.fukalhan.utils.network.NetworkReceiver
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.app_bar_main.*
 import kotlinx.android.synthetic.main.content_main.*
@@ -24,6 +26,7 @@ import kotlinx.android.synthetic.main.fragment_home.*
 class MainActivity : AppCompatActivity(), ILoginNavigation {
 
     private lateinit var appBarConfiguration: AppBarConfiguration
+    private var networkReceiver: NetworkReceiver = NetworkReceiver()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -38,6 +41,18 @@ class MainActivity : AppCompatActivity(), ILoginNavigation {
         appBarConfiguration = AppBarConfiguration(setOf(R.id.nav_home, R.id.nav_activity, R.id.nav_challenges), drawerLayout)
         setupActionBarWithNavController(navController, appBarConfiguration)
         navView.setupWithNavController(navController)
+    }
+
+    override fun onResume() {
+        super.onResume()
+        val intentFilter = IntentFilter("android.net.conn.CONNECTIVITY_CHANGE")
+        intentFilter.addCategory(Intent.CATEGORY_DEFAULT)
+        registerReceiver(networkReceiver, intentFilter)
+    }
+
+    override fun onPause() {
+        unregisterReceiver(networkReceiver)
+        super.onPause()
     }
 
     override fun onSupportNavigateUp(): Boolean {
