@@ -6,6 +6,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import cz.cvut.fukalhan.repository.entity.states.SignUpState
 import cz.cvut.fukalhan.repository.entity.User
+import cz.cvut.fukalhan.repository.entity.UserLogin
 import cz.cvut.fukalhan.repository.login.LoginFacade
 import kotlinx.coroutines.launch
 import org.koin.core.KoinComponent
@@ -16,10 +17,10 @@ class SignUpViewModel: ViewModel(), KoinComponent {
     private val loginFacade by inject<LoginFacade>()
 
     fun signUp (username: String, email: String, password: String) {
-        val user = User(email, password, username)
+        val userLogin = UserLogin(email, password, username)
         viewModelScope.launch {
             //val state = loginFacade.createUser(user)
-            val regState = loginFacade.registerUser(user)
+            val regState = loginFacade.registerUser(userLogin)
             signUpState.postValue(regState)
             Log.e(regState.toString(), regState.toString())
         }

@@ -10,6 +10,7 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 
 import cz.cvut.fukalhan.R
+import cz.cvut.fukalhan.login.activity.LoginActivity
 import cz.cvut.fukalhan.login.viewmodel.SignUpViewModel
 import cz.cvut.fukalhan.repository.entity.states.SignUpState
 import cz.cvut.fukalhan.shared.Settings
@@ -34,10 +35,10 @@ class SignUpFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        // On Sign up button pressed sends user info to signUp view model
+        // On Sign up button pressed send user info to signUp view model
         signUpButton.setOnClickListener {
             signUpProgressBar.visibility = View.VISIBLE
-            viewModel.signUp( usernameSignUp.text.toString(),"${emailSignUp.text}", passwordSignUp.text.toString())
+            viewModel.signUp( "${usernameSignUp.text}","${emailSignUp.text}", "${passwordSignUp.text}")
         }
 
         // Observe data sent from view model
@@ -46,9 +47,10 @@ class SignUpFragment : Fragment() {
                 SignUpState.SUCCESS -> {
                     Settings.username = usernameSignUp.text.toString()
                     Toast.makeText(context, "Sign up", Toast.LENGTH_SHORT).show()
+                    (activity as LoginActivity).navigateToMainScreen()
                 }
                 SignUpState.FAIL -> Toast.makeText(context, "Sign up failed", Toast.LENGTH_SHORT).show()
-                SignUpState.WEAK_PASSWORD -> Toast.makeText(context, "Password must be at least 6", Toast.LENGTH_SHORT).show()
+                SignUpState.WEAK_PASSWORD -> Toast.makeText(context, "Password too short", Toast.LENGTH_SHORT).show()
             }
             signUpProgressBar.visibility = View.GONE
         })
