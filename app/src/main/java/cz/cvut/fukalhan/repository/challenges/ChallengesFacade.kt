@@ -7,10 +7,10 @@ import org.koin.core.inject
 class ChallengesFacade: IChallengesFacade, KoinComponent {
 
     private val repository by inject<ChallengesRepository>()
-    private val fakeRepository by inject<FakeChallengesRepository>()
+    private val repositoryMock by inject<ChallengesRepositoryMock>()
 
     override suspend fun getChallenges(): List<Challenge> {
-        return fakeRepository.getChallenges()
+        return repositoryMock.getChallenges()
     }
 
 }

@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/fragment_single_enemy"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".main.enemies.fragment.SingleEnemyFragment"
+    android:gravity="center|top"
+    android:orientation="vertical">
+
+    <ImageView
+        android:id="@+id/userProfilePic"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:adjustViewBounds="true"
+        android:scaleType="fitXY"
+        android:layout_marginTop="100dp"
+        android:src="@drawable/ic_account_circle_black_24dp"
+        android:contentDescription="@string/userprofilepic" />
+
+    <TextView
+        android:id="@+id/enemyProfileUsername"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="50dp"
+        tools:text="Username"/>
+</LinearLayout>

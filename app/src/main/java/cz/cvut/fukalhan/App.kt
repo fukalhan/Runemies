@@ -13,6 +13,7 @@ class App: Application() {
             androidContext(this@App)
             modules(Module.loginModule)
             modules(Module.challengeModule)
+            modules(Module.enemiesModule)
         }
     }
 }

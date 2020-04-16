@@ -19,10 +19,8 @@ class SignInViewModel: ViewModel(), KoinComponent {
     fun signIn (email: String, password: String) {
         val userLogin = UserLogin(email, password)
         viewModelScope.launch {
-            //val state = loginFacade.createUser(user)
             val regState = loginFacade.signInUser(userLogin)
             signInState.postValue(regState)
-            Log.e(regState.toString(), regState.toString())
         }
     }
 

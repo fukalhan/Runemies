@@ -23,4 +23,17 @@
         android:name="cz.cvut.fukalhan.main.challenges.fragment.ChallengesFragment"
         android:label="Challenges"
         tools:layout="@layout/fragment_challenges" />
+
+    <fragment
+        android:id="@+id/nav_enemies"
+        android:name="cz.cvut.fukalhan.main.enemies.fragment.EnemiesFragment"
+        android:label="Enemies"
+        tools:layout="@layout/fragment_enemies" />
+
+    <fragment
+        android:id="@+id/nav_enemy"
+        android:name="cz.cvut.fukalhan.main.enemies.fragment.SingleEnemyFragment"
+        android:label="Enemy"
+        tools:layout="@layout/fragment_single_enemy" />
+
 </navigation>

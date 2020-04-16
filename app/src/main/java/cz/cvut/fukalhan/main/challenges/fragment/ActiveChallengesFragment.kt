@@ -35,7 +35,6 @@ class ActiveChallengesFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         challengesViewModel.challenges.observe(viewLifecycleOwner, Observer {challenges ->
-            challenges.forEach{ Log.d("ActiveChallenges", "${it}" )}
             setAdapter(challenges)
         })
         challengesViewModel.getChallenges()

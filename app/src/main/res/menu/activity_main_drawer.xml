@@ -14,7 +14,8 @@
             android:id="@+id/nav_challenges"
             android:title="@string/menuChallenges" />
         <item
-            android:title="@string/menuRanking" />
+            android:id="@+id/nav_enemies"
+            android:title="@string/enemies" />
         <item
             android:title="@string/menuMap" />
     </group>
