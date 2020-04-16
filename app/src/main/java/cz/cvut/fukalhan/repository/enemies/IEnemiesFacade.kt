@@ -5,5 +5,5 @@ import cz.cvut.fukalhan.repository.entity.User
 interface IEnemiesFacade {
     fun getEnemies(): List<User>
 
-    fun getEnemy(): User
+    fun getEnemy(id: String): User
 }

@@ -29,9 +29,8 @@ class EnemiesAdapter(private val fragment: EnemiesFragment, private val enemies:
     override fun onBindViewHolder(holder: EnemyViewHolder, position: Int) {
         val enemy = enemies[position]
         holder.username.text = enemy.username
-        holder.itemView.setOnClickListener {view ->
-            Toast.makeText(view.context, "Card clicked", Toast.LENGTH_SHORT).show()
-            fragment.showEnemy()
+        holder.itemView.setOnClickListener {
+            fragment.showEnemy(enemy.id)
         }
     }
 }

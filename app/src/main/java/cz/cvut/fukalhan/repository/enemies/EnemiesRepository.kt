@@ -7,7 +7,7 @@ class EnemiesRepository: IEnemiesRepository {
         TODO("Not yet implemented")
     }
 
-    override fun getEnemy(): User {
+    override fun getEnemy(id: String): User {
         TODO("Not yet implemented")
     }
 }

@@ -6,13 +6,13 @@ import org.koin.core.inject
 
 class EnemiesFacade: IEnemiesFacade, KoinComponent {
     val repository by inject<EnemiesRepository>()
-    val repostioryMock by inject<EnemiesRepositoryMock>()
+    val repositoryMock by inject<EnemiesRepositoryMock>()
 
     override fun getEnemies(): List<User> {
-        return repostioryMock.getEnemies()
+        return repositoryMock.getEnemies()
     }
 
-    override fun getEnemy(): User {
-        TODO("Not yet implemented")
+    override fun getEnemy(id: String): User {
+        return repositoryMock.getEnemy(id)
     }
 }

@@ -28,12 +28,21 @@
         android:id="@+id/nav_enemies"
         android:name="cz.cvut.fukalhan.main.enemies.fragment.EnemiesFragment"
         android:label="Enemies"
-        tools:layout="@layout/fragment_enemies" />
+        tools:layout="@layout/fragment_enemies">
+        <action
+            android:id="@+id/showSingleEnemy"
+            app:destination="@id/nav_enemy"/>
+    </fragment>
 
     <fragment
         android:id="@+id/nav_enemy"
         android:name="cz.cvut.fukalhan.main.enemies.fragment.SingleEnemyFragment"
         android:label="Enemy"
-        tools:layout="@layout/fragment_single_enemy" />
+        tools:layout="@layout/fragment_single_enemy">
+        <argument
+            android:name="enemyID"
+            app:argType="string"
+            android:defaultValue="null"/>
+    </fragment>
 
 </navigation>

@@ -50,8 +50,9 @@ class EnemiesFragment : Fragment() {
         }
     }
 
-    fun showEnemy() {
-        findNavController().navigate(R.id.nav_enemy)
+    fun showEnemy(enemyID: String) {
+        val action = EnemiesFragmentDirections.showSingleEnemy(enemyID)
+        findNavController().navigate(action)
     }
 
 }
