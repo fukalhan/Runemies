@@ -1,5 +1,6 @@
 package cz.cvut.fukalhan.repository.entity
 
+import cz.cvut.fukalhan.repository.entity.states.ChallengeType
 import java.util.*
 
 data class Challenge (

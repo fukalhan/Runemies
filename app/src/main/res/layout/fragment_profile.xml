@@ -1,21 +1,29 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    tools:context=".main.profile.fragment.ProfileFragment"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".main.useractivity.fragment.ActivityFragment"
     android:orientation="vertical"
     android:gravity="center">
 
+    <ImageView
+        android:id="@+id/profilePic"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:src="@drawable/ic_account_circle_black_24dp"
+        android:contentDescription="@string/userprofilepic" />
+
     <TextView
-        android:id="@+id/homeScreenUsername"
+        android:id="@+id/profileUsername"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"/>
+        android:layout_height="wrap_content"
+        tools:text="Username"/>
     <Button
         android:id="@+id/signOutButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Sign out">
+        android:text="@string/signOut">
     </Button>
 
 </LinearLayout>

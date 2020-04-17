@@ -23,4 +23,5 @@
     <string name="duration">DURATION</string>
     <string name="type">TYPE</string>
     <string name="enemies">Enemies</string>
+    <string name="signOut">Sign out</string>
 </resources>

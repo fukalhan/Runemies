@@ -1,7 +1,7 @@
 package cz.cvut.fukalhan.repository.challenges
 
 import cz.cvut.fukalhan.repository.entity.Challenge
-import cz.cvut.fukalhan.repository.entity.ChallengeType
+import cz.cvut.fukalhan.repository.entity.states.ChallengeType
 import cz.cvut.fukalhan.repository.entity.User
 import java.util.*
 import kotlin.collections.ArrayList

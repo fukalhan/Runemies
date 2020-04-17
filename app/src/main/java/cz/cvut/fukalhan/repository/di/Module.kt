@@ -8,6 +8,8 @@ import cz.cvut.fukalhan.repository.enemies.EnemiesRepository
 import cz.cvut.fukalhan.repository.enemies.EnemiesRepositoryMock
 import cz.cvut.fukalhan.repository.login.LoginFacade
 import cz.cvut.fukalhan.repository.login.LoginRepository
+import cz.cvut.fukalhan.repository.user.UserFacade
+import cz.cvut.fukalhan.repository.user.UserRepository
 import org.koin.dsl.module
 
 object Module {
@@ -26,6 +28,11 @@ object Module {
         single { EnemiesFacade() }
         single { EnemiesRepository() }
         single { EnemiesRepositoryMock() }
+    }
+
+    val userModule = module {
+        single { UserFacade() }
+        single { UserRepository()}
     }
 
 }

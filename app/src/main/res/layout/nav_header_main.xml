@@ -1,38 +1,32 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/nav_home"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/menuHeader"
     android:layout_width="match_parent"
-    android:layout_height="176dp"
+    android:layout_height="150dp"
     android:gravity="bottom"
-    android:orientation="vertical"
-    android:paddingLeft="16dp"
-    android:paddingTop="16dp"
-    android:paddingRight="16dp"
-    android:paddingBottom="16dp"
+    android:orientation="horizontal"
+    android:layout_gravity="start"
+    android:paddingStart="20dp"
     android:background="?android:attr/selectableItemBackground"
-    android:clickable="true"
-    android:focusable="true">
+    >
 
     <ImageView
-        android:id="@+id/imageView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:contentDescription="Navigation header"
-        android:paddingTop="8dp"
-        app:srcCompat="@mipmap/ic_launcher_round" />
-
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:paddingTop="8dp"
-        android:text="Android studio"
+        android:id="@+id/menuProfilePic"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:layout_gravity="center"
+        android:src="@drawable/ic_account_circle_black_24dp"
+        android:contentDescription="@string/userprofilepic"
         />
 
     <TextView
-        android:id="@+id/textView"
-        android:layout_width="wrap_content"
+        android:id="@+id/menuUsername"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="android.studio@android.com" />
+        android:layout_gravity="center"
+        android:layout_marginStart="16dp"
+        tools:text="Username"
+        />
 
 </LinearLayout>

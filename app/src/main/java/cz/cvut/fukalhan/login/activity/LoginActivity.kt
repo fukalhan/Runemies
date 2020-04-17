@@ -3,7 +3,6 @@ package cz.cvut.fukalhan.login.activity
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.util.Log
 import com.google.android.material.tabs.TabLayoutMediator
 import cz.cvut.fukalhan.R
 import cz.cvut.fukalhan.common.ILoginNavigation
@@ -32,9 +31,8 @@ class LoginActivity : AppCompatActivity(),
         }.attach()
     }
 
-    override fun onBackPressed() {
-        Log.d("LoginActivity", "Back pressed, not logged in")
-    }
+    // On login screen if back pressed without sign in/up do nothing
+    override fun onBackPressed() {}
 
     override fun navigateToMainScreen() {
         val intent = Intent(this, MainActivity::class.java)

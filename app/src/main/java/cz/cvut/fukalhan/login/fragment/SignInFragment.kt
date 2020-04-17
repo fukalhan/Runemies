@@ -39,7 +39,7 @@ class SignInFragment : Fragment() {
 
         viewModel.signInState.observe(viewLifecycleOwner, Observer {state ->
             when (state) {
-                SignInState.SUCCES -> {
+                SignInState.SUCCESS -> {
                     Toast.makeText(context, "Sign in", Toast.LENGTH_SHORT).show()
                     (activity as LoginActivity).navigateToMainScreen()
                 }

@@ -1,19 +1,13 @@
 package cz.cvut.fukalhan.main.enemies.adapter
 
-import android.content.Context
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.recyclerview.widget.RecyclerView
 import cz.cvut.fukalhan.R
-import cz.cvut.fukalhan.common.IViewHolderClickListener
-import cz.cvut.fukalhan.main.activity.MainActivity
 import cz.cvut.fukalhan.main.enemies.fragment.EnemiesFragment
-import cz.cvut.fukalhan.main.enemies.fragment.SingleEnemyFragment
 import cz.cvut.fukalhan.main.enemies.viewholder.EnemyViewHolder
 import cz.cvut.fukalhan.repository.entity.User
 import org.koin.core.KoinComponent
-import org.koin.core.inject
 
 class EnemiesAdapter(private val fragment: EnemiesFragment, private val enemies: List<User>): RecyclerView.Adapter<EnemyViewHolder>(), KoinComponent{
 
