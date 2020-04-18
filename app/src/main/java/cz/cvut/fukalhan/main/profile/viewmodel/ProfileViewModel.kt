@@ -4,6 +4,5 @@ import androidx.lifecycle.ViewModel
 import org.koin.core.KoinComponent
 
 class ProfileViewModel: ViewModel(), KoinComponent {
-    //private val user:
 
 }

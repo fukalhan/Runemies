@@ -5,6 +5,7 @@ import cz.cvut.fukalhan.repository.entity.states.SignInState
 import cz.cvut.fukalhan.repository.entity.states.SignUpState
 import cz.cvut.fukalhan.repository.entity.User
 import cz.cvut.fukalhan.repository.entity.UserLogin
+import cz.cvut.fukalhan.repository.entity.states.SignOutState
 import org.koin.core.KoinComponent
 import org.koin.core.inject
 
@@ -25,6 +26,10 @@ class LoginFacade: ILoginFacade, KoinComponent {
 
     override suspend fun getUser(): FirebaseUser? {
         return repository.getUser()
+    }
+
+    override suspend fun signOutUser(): SignOutState {
+        return repository.signOutUser()
     }
 
 }

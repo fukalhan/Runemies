@@ -33,18 +33,14 @@ class ProfileFragment : Fragment(), ILoginNavigation {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        signOutButton.setOnClickListener {
-            logOut()
-        }
-
         profileUsername.text = Settings.username
 
-        NetworkUtil.connected.observe(viewLifecycleOwner, Observer {connected ->
+        /*NetworkUtil.connected.observe(viewLifecycleOwner, Observer {connected ->
             when(connected) {
                 true -> Toast.makeText(context, "connected", Toast.LENGTH_SHORT).show()
                 false -> Toast.makeText(context, "not connected", Toast.LENGTH_SHORT).show()
             }
-        })
+        })*/
     }
 
     override fun logOut() {

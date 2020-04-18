@@ -5,6 +5,7 @@ import android.content.IntentFilter
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.provider.Settings
+import android.view.MenuItem
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import androidx.navigation.findNavController
@@ -12,11 +13,13 @@ import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.navigateUp
 import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
+import com.google.android.material.navigation.NavigationView
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.ktx.Firebase
 import cz.cvut.fukalhan.R
 import cz.cvut.fukalhan.common.ILoginNavigation
 import cz.cvut.fukalhan.login.activity.LoginActivity
+import cz.cvut.fukalhan.repository.entity.states.SignOutState
 import cz.cvut.fukalhan.shared.Settings.username
 import cz.cvut.fukalhan.utils.network.NetworkReceiver
 import kotlinx.android.synthetic.main.activity_main.*
@@ -24,10 +27,10 @@ import kotlinx.android.synthetic.main.app_bar_main.*
 import kotlinx.android.synthetic.main.nav_header_main.view.*
 import kotlinx.android.synthetic.main.nav_header_main.view.menuHeader
 
-class MainActivity : AppCompatActivity(), ILoginNavigation {
+class MainActivity : AppCompatActivity(), ILoginNavigation, NavigationView.OnNavigationItemSelectedListener {
 
     lateinit var user: FirebaseUser
-    fun isUserInitialised() = ::user.isInitialized
+        fun isUserInitialised() = ::user.isInitialized
     private lateinit var mainActivityViewModel: MainActivityViewModel
     private lateinit var appBarConfiguration: AppBarConfiguration
     private var networkReceiver: NetworkReceiver = NetworkReceiver()
@@ -37,8 +40,14 @@ class MainActivity : AppCompatActivity(), ILoginNavigation {
         setContentView(R.layout.activity_main)
         mainActivityViewModel = ViewModelProviders.of(this).get(MainActivityViewModel::class.java)
         setSupportActionBar(toolbar_main)
-        setUser()
         setMenuView()
+
+        mainActivityViewModel.signOutState.observe(this, Observer { signOutState ->
+            when(signOutState) {
+                SignOutState.SUCCESS -> logOut()
+                SignOutState.FAIL -> Unit
+            }
+        })
     }
 
     private fun setMenuView() {
@@ -60,9 +69,21 @@ class MainActivity : AppCompatActivity(), ILoginNavigation {
             navigationController.navigate(R.id.nav_profile)
             drawer_layout.closeDrawers()
         }
+
+        nav_view.setNavigationItemSelectedListener(this)
     }
 
-    private fun setUser() {
+    override fun onNavigationItemSelected(item: MenuItem): Boolean {
+        return when(item.itemId) {
+            R.id.signOut -> {
+                mainActivityViewModel.signOutUser()
+                true
+            }
+            else -> false
+        }
+    }
+
+    private fun getCurrentUser() {
         mainActivityViewModel.user.observe(this, Observer { firebaseUser ->
             if (firebaseUser == null) {
                 logOut()
@@ -79,6 +100,7 @@ class MainActivity : AppCompatActivity(), ILoginNavigation {
 
     override fun onStart() {
         super.onStart()
+        getCurrentUser()
         val intentFilter = IntentFilter("android.net.conn.CONNECTIVITY_CHANGE")
         intentFilter.addCategory(Intent.CATEGORY_DEFAULT)
         registerReceiver(networkReceiver, intentFilter)
@@ -98,4 +120,5 @@ class MainActivity : AppCompatActivity(), ILoginNavigation {
         val intent = Intent(this, LoginActivity::class.java)
         startActivity(intent)
     }
+
 }

@@ -9,6 +9,7 @@ import cz.cvut.fukalhan.repository.entity.states.SignInState
 import cz.cvut.fukalhan.repository.entity.states.SignUpState
 import cz.cvut.fukalhan.repository.entity.User
 import cz.cvut.fukalhan.repository.entity.UserLogin
+import cz.cvut.fukalhan.repository.entity.states.SignOutState
 import cz.cvut.fukalhan.shared.Constants
 import kotlinx.coroutines.tasks.await
 import java.lang.Exception
@@ -57,6 +58,16 @@ class LoginRepository: ILoginRepository {
 
     override suspend fun getUser(): FirebaseUser? {
         return auth.currentUser
+    }
+
+    override suspend fun signOutUser(): SignOutState {
+        return try {
+            auth.signOut()
+            SignOutState.SUCCESS
+        } catch (e: Exception) {
+            e.printStackTrace()
+            SignOutState.FAIL
+        }
     }
 
 }
