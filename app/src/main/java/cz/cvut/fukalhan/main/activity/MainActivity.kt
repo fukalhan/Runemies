@@ -7,7 +7,6 @@ import android.os.Bundle
 import android.provider.Settings
 import android.view.MenuItem
 import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProviders
 import androidx.navigation.findNavController
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.navigateUp
@@ -39,7 +38,7 @@ class MainActivity : AppCompatActivity(), ILoginNavigation {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-        mainActivityViewModel = ViewModelProviders.of(this).get(MainActivityViewModel::class.java)
+        mainActivityViewModel = MainActivityViewModel()
         setSupportActionBar(toolbar_main)
         getCurrentUser()
         observeSignOutState()

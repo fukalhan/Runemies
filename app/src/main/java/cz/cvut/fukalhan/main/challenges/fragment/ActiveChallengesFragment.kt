@@ -7,7 +7,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.LinearLayoutManager
 
 import cz.cvut.fukalhan.R
@@ -27,7 +26,7 @@ class ActiveChallengesFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        challengesViewModel = ViewModelProviders.of(this).get(ActiveChallengesViewModel::class.java)
+        challengesViewModel = ActiveChallengesViewModel()
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_active_challenges, container, false)
     }
