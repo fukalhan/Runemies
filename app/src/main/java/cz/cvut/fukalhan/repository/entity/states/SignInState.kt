@@ -1,5 +1,5 @@
 package cz.cvut.fukalhan.repository.entity.states
 
 enum class SignInState {
-    SUCCESS, FAIL
+    SUCCESS, FAIL, NOT_EXISTING_ACCOUNT, WRONG_PASSWORD
 }

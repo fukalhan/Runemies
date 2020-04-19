@@ -6,6 +6,7 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.provider.Settings
 import android.view.MenuItem
+import android.widget.Toast
 import androidx.lifecycle.Observer
 import androidx.navigation.findNavController
 import androidx.navigation.ui.AppBarConfiguration
@@ -13,13 +14,13 @@ import androidx.navigation.ui.navigateUp
 import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
 import com.google.android.material.navigation.NavigationView
+import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.ktx.Firebase
 import cz.cvut.fukalhan.R
 import cz.cvut.fukalhan.common.ILoginNavigation
 import cz.cvut.fukalhan.login.activity.LoginActivity
 import cz.cvut.fukalhan.repository.entity.states.SignOutState
-import cz.cvut.fukalhan.shared.Settings.username
 import cz.cvut.fukalhan.utils.network.NetworkReceiver
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.activity_main.view.*
@@ -29,37 +30,21 @@ import kotlinx.android.synthetic.main.nav_header_main.view.menuHeader
 
 class MainActivity : AppCompatActivity(), ILoginNavigation {
 
-    lateinit var user: FirebaseUser
-        fun isUserInitialised() = ::user.isInitialized
+    val user: FirebaseUser? = FirebaseAuth.getInstance().currentUser
     private lateinit var mainActivityViewModel: MainActivityViewModel
     private lateinit var appBarConfiguration: AppBarConfiguration
     private var networkReceiver: NetworkReceiver = NetworkReceiver()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        if (user == null) {
+            logOut()
+        }
         setContentView(R.layout.activity_main)
         mainActivityViewModel = MainActivityViewModel()
         setSupportActionBar(toolbar_main)
-        getCurrentUser()
         observeSignOutState()
         setSideMenuView()
-    }
-
-    /**
-     * Request for currently signed user
-     * -> if none found, logout and navigate to login screen
-     * -> if found, set him as main activity user
-     */
-    private fun getCurrentUser() {
-        mainActivityViewModel.user.observe(this, Observer { firebaseUser ->
-            if (firebaseUser == null) {
-                logOut()
-            } else {
-                user = firebaseUser
-                nav_view.getHeaderView(0).menuUsername.text = user.displayName
-            }
-        })
-        mainActivityViewModel.getUser()
     }
 
     /** Observe if sign out was called, log out if was */
@@ -67,7 +52,7 @@ class MainActivity : AppCompatActivity(), ILoginNavigation {
         mainActivityViewModel.signOutState.observe(this, Observer { signOutState ->
             when(signOutState) {
                 SignOutState.SUCCESS -> logOut()
-                SignOutState.FAIL -> Unit
+                SignOutState.FAIL -> Toast.makeText(this, "Sign out failed", Toast.LENGTH_SHORT).show()
             }
         })
     }
@@ -91,7 +76,7 @@ class MainActivity : AppCompatActivity(), ILoginNavigation {
 
         //Set menu header clickable to navigate to main screen (profile screen)
         val headerView = nav_view.getHeaderView(0)
-        headerView.menuUsername.text = username
+        headerView.menuUsername.text = user?.displayName
         headerView.menuHeader.setOnClickListener {
             navigationController.navigate(R.id.nav_profile)
             drawer_layout.closeDrawers()

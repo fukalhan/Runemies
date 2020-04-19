@@ -8,6 +8,8 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.lifecycle.Observer
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.FirebaseUser
 
 import cz.cvut.fukalhan.R
 import cz.cvut.fukalhan.common.ILoginNavigation
@@ -22,6 +24,8 @@ import kotlinx.android.synthetic.main.fragment_profile.*
  */
 class ProfileFragment : Fragment(), ILoginNavigation {
 
+    val user: FirebaseUser? = FirebaseAuth.getInstance().currentUser
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -32,6 +36,7 @@ class ProfileFragment : Fragment(), ILoginNavigation {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        profileUsername.text = user?.displayName
 
         NetworkUtil.connected.observe(viewLifecycleOwner, Observer {connected ->
             when(connected) {
@@ -39,19 +44,5 @@ class ProfileFragment : Fragment(), ILoginNavigation {
                 false -> Toast.makeText(context, "not connected", Toast.LENGTH_SHORT).show()
             }
         })
-    }
-
-    override fun onStart() {
-        super.onStart()
-        val activity = activity as MainActivity
-        if (activity.isUserInitialised()) {
-            profileUsername.text = activity.user.displayName
-        }
-    }
-
-    override fun logOut() {
-        // TODO logout user
-        val intent = Intent(context, LoginActivity::class.java)
-        startActivity(intent)
     }
 }

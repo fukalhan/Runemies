@@ -24,10 +24,6 @@ class LoginFacade: ILoginFacade, KoinComponent {
         return repository.signInUser(userLogin)
     }
 
-    override suspend fun getUser(): FirebaseUser? {
-        return repository.getUser()
-    }
-
     override suspend fun signOutUser(): SignOutState {
         return repository.signOutUser()
     }

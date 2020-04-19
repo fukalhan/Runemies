@@ -11,16 +11,8 @@ import org.koin.core.KoinComponent
 import org.koin.core.inject
 
 class MainActivityViewModel: ViewModel(), KoinComponent {
-    val user: MutableLiveData<FirebaseUser?> by lazy { MutableLiveData<FirebaseUser?>()}
     val signOutState: MutableLiveData<SignOutState> by lazy { MutableLiveData<SignOutState>()}
     private val loginFacade by inject<LoginFacade>()
-
-    fun getUser() {
-        viewModelScope.launch {
-            val firebaseUser = loginFacade.getUser()
-            user.postValue(firebaseUser)
-        }
-    }
 
     fun signOutUser() {
         viewModelScope.launch {

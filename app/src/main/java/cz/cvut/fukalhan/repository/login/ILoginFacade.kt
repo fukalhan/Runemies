@@ -14,7 +14,5 @@ interface ILoginFacade {
 
     suspend fun signInUser(userLogin: UserLogin): SignInState
 
-    suspend fun getUser(): FirebaseUser?
-
     suspend fun signOutUser(): SignOutState
 }

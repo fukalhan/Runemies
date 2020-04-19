@@ -11,7 +11,6 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"/>
 
-    <!--TODO unify the navigation view item style-->
     <com.google.android.material.navigation.NavigationView
         android:id="@+id/nav_view"
         android:layout_width="wrap_content"
@@ -29,6 +28,8 @@
                 android:id="@+id/sign_out_button"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginStart="-5dp"
+                android:layout_marginEnd="30dp"
                 android:gravity="start|center"
                 android:text="@string/signOut"/>
         </LinearLayout>

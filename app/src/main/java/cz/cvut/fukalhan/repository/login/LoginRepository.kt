@@ -1,9 +1,6 @@
 package cz.cvut.fukalhan.repository.login
 
-import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.auth.FirebaseAuthWeakPasswordException
-import com.google.firebase.auth.FirebaseUser
-import com.google.firebase.auth.UserProfileChangeRequest
+import com.google.firebase.auth.*
 import com.google.firebase.firestore.FirebaseFirestore
 import cz.cvut.fukalhan.repository.entity.states.SignInState
 import cz.cvut.fukalhan.repository.entity.states.SignUpState
@@ -41,6 +38,8 @@ class LoginRepository: ILoginRepository {
             e.printStackTrace()
             return when (e) {
                 is FirebaseAuthWeakPasswordException ->  SignUpState.WEAK_PASSWORD
+                is FirebaseAuthUserCollisionException -> SignUpState.EMAIL_ALREADY_REGISTERED
+                is FirebaseAuthInvalidCredentialsException -> SignUpState.INVALID_EMAIL
                 else -> SignUpState.FAIL
             }
         }
@@ -52,12 +51,12 @@ class LoginRepository: ILoginRepository {
             SignInState.SUCCESS
         } catch (e: Exception) {
             e.printStackTrace()
-            SignInState.FAIL
+            return when (e) {
+                is FirebaseAuthInvalidUserException -> SignInState.NOT_EXISTING_ACCOUNT
+                is FirebaseAuthInvalidCredentialsException -> SignInState.WRONG_PASSWORD
+                else -> SignInState.FAIL
+            }
         }
-    }
-
-    override suspend fun getUser(): FirebaseUser? {
-        return auth.currentUser
     }
 
     override suspend fun signOutUser(): SignOutState {

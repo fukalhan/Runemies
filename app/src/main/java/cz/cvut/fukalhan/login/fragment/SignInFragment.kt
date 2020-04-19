@@ -42,6 +42,8 @@ class SignInFragment : Fragment() {
                     Toast.makeText(context, "Sign in", Toast.LENGTH_SHORT).show()
                     (activity as LoginActivity).navigateToMainScreen()
                 }
+                SignInState.NOT_EXISTING_ACCOUNT -> Toast.makeText(context, "Account doesn't exist", Toast.LENGTH_SHORT).show()
+                SignInState.WRONG_PASSWORD -> Toast.makeText(context, "Wrong password", Toast.LENGTH_SHORT).show()
                 SignInState.FAIL -> Toast.makeText(context, "Sign in failed", Toast.LENGTH_SHORT).show()
             }
         })

@@ -44,12 +44,13 @@ class SignUpFragment : Fragment() {
         viewModel.signUpState.observe(viewLifecycleOwner, Observer {state ->
             when (state) {
                 SignUpState.SUCCESS -> {
-                    Settings.username = usernameSignUp.text.toString()
                     Toast.makeText(context, "Sign up", Toast.LENGTH_SHORT).show()
                     (activity as LoginActivity).navigateToMainScreen()
                 }
-                SignUpState.FAIL -> Toast.makeText(context, "Sign up failed", Toast.LENGTH_SHORT).show()
                 SignUpState.WEAK_PASSWORD -> Toast.makeText(context, "Password too short", Toast.LENGTH_SHORT).show()
+                SignUpState.EMAIL_ALREADY_REGISTERED -> Toast.makeText(context, "Email is already registered", Toast.LENGTH_SHORT).show()
+                SignUpState.INVALID_EMAIL -> Toast.makeText(context, "Invalid email address", Toast.LENGTH_SHORT).show()
+                SignUpState.FAIL -> Toast.makeText(context, "Sign up failed", Toast.LENGTH_SHORT).show()
             }
             signUpProgressBar.visibility = View.GONE
         })
