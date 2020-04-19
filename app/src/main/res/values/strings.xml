@@ -24,4 +24,13 @@
     <string name="type">TYPE</string>
     <string name="enemies">Enemies</string>
     <string name="signOut">Sign out</string>
+    <string name="mileage_total">Mileage total:</string>
+    <string name="hours_total">Hours total</string>
+    <string name="elevation_total">Elevation total</string>
+    <string name="records">Records:</string>
+    <string name="longest_distance_run">Longest distance run</string>
+    <string name="longest_run">Longest run</string>
+    <string name="fastest_1_km">Fastest 1 km</string>
+    <string name="fastest_5_km">Fastest 5 km</string>
+    <string name="fastest_10_km">Fastest 10 km</string>
 </resources>
