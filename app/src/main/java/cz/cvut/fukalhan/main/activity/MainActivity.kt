@@ -23,11 +23,12 @@ import cz.cvut.fukalhan.repository.entity.states.SignOutState
 import cz.cvut.fukalhan.shared.Settings.username
 import cz.cvut.fukalhan.utils.network.NetworkReceiver
 import kotlinx.android.synthetic.main.activity_main.*
+import kotlinx.android.synthetic.main.activity_main.view.*
 import kotlinx.android.synthetic.main.app_bar_main.*
 import kotlinx.android.synthetic.main.nav_header_main.view.*
 import kotlinx.android.synthetic.main.nav_header_main.view.menuHeader
 
-class MainActivity : AppCompatActivity(), ILoginNavigation, NavigationView.OnNavigationItemSelectedListener {
+class MainActivity : AppCompatActivity(), ILoginNavigation {
 
     lateinit var user: FirebaseUser
         fun isUserInitialised() = ::user.isInitialized
@@ -40,8 +41,30 @@ class MainActivity : AppCompatActivity(), ILoginNavigation, NavigationView.OnNav
         setContentView(R.layout.activity_main)
         mainActivityViewModel = ViewModelProviders.of(this).get(MainActivityViewModel::class.java)
         setSupportActionBar(toolbar_main)
-        setMenuView()
+        getCurrentUser()
+        observeSignOutState()
+        setSideMenuView()
+    }
 
+    /**
+     * Request for currently signed user
+     * -> if none found, logout and navigate to login screen
+     * -> if found, set him as main activity user
+     */
+    private fun getCurrentUser() {
+        mainActivityViewModel.user.observe(this, Observer { firebaseUser ->
+            if (firebaseUser == null) {
+                logOut()
+            } else {
+                user = firebaseUser
+                nav_view.getHeaderView(0).menuUsername.text = user.displayName
+            }
+        })
+        mainActivityViewModel.getUser()
+    }
+
+    /** Observe if sign out was called, log out if was */
+    private fun observeSignOutState() {
         mainActivityViewModel.signOutState.observe(this, Observer { signOutState ->
             when(signOutState) {
                 SignOutState.SUCCESS -> logOut()
@@ -50,7 +73,11 @@ class MainActivity : AppCompatActivity(), ILoginNavigation, NavigationView.OnNav
         })
     }
 
-    private fun setMenuView() {
+    /**
+     * Configure app bar to change according current top level destination,
+     * set menu navigation view
+     */
+    private fun setSideMenuView() {
         val navigationController = findNavController(R.id.nav_host_fragment)
         // Passing each menu ID as a set of Ids because each menu should be considered as top level destinations
         appBarConfiguration = AppBarConfiguration(
@@ -62,45 +89,28 @@ class MainActivity : AppCompatActivity(), ILoginNavigation, NavigationView.OnNav
             drawer_layout)
         setupActionBarWithNavController(navigationController, appBarConfiguration)
         nav_view.setupWithNavController(navigationController)
+
+        //Set menu header clickable to navigate to main screen (profile screen)
         val headerView = nav_view.getHeaderView(0)
         headerView.menuUsername.text = username
-
         headerView.menuHeader.setOnClickListener {
             navigationController.navigate(R.id.nav_profile)
             drawer_layout.closeDrawers()
         }
 
-        nav_view.setNavigationItemSelectedListener(this)
-    }
-
-    override fun onNavigationItemSelected(item: MenuItem): Boolean {
-        return when(item.itemId) {
-            R.id.signOut -> {
-                mainActivityViewModel.signOutUser()
-                true
-            }
-            else -> false
+        // Sign out user if menu sign out button is clicked
+        nav_view.sign_out_button.setOnClickListener {
+            mainActivityViewModel.signOutUser()
         }
     }
 
-    private fun getCurrentUser() {
-        mainActivityViewModel.user.observe(this, Observer { firebaseUser ->
-            if (firebaseUser == null) {
-                logOut()
-            } else {
-                user = firebaseUser
-            }
-        })
-        mainActivityViewModel.getUser()
-
-        if (isUserInitialised()) {
-            username = user.displayName
-        }
+    override fun onSupportNavigateUp(): Boolean {
+        val navController = findNavController(R.id.nav_host_fragment)
+        return navController.navigateUp(appBarConfiguration) || super.onSupportNavigateUp()
     }
 
     override fun onStart() {
         super.onStart()
-        getCurrentUser()
         val intentFilter = IntentFilter("android.net.conn.CONNECTIVITY_CHANGE")
         intentFilter.addCategory(Intent.CATEGORY_DEFAULT)
         registerReceiver(networkReceiver, intentFilter)
@@ -111,11 +121,7 @@ class MainActivity : AppCompatActivity(), ILoginNavigation, NavigationView.OnNav
         super.onStop()
     }
 
-    override fun onSupportNavigateUp(): Boolean {
-        val navController = findNavController(R.id.nav_host_fragment)
-        return navController.navigateUp(appBarConfiguration) || super.onSupportNavigateUp()
-    }
-
+    /** Navigate to login activity */
     override fun logOut() {
         val intent = Intent(this, LoginActivity::class.java)
         startActivity(intent)

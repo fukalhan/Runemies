@@ -33,14 +33,20 @@ class ProfileFragment : Fragment(), ILoginNavigation {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        profileUsername.text = Settings.username
-
-        /*NetworkUtil.connected.observe(viewLifecycleOwner, Observer {connected ->
+        NetworkUtil.connected.observe(viewLifecycleOwner, Observer {connected ->
             when(connected) {
                 true -> Toast.makeText(context, "connected", Toast.LENGTH_SHORT).show()
                 false -> Toast.makeText(context, "not connected", Toast.LENGTH_SHORT).show()
             }
-        })*/
+        })
+    }
+
+    override fun onStart() {
+        super.onStart()
+        val activity = activity as MainActivity
+        if (activity.isUserInitialised()) {
+            profileUsername.text = activity.user.displayName
+        }
     }
 
     override fun logOut() {
