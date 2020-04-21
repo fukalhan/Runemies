@@ -33,4 +33,8 @@
     <string name="fastest_1_km">Fastest 1 km</string>
     <string name="fastest_5_km">Fastest 5 km</string>
     <string name="fastest_10_km">Fastest 10 km</string>
+    <string name="distance_label">Distance (km)</string>
+    <string name="tempo_label">Tempo (min/km)</string>
+    <string name="start">START</string>
+    <string name="menuRun">Run</string>
 </resources>

@@ -5,6 +5,9 @@
 
     <group android:checkableBehavior="single">
         <item
+            android:id="@+id/nav_run"
+            android:title="@string/menuRun" />
+        <item
             android:id="@+id/nav_activity"
             android:title="@string/menuActivity" />
         <item
@@ -13,9 +16,6 @@
         <item
             android:id="@+id/nav_enemies"
             android:title="@string/enemies" />
-        <item
-            android:id="@+id/nav_map"
-            android:title="@string/menuMap" />
     </group>
 
 </menu>

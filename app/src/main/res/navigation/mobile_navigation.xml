@@ -45,4 +45,10 @@
             android:defaultValue="null"/>
     </fragment>
 
+    <fragment
+        android:id="@+id/nav_run"
+        android:name="cz.cvut.fukalhan.main.run.fragment.RunFragment"
+        android:label="Run"
+        tools:layout="@layout/fragment_run" />
+
 </navigation>
