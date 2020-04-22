@@ -5,8 +5,11 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:gravity="center">
+    android:gravity="top|center">
 
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="50dp"/>
     <ImageView
         android:id="@+id/profilePic"
         android:layout_width="100dp"
@@ -19,4 +22,19 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         tools:text="Username"/>
+    <TextView
+        android:id="@+id/profileCountry"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        tools:text="Country/city"/>
+    <TextView
+        android:id="@+id/joinDate"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        tools:text="Join date"/>
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_marginTop="20dp"
+        android:background="@color/colorPrimaryDark"/>
 </LinearLayout>
