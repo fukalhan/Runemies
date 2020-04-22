@@ -61,7 +61,9 @@ class RunFragment : Fragment(), OnMapReadyCallback {
     }
 
     override fun onDestroy() {
-        map_view.onDestroy()
+        if (map_view != null) {
+            map_view.onDestroy()
+        }
         super.onDestroy()
     }
 

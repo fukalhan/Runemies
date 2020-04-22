@@ -37,4 +37,5 @@
     <string name="tempo_label">Tempo (min/km)</string>
     <string name="start">START</string>
     <string name="menuRun">Run</string>
+    <string name="profile">Profile</string>
 </resources>

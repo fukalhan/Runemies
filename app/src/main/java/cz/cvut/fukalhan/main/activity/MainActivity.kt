@@ -42,7 +42,7 @@ class MainActivity : AppCompatActivity(), ILoginNavigation {
         }
         setContentView(R.layout.activity_main)
         mainActivityViewModel = MainActivityViewModel()
-        setSupportActionBar(toolbar_main)
+        //setSupportActionBar(toolbar_main)
         observeSignOutState()
         setSideMenuView()
     }
@@ -70,23 +70,14 @@ class MainActivity : AppCompatActivity(), ILoginNavigation {
                 R.id.nav_profile,
                 R.id.nav_activity,
                 R.id.nav_challenges,
-                R.id.nav_enemies),
-            drawer_layout)
+                R.id.nav_enemies))
         setupActionBarWithNavController(navigationController, appBarConfiguration)
         nav_view.setupWithNavController(navigationController)
 
-        //Set menu header clickable to navigate to main screen (profile screen)
-        val headerView = nav_view.getHeaderView(0)
-        headerView.menuUsername.text = user?.displayName
-        headerView.menuHeader.setOnClickListener {
-            navigationController.navigate(R.id.nav_profile)
-            drawer_layout.closeDrawers()
-        }
-
         // Sign out user if menu sign out button is clicked
-        nav_view.sign_out_button.setOnClickListener {
+        /*nav_view.sign_out_button.setOnClickListener {
             mainActivityViewModel.signOutUser()
-        }
+        }*/
     }
 
     override fun onSupportNavigateUp(): Boolean {
