@@ -4,7 +4,6 @@ import android.content.Intent
 import android.content.IntentFilter
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.provider.Settings
 import android.view.Menu
 import android.view.MenuItem
 import android.widget.Toast
@@ -14,20 +13,15 @@ import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.navigateUp
 import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
-import com.google.android.material.navigation.NavigationView
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
-import com.google.firebase.ktx.Firebase
 import cz.cvut.fukalhan.R
 import cz.cvut.fukalhan.common.ILoginNavigation
 import cz.cvut.fukalhan.login.activity.LoginActivity
-import cz.cvut.fukalhan.repository.entity.states.SignOutState
+import cz.cvut.fukalhan.repository.login.states.SignOutState
 import cz.cvut.fukalhan.utils.network.NetworkReceiver
 import kotlinx.android.synthetic.main.activity_main.*
-import kotlinx.android.synthetic.main.activity_main.view.*
 import kotlinx.android.synthetic.main.app_bar_main.*
-import kotlinx.android.synthetic.main.nav_header_main.view.*
-import kotlinx.android.synthetic.main.nav_header_main.view.menuHeader
 
 class MainActivity : AppCompatActivity(), ILoginNavigation {
 

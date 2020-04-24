@@ -3,8 +3,7 @@ package cz.cvut.fukalhan.main.activity
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.google.firebase.auth.FirebaseUser
-import cz.cvut.fukalhan.repository.entity.states.SignOutState
+import cz.cvut.fukalhan.repository.login.states.SignOutState
 import cz.cvut.fukalhan.repository.login.LoginFacade
 import kotlinx.coroutines.launch
 import org.koin.core.KoinComponent

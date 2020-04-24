@@ -3,7 +3,7 @@
     <string name="appName">Runemies</string>
     <string name="maxLength">Max length</string>
 
-    <!--Sign in and sign up screens-->
+    <!--Login-->
     <string name="signIn">Sign in</string>
     <string name="signUp">Sign up</string>
     <string name="hintUsername">Username</string>
@@ -12,42 +12,38 @@
     <string name="hintConfirmPassword">Confirm password</string>
     <string name="forgottenPassword">Forgotten password</string>
     <string name="loading">Loading</string>
-    <string name="menuActivity">Activity</string>
-    <string name="menuChallenges">Challenges</string>
-    <string name="menuRanking">Ranking</string>
-    <string name="menuMap">Map</string>
 
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
-    <string name="userprofilepic">userProfilePic</string>
-    <string name="duration">DURATION</string>
-    <string name="type">TYPE</string>
+    <!-- Bottom navigation and options menu labels -->
     <string name="enemies">Enemies</string>
-    <string name="signOut">Sign out</string>
-    <string name="mileage_total">Mileage total:</string>
-    <string name="hours_total">Hours total</string>
-    <string name="elevation_total">Elevation total</string>
-    <string name="records">Records:</string>
-    <string name="longest_distance_run">Longest distance run</string>
-    <string name="longest_run">Longest run</string>
-    <string name="fastest_1_km">Fastest 1 km</string>
-    <string name="fastest_5_km">Fastest 5 km</string>
-    <string name="fastest_10_km">Fastest 10 km</string>
-    <string name="distance_label">Distance (km)</string>
-    <string name="tempo_label">Tempo (min/km)</string>
-    <string name="start">START</string>
-    <string name="menuRun">Run</string>
+    <string name="challenges">Challenges</string>
     <string name="profile">Profile</string>
+    <string name="run">Run</string>
+    <string name="activity">Activity</string>
     <string name="calendar">Calendar</string>
     <string name="settings">Settings</string>
     <string name="sign_out">Sign out</string>
-    <string name="activity">Activity</string>
-    <string name="lifes">Lifes:</string>
-    <string name="points">Points:</string>
-    <string name="total_mileage">Total mileage:</string>
-    <string name="total_mileage_km">Total mileage (km):</string>
-    <string name="total_time_h">Total time (h):</string>
-    <string name="longest_run_km">Longest run (km):</string>
-    <string name="lives">Lives:</string>
+
+    <!-- Challenges -->
+    <string name="type">TYPE</string>
+
+    <!-- Profile -->
     <string name="joined">Joined %1$s</string>
+    <string name="points">Points:</string>
+    <string name="lives">Lives:</string>
+
+    <string name="total_mileage_label">Total mileage:</string>
+    <string name="total_mileage">%1$s km</string>
+    <string name="total_time_label">Total time:</string>
+    <string name="total_time">%1$s h</string>
+    <string name="longest_run_label">Longest run:</string>
+    <string name="longest_run">%1$s km</string>
+    <string name="fastest_1_km_label">Fastest 1 km</string>
+    <string name="fastest_1_km">%1$s min/km</string>
+
+    <!-- Run -->
+    <string name="distance_label">Distance (km)</string>
+    <string name="duration">Duration</string>
+    <string name="tempo_label">Tempo (min/km)</string>
+    <string name="start">START</string>
+
 </resources>

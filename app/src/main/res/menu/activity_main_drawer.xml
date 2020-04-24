@@ -9,7 +9,7 @@
     <item
         android:id="@+id/nav_challenges"
         android:icon="@drawable/ic_flash"
-        android:title="@string/menuChallenges" />
+        android:title="@string/challenges" />
     <item
         android:id="@+id/nav_profile"
         android:icon="@drawable/ic_profile"
@@ -17,7 +17,7 @@
     <item
         android:id="@+id/nav_run"
         android:icon="@drawable/ic_run"
-        android:title="@string/menuRun" />
+        android:title="@string/run" />
     <item
         android:id="@+id/nav_activity"
         android:icon="@drawable/ic_graph"

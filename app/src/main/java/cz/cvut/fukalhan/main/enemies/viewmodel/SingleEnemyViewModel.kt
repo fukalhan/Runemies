@@ -10,7 +10,7 @@ import org.koin.core.KoinComponent
 import org.koin.core.inject
 
 class SingleEnemyViewModel: ViewModel(), KoinComponent {
-    val enemy: MutableLiveData<User> by lazy { MutableLiveData<User>() }
+    val enemy: MutableLiveData<User?> by lazy { MutableLiveData<User?>() }
     private val userFacade by inject<UserFacade>()
 
 

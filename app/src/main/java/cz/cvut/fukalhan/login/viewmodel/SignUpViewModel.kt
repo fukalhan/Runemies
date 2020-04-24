@@ -3,9 +3,9 @@ package cz.cvut.fukalhan.login.viewmodel
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import cz.cvut.fukalhan.repository.entity.states.SignUpState
 import cz.cvut.fukalhan.repository.entity.UserLogin
 import cz.cvut.fukalhan.repository.login.LoginFacade
+import cz.cvut.fukalhan.repository.login.states.SignUpState
 import kotlinx.coroutines.launch
 import org.koin.core.KoinComponent
 import org.koin.core.inject

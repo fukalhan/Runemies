@@ -18,6 +18,7 @@ import cz.cvut.fukalhan.repository.entity.User
 import kotlinx.android.synthetic.main.fragment_profile.*
 import java.text.SimpleDateFormat
 import java.util.*
+import java.util.concurrent.TimeUnit
 
 /**
  * A simple [Fragment] subclass.
@@ -43,9 +44,9 @@ class ProfileFragment : Fragment(), ILoginNavigation {
 
     /** Request data of current user and set observer for the answer */
     private fun getUserData () {
-        profileViewModel.userState.observe(viewLifecycleOwner, Observer { user ->
-            if (user != null) {
-                setUserData(user)
+        profileViewModel.user.observe(viewLifecycleOwner, Observer { userData ->
+            if (userData != null) {
+                setUserData(userData)
             } else {
                 Toast.makeText(context, "User data not available", Toast.LENGTH_SHORT).show()
             }
@@ -63,5 +64,16 @@ class ProfileFragment : Fragment(), ILoginNavigation {
         join_date.text = getString(R.string.joined, formater.format(user.joinDate))
         lives.text = user.lives.toString()
         points.text = user.points.toString()
+        total_mileage.text = getString(R.string.total_mileage, user.totalMileage.toString())
+        total_hours.text = getString(R.string.total_time, user.totalTime.toString())
+        longest_run.text = getString(R.string.longest_run, user.longestRun.toString())
+
+        val fastest1KmTime = String.format(
+            "%02d:%02d",
+            TimeUnit.MILLISECONDS.toMinutes(user.fastest1km),
+            TimeUnit.MILLISECONDS.toSeconds(user.fastest1km) -
+            TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(user.fastest1km))
+        )
+        fastest_1_km.text = getString(R.string.fastest_1_km, fastest1KmTime)
     }
 }

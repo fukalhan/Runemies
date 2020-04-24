@@ -11,8 +11,7 @@ import androidx.lifecycle.Observer
 import cz.cvut.fukalhan.R
 import cz.cvut.fukalhan.login.activity.LoginActivity
 import cz.cvut.fukalhan.login.viewmodel.SignUpViewModel
-import cz.cvut.fukalhan.repository.entity.states.SignUpState
-import cz.cvut.fukalhan.shared.Settings
+import cz.cvut.fukalhan.repository.login.states.SignUpState
 import kotlinx.android.synthetic.main.fragment_sign_up.*
 
 /**

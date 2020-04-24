@@ -11,13 +11,13 @@ import org.koin.core.KoinComponent
 import org.koin.core.inject
 
 class ProfileViewModel: ViewModel(), KoinComponent {
-    val userState: MutableLiveData<User?> by lazy { MutableLiveData<User?>() }
+    val user: MutableLiveData<User?> by lazy { MutableLiveData<User?>() }
     private val userFacade by inject<UserFacade>()
 
     fun getUser(id: String) {
         viewModelScope.launch {
-            val user = userFacade.getUser(id)
-            userState.postValue(user)
+            val userData = userFacade.getUser(id)
+            user.postValue(userData)
         }
     }
 

@@ -1,11 +1,9 @@
 package cz.cvut.fukalhan.repository.login
 
-import com.google.firebase.auth.FirebaseUser
-import cz.cvut.fukalhan.repository.entity.states.SignInState
-import cz.cvut.fukalhan.repository.entity.states.SignUpState
-import cz.cvut.fukalhan.repository.entity.User
+import cz.cvut.fukalhan.repository.login.states.SignInState
 import cz.cvut.fukalhan.repository.entity.UserLogin
-import cz.cvut.fukalhan.repository.entity.states.SignOutState
+import cz.cvut.fukalhan.repository.login.states.SignOutState
+import cz.cvut.fukalhan.repository.login.states.SignUpState
 
 interface ILoginFacade {
     //suspend fun createUser(user: User): SignUpState

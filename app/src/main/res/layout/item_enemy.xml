@@ -17,16 +17,16 @@
         android:gravity="start">
 
         <ImageView
-            android:id="@+id/userProfilePic"
+            android:id="@+id/enemy_profile_pic"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:adjustViewBounds="true"
             android:scaleType="fitXY"
             android:src="@drawable/ic_account_circle_black_24dp"
-            android:contentDescription="@string/userprofilepic" />
+            tools:ignore="ContentDescription" />
 
         <TextView
-            android:id="@+id/enemyUsername"
+            android:id="@+id/enemy_username"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center|start"

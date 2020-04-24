@@ -6,6 +6,5 @@ import java.util.*
 data class RunRecord (
     var date: Date,
     var length: Double,
-    var time: Time,
-    var elevation: Double
-    )
+    var time: Time
+)
