@@ -1,11 +1,9 @@
 package cz.cvut.fukalhan.login.viewmodel
 
-import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import cz.cvut.fukalhan.repository.entity.states.SignInState
-import cz.cvut.fukalhan.repository.entity.User
 import cz.cvut.fukalhan.repository.entity.UserLogin
 import cz.cvut.fukalhan.repository.login.LoginFacade
 import kotlinx.coroutines.launch
@@ -19,8 +17,8 @@ class SignInViewModel: ViewModel(), KoinComponent {
     fun signIn (email: String, password: String) {
         val userLogin = UserLogin(email, password)
         viewModelScope.launch {
-            val regState = loginFacade.signInUser(userLogin)
-            signInState.postValue(regState)
+            val signIn = loginFacade.signInUser(userLogin)
+            signInState.postValue(signIn)
         }
     }
 

@@ -1,11 +1,9 @@
 package cz.cvut.fukalhan.login.viewmodel
 
-import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import cz.cvut.fukalhan.repository.entity.states.SignUpState
-import cz.cvut.fukalhan.repository.entity.User
 import cz.cvut.fukalhan.repository.entity.UserLogin
 import cz.cvut.fukalhan.repository.login.LoginFacade
 import kotlinx.coroutines.launch

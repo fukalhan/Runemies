@@ -4,17 +4,22 @@
     tools:showIn="navigation_view">
     <item
         android:id="@+id/nav_enemies"
+        android:icon="@drawable/ic_skull"
         android:title="@string/enemies" />
     <item
         android:id="@+id/nav_challenges"
+        android:icon="@drawable/ic_flash"
         android:title="@string/menuChallenges" />
     <item
+        android:id="@+id/nav_profile"
+        android:icon="@drawable/ic_profile"
+        android:title="@string/profile"/>
+    <item
         android:id="@+id/nav_run"
+        android:icon="@drawable/ic_run"
         android:title="@string/menuRun" />
     <item
         android:id="@+id/nav_activity"
-        android:title="@string/menuActivity" />
-    <item
-        android:id="@+id/nav_profile"
-        android:title="@string/profile"/>
+        android:icon="@drawable/ic_graph"
+        android:title="@string/activity" />
 </menu>

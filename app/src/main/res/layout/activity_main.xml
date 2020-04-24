@@ -8,7 +8,7 @@
     android:orientation="vertical">
 
     <include
-        layout="@layout/content_main"
+        layout="@layout/app_bar_main"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"/>
@@ -18,9 +18,9 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom"
-        android:background="@color/colorPrimaryDark"
-        app:itemIconTint="@color/white"
-        app:itemTextColor="@color/white"
+        app:itemIconTint="@color/bottom_navigation_colors"
+        app:itemTextColor="@color/bottom_navigation_colors"
+        app:labelVisibilityMode="labeled"
         app:menu="@menu/activity_main_drawer"/>
 </LinearLayout>
 <!--

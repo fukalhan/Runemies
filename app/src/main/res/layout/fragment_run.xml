@@ -5,33 +5,34 @@
     android:layout_width="match_parent"
     android:orientation="vertical">
 
-    <TextView
-        android:id="@+id/distance"
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:gravity="center"
-        android:layout_marginTop="30dp"
-        android:text="0.00"
-        tools:text="0.00"
-        android:textSize="45sp"/>
-    <TextView
-        android:id="@+id/distance_label"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:gravity="center"
-        android:text="@string/distance_label"
-        tools:text="Distance (km)"
-        />
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="20dp"
-        android:orientation="horizontal"
-        android:baselineAligned="false">
+        android:background="@color/white"
+        android:elevation="15dp">
+        <TextView
+            android:id="@+id/distance"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:gravity="center"
+            android:text="0.00"
+            tools:text="0.00"
+            android:textSize="45sp"/>
+        <TextView
+            android:id="@+id/distance_label"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/distance"
+            android:gravity="center"
+            android:text="@string/distance_label"
+            tools:text="Distance (km)"
+            />
         <LinearLayout
-            android:layout_width="0dp"
-            android:layout_weight="1"
-            android:layout_height="match_parent"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="20dp"
+            android:layout_below="@+id/distance_label"
             android:orientation="vertical">
             <TextView
                 android:id="@+id/timer"
@@ -51,9 +52,11 @@
                 />
         </LinearLayout>
         <LinearLayout
-            android:layout_width="0dp"
-            android:layout_weight="1"
-            android:layout_height="match_parent"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="20dp"
+            android:layout_below="@+id/distance_label"
+            android:layout_alignParentEnd="true"
             android:orientation="vertical">
             <TextView
                 android:id="@+id/tempo"
@@ -72,10 +75,7 @@
                 tools:text="Tempo (min/km)"
                 />
         </LinearLayout>
-    </LinearLayout>
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="20dp"/>
+    </RelativeLayout>
 
     <RelativeLayout
         android:layout_width="match_parent"

@@ -11,6 +11,7 @@ import cz.cvut.fukalhan.shared.Constants
 import kotlinx.coroutines.tasks.await
 import java.lang.Exception
 import java.lang.IllegalStateException
+import java.text.SimpleDateFormat
 
 class LoginRepository: ILoginRepository {
 
@@ -32,7 +33,9 @@ class LoginRepository: ILoginRepository {
             val credentials = FirebaseAuth.getInstance().createUserWithEmailAndPassword(userLogin.email.trim(), userLogin.password).await()
             credentials.user?.updateProfile(UserProfileChangeRequest.Builder().setDisplayName(userLogin.username).build())
             // Create user with given user auth id and set it to database
-            val user = User(userLogin.email.trim(), userLogin.username, credentials.user?.uid.toString())
+            val id = credentials.user?.uid.toString()
+            val joinDate = credentials.user?.metadata?.creationTimestamp ?: 0
+            val user = User(id, userLogin.email.trim(), userLogin.username, joinDate = joinDate)
             createUser(user)
         } catch (e: Exception) {
             e.printStackTrace()

@@ -8,6 +8,8 @@ import android.view.ViewGroup
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.FirebaseUser
 
 import cz.cvut.fukalhan.R
 import cz.cvut.fukalhan.main.enemies.adapter.EnemiesAdapter
@@ -19,7 +21,9 @@ import kotlinx.android.synthetic.main.fragment_enemies.*
  * A simple [Fragment] subclass.
  */
 class EnemiesFragment : Fragment() {
+
     private lateinit var enemiesViewModel: EnemiesViewModel
+    private val userAuth: FirebaseUser? = FirebaseAuth.getInstance().currentUser
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -32,11 +36,12 @@ class EnemiesFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
         enemiesViewModel.enemies.observe(viewLifecycleOwner, Observer {enemies ->
             setAdapter(enemies)
         })
-        enemiesViewModel.getEnemies()
+        if (userAuth != null) {
+            enemiesViewModel.getEnemies(userAuth.uid)
+        }
     }
 
     private fun setAdapter(enemies: List<User>) {

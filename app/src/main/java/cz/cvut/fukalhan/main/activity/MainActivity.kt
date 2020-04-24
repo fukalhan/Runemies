@@ -5,6 +5,7 @@ import android.content.IntentFilter
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.provider.Settings
+import android.view.Menu
 import android.view.MenuItem
 import android.widget.Toast
 import androidx.lifecycle.Observer
@@ -42,7 +43,7 @@ class MainActivity : AppCompatActivity(), ILoginNavigation {
         }
         setContentView(R.layout.activity_main)
         mainActivityViewModel = MainActivityViewModel()
-        //setSupportActionBar(toolbar_main)
+        setSupportActionBar(toolbar_main)
         observeSignOutState()
         setSideMenuView()
     }
@@ -73,11 +74,22 @@ class MainActivity : AppCompatActivity(), ILoginNavigation {
                 R.id.nav_enemies))
         setupActionBarWithNavController(navigationController, appBarConfiguration)
         nav_view.setupWithNavController(navigationController)
+    }
 
-        // Sign out user if menu sign out button is clicked
-        /*nav_view.sign_out_button.setOnClickListener {
-            mainActivityViewModel.signOutUser()
-        }*/
+    override fun onCreateOptionsMenu(menu: Menu): Boolean {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        menuInflater.inflate(R.menu.settings_menu, menu)
+        return true
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        return when(item.itemId) {
+            R.id.sign_out -> {
+                mainActivityViewModel.signOutUser()
+                return true
+            }
+            else -> super.onOptionsItemSelected(item)
+        }
     }
 
     override fun onSupportNavigateUp(): Boolean {

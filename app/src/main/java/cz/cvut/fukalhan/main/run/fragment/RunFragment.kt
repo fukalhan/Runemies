@@ -1,6 +1,7 @@
 package cz.cvut.fukalhan.main.run.fragment
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -64,6 +65,7 @@ class RunFragment : Fragment(), OnMapReadyCallback {
         if (map_view != null) {
             map_view.onDestroy()
         }
+        Log.e("Run fragment", "destroying")
         super.onDestroy()
     }
 
