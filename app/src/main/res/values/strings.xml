@@ -37,7 +37,7 @@
     <string name="total_time">%1$s h</string>
     <string name="longest_run_label">Longest run:</string>
     <string name="longest_run">%1$s km</string>
-    <string name="fastest_1_km_label">Fastest 1 km</string>
+    <string name="fastest_1_km_label">Fastest 1 km:</string>
     <string name="fastest_1_km">%1$s min/km</string>
 
     <!-- Run -->
