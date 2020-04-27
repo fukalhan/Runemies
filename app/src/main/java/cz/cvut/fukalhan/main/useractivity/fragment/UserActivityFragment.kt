@@ -25,7 +25,8 @@ class UserActivityFragment : Fragment() {
     val userAuth: FirebaseUser? = FirebaseAuth.getInstance().currentUser
 
     override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
+        inflater: LayoutInflater,
+        container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
         userActivityViewModel = UserActivityViewModel()
@@ -53,11 +54,10 @@ class UserActivityFragment : Fragment() {
     private fun setAdapter(userActivities: List<RunRecord>) {
         val userActivityAdapter = context?.let { UserActivityAdapter(userActivities, it) }
         val viewManager = LinearLayoutManager(activity)
-        user_activity_recycler_view.apply{
+        user_activity_recycler_view.apply {
             setHasFixedSize(true)
             layoutManager = viewManager
             adapter = userActivityAdapter
         }
     }
-
 }

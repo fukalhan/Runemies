@@ -9,7 +9,7 @@ import cz.cvut.fukalhan.main.enemies.viewholder.EnemyViewHolder
 import cz.cvut.fukalhan.repository.entity.User
 import org.koin.core.KoinComponent
 
-class EnemiesAdapter(private val fragment: EnemiesFragment, private val enemies: List<User>): RecyclerView.Adapter<EnemyViewHolder>(), KoinComponent{
+class EnemiesAdapter(private val fragment: EnemiesFragment, private val enemies: List<User>) : RecyclerView.Adapter<EnemyViewHolder>(), KoinComponent {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): EnemyViewHolder {
         val view = LayoutInflater.from(parent.context).inflate(R.layout.item_enemy, parent, false)

@@ -1,7 +1,13 @@
 package cz.cvut.fukalhan.repository.login
 
-import com.google.firebase.auth.*
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.UserProfileChangeRequest
+import com.google.firebase.auth.FirebaseAuthWeakPasswordException
+import com.google.firebase.auth.FirebaseAuthUserCollisionException
+import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException
+import com.google.firebase.auth.FirebaseAuthInvalidUserException
 import com.google.firebase.firestore.FirebaseFirestore
+
 import cz.cvut.fukalhan.repository.entity.User
 import cz.cvut.fukalhan.repository.entity.UserLogin
 import cz.cvut.fukalhan.repository.login.states.SignInState
@@ -10,10 +16,8 @@ import cz.cvut.fukalhan.repository.login.states.SignUpState
 import cz.cvut.fukalhan.shared.Constants
 import kotlinx.coroutines.tasks.await
 import java.lang.Exception
-import java.lang.IllegalStateException
-import java.text.SimpleDateFormat
 
-class LoginRepository: ILoginRepository {
+class LoginRepository : ILoginRepository {
 
     private val db = FirebaseFirestore.getInstance()
     private val auth = FirebaseAuth.getInstance()
@@ -29,7 +33,7 @@ class LoginRepository: ILoginRepository {
     }
 
     override suspend fun registerUser(userLogin: UserLogin): SignUpState {
-        return try{
+        return try {
             val credentials = FirebaseAuth.getInstance().createUserWithEmailAndPassword(userLogin.email.trim(), userLogin.password).await()
             credentials.user?.updateProfile(UserProfileChangeRequest.Builder().setDisplayName(userLogin.username).build())
             // Create user with given user auth id and set it to database
@@ -40,7 +44,7 @@ class LoginRepository: ILoginRepository {
         } catch (e: Exception) {
             e.printStackTrace()
             return when (e) {
-                is FirebaseAuthWeakPasswordException ->  SignUpState.WEAK_PASSWORD
+                is FirebaseAuthWeakPasswordException -> SignUpState.WEAK_PASSWORD
                 is FirebaseAuthUserCollisionException -> SignUpState.EMAIL_ALREADY_REGISTERED
                 is FirebaseAuthInvalidCredentialsException -> SignUpState.INVALID_EMAIL
                 else -> SignUpState.FAIL
@@ -71,5 +75,4 @@ class LoginRepository: ILoginRepository {
             SignOutState.FAIL
         }
     }
-
 }

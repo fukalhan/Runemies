@@ -26,7 +26,8 @@ class ProfileFragment : Fragment(), ILoginNavigation {
     val userAuth: FirebaseUser? = FirebaseAuth.getInstance().currentUser
 
     override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
+        inflater: LayoutInflater,
+        container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
         profileViewModel = ProfileViewModel()
@@ -40,7 +41,7 @@ class ProfileFragment : Fragment(), ILoginNavigation {
     }
 
     /** Request data of current user and set observer for the answer */
-    private fun getUserData () {
+    private fun getUserData() {
         profileViewModel.user.observe(viewLifecycleOwner, Observer { userData ->
             if (userData != null) {
                 setUserData(userData)
@@ -55,7 +56,7 @@ class ProfileFragment : Fragment(), ILoginNavigation {
     }
 
     /** Set data of given user on profile fragment screen */
-    private fun setUserData (user: User) {
+    private fun setUserData(user: User) {
         profile_username.text = user.username
         join_date.text = getString(R.string.joined, TimeFormatter.simpleDate.format(user.joinDate))
         lives.text = user.lives.toString()

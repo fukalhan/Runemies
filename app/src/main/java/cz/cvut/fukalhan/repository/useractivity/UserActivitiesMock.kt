@@ -1,7 +1,7 @@
 package cz.cvut.fukalhan.repository.useractivity
 
 import cz.cvut.fukalhan.repository.entity.RunRecord
-import java.util.*
+import java.util.Calendar
 
 object UserActivitiesMock {
     val runRecords = listOf<RunRecord>(

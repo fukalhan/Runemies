@@ -5,13 +5,12 @@ import android.content.Context
 import android.content.Intent
 import android.util.Log
 
-class NetworkReceiver: BroadcastReceiver() {
+class NetworkReceiver : BroadcastReceiver() {
     override fun onReceive(context: Context?, intent: Intent?) {
-        if (NetworkUtil.isNetworkAvailable){
+        if (NetworkUtil.isNetworkAvailable) {
             Log.e("network", "connected")
         } else {
             Log.e("network", "not connected")
         }
     }
-
 }

@@ -9,8 +9,8 @@ import kotlinx.coroutines.launch
 import org.koin.core.KoinComponent
 import org.koin.core.inject
 
-class EnemiesViewModel: ViewModel(), KoinComponent {
-    val enemies: MutableLiveData<List<User>> by lazy { MutableLiveData<List<User>>()}
+class EnemiesViewModel : ViewModel(), KoinComponent {
+    val enemies: MutableLiveData<List<User>> by lazy { MutableLiveData<List<User>>() }
     private val userFacade by inject<UserFacade>()
 
     fun getEnemies(currentUserID: String) {
@@ -20,7 +20,7 @@ class EnemiesViewModel: ViewModel(), KoinComponent {
         }
     }
 
-    private fun filterCurrentUser (currentUserID: String, users: List<User>): List<User> {
+    private fun filterCurrentUser(currentUserID: String, users: List<User>): List<User> {
         val enemies = ArrayList<User>()
         users.forEach { user ->
             if (user.id != currentUserID) {

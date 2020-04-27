@@ -11,4 +11,4 @@ data class User(
     var totalTime: Double = 0.0,
     var longestRun: Double = 0.0,
     var fastest1km: Long = 0
- )
+)

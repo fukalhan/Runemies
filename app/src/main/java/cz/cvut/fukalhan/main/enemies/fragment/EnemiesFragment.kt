@@ -26,7 +26,8 @@ class EnemiesFragment : Fragment() {
     private val userAuth: FirebaseUser? = FirebaseAuth.getInstance().currentUser
 
     override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
+        inflater: LayoutInflater,
+        container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
         enemiesViewModel = EnemiesViewModel()
@@ -36,7 +37,7 @@ class EnemiesFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        enemiesViewModel.enemies.observe(viewLifecycleOwner, Observer {enemies ->
+        enemiesViewModel.enemies.observe(viewLifecycleOwner, Observer { enemies ->
             setAdapter(enemies)
         })
         if (userAuth != null) {
@@ -47,7 +48,7 @@ class EnemiesFragment : Fragment() {
     private fun setAdapter(enemies: List<User>) {
         val enemiesAdapter = EnemiesAdapter(this, enemies)
         val viewManager = LinearLayoutManager(activity)
-        enemiesRecyclerView.apply{
+        enemiesRecyclerView.apply {
             setHasFixedSize(true)
             layoutManager = viewManager
             adapter = enemiesAdapter
@@ -58,5 +59,4 @@ class EnemiesFragment : Fragment() {
         val action = EnemiesFragmentDirections.showSingleEnemy(enemyID)
         findNavController().navigate(action)
     }
-
 }

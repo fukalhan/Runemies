@@ -45,7 +45,7 @@ class MainActivity : AppCompatActivity(), ILoginNavigation {
     /** Observe if sign out was called, log out if was */
     private fun observeSignOutState() {
         mainActivityViewModel.signOutState.observe(this, Observer { signOutState ->
-            when(signOutState) {
+            when (signOutState) {
                 SignOutState.SUCCESS -> logOut()
                 SignOutState.FAIL -> Toast.makeText(this, "Sign out failed", Toast.LENGTH_SHORT).show()
             }
@@ -77,7 +77,7 @@ class MainActivity : AppCompatActivity(), ILoginNavigation {
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        return when(item.itemId) {
+        return when (item.itemId) {
             R.id.sign_out -> {
                 mainActivityViewModel.signOutUser()
                 return true
@@ -108,5 +108,4 @@ class MainActivity : AppCompatActivity(), ILoginNavigation {
         val intent = Intent(this, LoginActivity::class.java)
         startActivity(intent)
     }
-
 }

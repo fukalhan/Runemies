@@ -4,7 +4,7 @@ import cz.cvut.fukalhan.repository.entity.User
 import org.koin.core.KoinComponent
 import org.koin.core.inject
 
-class UserFacade: IUserFacade, KoinComponent {
+class UserFacade : IUserFacade, KoinComponent {
     val repository by inject<UserRepository>()
     val repositoryMock by inject<UserRepositoryMock>()
 

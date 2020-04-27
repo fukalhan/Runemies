@@ -7,7 +7,7 @@ import cz.cvut.fukalhan.repository.login.states.SignUpState
 import org.koin.core.KoinComponent
 import org.koin.core.inject
 
-class LoginFacade: ILoginFacade, KoinComponent {
+class LoginFacade : ILoginFacade, KoinComponent {
     private val repository by inject<LoginRepository>()
 
     /*override suspend fun createUser(user: User): SignUpState {
@@ -25,5 +25,4 @@ class LoginFacade: ILoginFacade, KoinComponent {
     override suspend fun signOutUser(): SignOutState {
         return repository.signOutUser()
     }
-
 }

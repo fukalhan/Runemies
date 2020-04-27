@@ -17,7 +17,8 @@ import kotlinx.android.synthetic.main.fragment_challenges.*
 class ChallengesFragment : Fragment() {
 
     override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
+        inflater: LayoutInflater,
+        container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
         // Inflate the layout for this fragment
@@ -32,7 +33,7 @@ class ChallengesFragment : Fragment() {
     private fun setView() {
         challengesViewPager.adapter = ChallengesAdapter(this)
         TabLayoutMediator(challengesTabLayout, challengesViewPager) { tab, position ->
-            tab.text = when(position){
+            tab.text = when (position) {
                 0 -> "ACTIVE"
                 1 -> "REQUESTED"
                 else -> throw IllegalStateException()

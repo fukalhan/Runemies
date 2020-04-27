@@ -1,6 +1,5 @@
 package cz.cvut.fukalhan.repository.user
 
-import android.util.Log
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ktx.toObject
 import cz.cvut.fukalhan.repository.entity.User
@@ -8,7 +7,7 @@ import cz.cvut.fukalhan.shared.Constants
 import kotlinx.coroutines.tasks.await
 import java.lang.Exception
 
-class UserRepository: IUserRepository {
+class UserRepository : IUserRepository {
     private val db = FirebaseFirestore.getInstance()
 
     override suspend fun getUsers(): List<User> {
@@ -17,7 +16,7 @@ class UserRepository: IUserRepository {
             val snapshot = db.collection(Constants.USERS).get().await()
             snapshot.documents.forEach { doc ->
                     val user = doc.toObject(User::class.java)
-                    if (user != null){
+                    if (user != null) {
                     users.add(user)
                 }
             }

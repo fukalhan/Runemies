@@ -11,7 +11,7 @@ class LoginAdapter(loginActivity: FragmentActivity) : FragmentStateAdapter(login
     override fun getItemCount(): Int = 2
 
     override fun createFragment(position: Int): Fragment {
-        return when(position) {
+        return when (position) {
             0 -> SignInFragment()
             1 -> SignUpFragment()
             else -> throw IllegalStateException()

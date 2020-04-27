@@ -22,7 +22,8 @@ class SignInFragment : Fragment() {
     private lateinit var viewModel: SignInViewModel
 
     override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
+        inflater: LayoutInflater,
+        container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
         viewModel = SignInViewModel()
@@ -36,7 +37,7 @@ class SignInFragment : Fragment() {
             viewModel.signIn(emailSignIn.text.toString(), passwordSignIn.text.toString())
         }
 
-        viewModel.signInState.observe(viewLifecycleOwner, Observer {state ->
+        viewModel.signInState.observe(viewLifecycleOwner, Observer { state ->
             when (state) {
                 SignInState.SUCCESS -> {
                     Toast.makeText(context, "Sign in", Toast.LENGTH_SHORT).show()
@@ -48,5 +49,4 @@ class SignInFragment : Fragment() {
             }
         })
     }
-
 }

@@ -4,7 +4,7 @@ import cz.cvut.fukalhan.repository.entity.RunRecord
 import org.koin.core.KoinComponent
 import org.koin.core.inject
 
-class UserActivityFacade: IUserActivityFacade, KoinComponent {
+class UserActivityFacade : IUserActivityFacade, KoinComponent {
     private val repository by inject<UserActivityRepository>()
     private val repositoryMock by inject<UserActivityRepositoryMock>()
 

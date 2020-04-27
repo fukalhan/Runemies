@@ -22,7 +22,8 @@ class SignUpFragment : Fragment() {
     private lateinit var viewModel: SignUpViewModel
 
     override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
+        inflater: LayoutInflater,
+        container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
         viewModel = SignUpViewModel()
@@ -36,11 +37,11 @@ class SignUpFragment : Fragment() {
         // On Sign up button pressed send user info to signUp view model
         signUpButton.setOnClickListener {
             signUpProgressBar.visibility = View.VISIBLE
-            viewModel.signUp( "${usernameSignUp.text}","${emailSignUp.text}", "${passwordSignUp.text}")
+            viewModel.signUp("${usernameSignUp.text}", "${emailSignUp.text}", "${passwordSignUp.text}")
         }
 
         // Observe data sent from view model
-        viewModel.signUpState.observe(viewLifecycleOwner, Observer {state ->
+        viewModel.signUpState.observe(viewLifecycleOwner, Observer { state ->
             when (state) {
                 SignUpState.SUCCESS -> {
                     Toast.makeText(context, "Sign up", Toast.LENGTH_SHORT).show()

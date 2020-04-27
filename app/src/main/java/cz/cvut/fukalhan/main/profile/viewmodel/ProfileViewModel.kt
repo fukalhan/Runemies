@@ -1,6 +1,5 @@
 package cz.cvut.fukalhan.main.profile.viewmodel
 
-import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -10,7 +9,7 @@ import kotlinx.coroutines.launch
 import org.koin.core.KoinComponent
 import org.koin.core.inject
 
-class ProfileViewModel: ViewModel(), KoinComponent {
+class ProfileViewModel : ViewModel(), KoinComponent {
     val user: MutableLiveData<User?> by lazy { MutableLiveData<User?>() }
     private val userFacade by inject<UserFacade>()
 
@@ -20,5 +19,4 @@ class ProfileViewModel: ViewModel(), KoinComponent {
             user.postValue(userData)
         }
     }
-
 }

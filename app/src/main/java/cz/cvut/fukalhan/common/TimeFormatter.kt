@@ -3,7 +3,6 @@ package cz.cvut.fukalhan.common
 import android.annotation.SuppressLint
 import cz.cvut.fukalhan.shared.Constants
 import java.text.SimpleDateFormat
-import java.util.*
 import java.util.concurrent.TimeUnit
 
 object TimeFormatter {

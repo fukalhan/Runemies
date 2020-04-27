@@ -23,7 +23,7 @@ class LoginActivity : AppCompatActivity(),
     private fun setView() {
         loginViewPager.adapter = LoginAdapter(this)
         TabLayoutMediator(loginTabLayout, loginViewPager) { tab, position ->
-            tab.text = when(position){
+            tab.text = when (position) {
                 0 -> "SIGN IN"
                 1 -> "SIGN UP"
                 else -> throw IllegalStateException()

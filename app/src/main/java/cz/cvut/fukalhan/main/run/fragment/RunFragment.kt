@@ -12,15 +12,12 @@ import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.MapView
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.ktx.Firebase
 
 import cz.cvut.fukalhan.R
 import cz.cvut.fukalhan.main.run.viewmodel.RunViewModel
-import cz.cvut.fukalhan.repository.entity.RunRecord
 import cz.cvut.fukalhan.repository.useractivity.RunRecordState
-import kotlinx.android.synthetic.*
 import kotlinx.android.synthetic.main.fragment_run.*
-import java.util.*
+import java.util.Calendar
 
 /**
  * A simple [Fragment] subclass.
@@ -33,7 +30,8 @@ class RunFragment : Fragment(), OnMapReadyCallback {
     private val MAPVIEW_BUNDLE_KEY = "MapViewBundleKey"
 
     override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
+        inflater: LayoutInflater,
+        container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
         var mapViewBundle: Bundle? = null
@@ -61,7 +59,7 @@ class RunFragment : Fragment(), OnMapReadyCallback {
         }
 
         runViewModel.runRecordState.observe(viewLifecycleOwner, Observer { runRecordState ->
-            when(runRecordState) {
+            when (runRecordState) {
                 RunRecordState.SUCCESS -> Toast.makeText(context, "Run record saved", Toast.LENGTH_SHORT).show()
                 RunRecordState.FAIL -> Toast.makeText(context, "Run record wasn't saved", Toast.LENGTH_SHORT).show()
             }
@@ -115,5 +113,4 @@ class RunFragment : Fragment(), OnMapReadyCallback {
         super.onLowMemory()
         map_view.onLowMemory()
     }
-
 }

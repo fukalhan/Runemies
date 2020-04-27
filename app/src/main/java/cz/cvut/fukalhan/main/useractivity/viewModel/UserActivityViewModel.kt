@@ -9,7 +9,7 @@ import kotlinx.coroutines.launch
 import org.koin.core.KoinComponent
 import org.koin.core.inject
 
-class UserActivityViewModel: ViewModel(), KoinComponent {
+class UserActivityViewModel : ViewModel(), KoinComponent {
     val userActivity: MutableLiveData<List<RunRecord>> by lazy { MutableLiveData<List<RunRecord>>() }
     val userActivityFacade by inject<UserActivityFacade>()
 

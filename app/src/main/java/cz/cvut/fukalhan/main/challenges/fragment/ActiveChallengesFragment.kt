@@ -1,7 +1,6 @@
 package cz.cvut.fukalhan.main.challenges.fragment
 
 import android.os.Bundle
-import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -23,7 +22,8 @@ class ActiveChallengesFragment : Fragment() {
     private lateinit var challengesViewModel: ActiveChallengesViewModel
 
     override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
+        inflater: LayoutInflater,
+        container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
         challengesViewModel = ActiveChallengesViewModel()
@@ -33,7 +33,7 @@ class ActiveChallengesFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        challengesViewModel.challenges.observe(viewLifecycleOwner, Observer {challenges ->
+        challengesViewModel.challenges.observe(viewLifecycleOwner, Observer { challenges ->
             setAdapter(challenges)
         })
         challengesViewModel.getChallenges()
@@ -42,7 +42,7 @@ class ActiveChallengesFragment : Fragment() {
     private fun setAdapter(challenges: List<Challenge>) {
         val challengeAdapter = ChallengeAdapter(challenges)
         val viewManager = LinearLayoutManager(activity)
-        activeChallengesRecyclerView.apply{
+        activeChallengesRecyclerView.apply {
             setHasFixedSize(true)
             layoutManager = viewManager
             adapter = challengeAdapter

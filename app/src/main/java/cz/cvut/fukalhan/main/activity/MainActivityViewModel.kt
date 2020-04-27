@@ -9,8 +9,8 @@ import kotlinx.coroutines.launch
 import org.koin.core.KoinComponent
 import org.koin.core.inject
 
-class MainActivityViewModel: ViewModel(), KoinComponent {
-    val signOutState: MutableLiveData<SignOutState> by lazy { MutableLiveData<SignOutState>()}
+class MainActivityViewModel : ViewModel(), KoinComponent {
+    val signOutState: MutableLiveData<SignOutState> by lazy { MutableLiveData<SignOutState>() }
     private val loginFacade by inject<LoginFacade>()
 
     fun signOutUser() {

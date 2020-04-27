@@ -10,11 +10,11 @@ import kotlinx.coroutines.launch
 import org.koin.core.KoinComponent
 import org.koin.core.inject
 
-class SignUpViewModel: ViewModel(), KoinComponent {
-    val signUpState : MutableLiveData<SignUpState> by lazy { MutableLiveData<SignUpState>() }
+class SignUpViewModel : ViewModel(), KoinComponent {
+    val signUpState: MutableLiveData<SignUpState> by lazy { MutableLiveData<SignUpState>() }
     private val loginFacade by inject<LoginFacade>()
 
-    fun signUp (username: String, email: String, password: String) {
+    fun signUp(username: String, email: String, password: String) {
         val userLogin = UserLogin(email, password, username)
         viewModelScope.launch {
             val regState = loginFacade.registerUser(userLogin)

@@ -12,11 +12,9 @@ import androidx.navigation.fragment.navArgs
 import cz.cvut.fukalhan.R
 import cz.cvut.fukalhan.main.enemies.viewmodel.SingleEnemyViewModel
 import cz.cvut.fukalhan.repository.entity.User
-import kotlinx.android.synthetic.main.fragment_profile.*
-import kotlinx.android.synthetic.main.fragment_profile.view.*
 import kotlinx.android.synthetic.main.fragment_single_enemy.*
 import java.text.SimpleDateFormat
-import java.util.*
+import java.util.Locale
 import java.util.concurrent.TimeUnit
 
 /**
@@ -26,9 +24,9 @@ class SingleEnemyFragment : Fragment() {
     val args: SingleEnemyFragmentArgs by navArgs()
     private lateinit var singleEnemyViewModel: SingleEnemyViewModel
 
-
     override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
+        inflater: LayoutInflater,
+        container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
         singleEnemyViewModel = SingleEnemyViewModel()
@@ -38,7 +36,7 @@ class SingleEnemyFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        singleEnemyViewModel.enemy.observe(viewLifecycleOwner, Observer {user ->
+        singleEnemyViewModel.enemy.observe(viewLifecycleOwner, Observer { user ->
             if (user != null) {
                 setUserData(user)
             } else {
@@ -49,7 +47,7 @@ class SingleEnemyFragment : Fragment() {
     }
 
     /** Set data of given user on profile fragment screen */
-    private fun setUserData (user: User) {
+    private fun setUserData(user: User) {
         enemy_profile_username.text = user.username
         val formater = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
         enemy_profile_join_date.text = getString(R.string.joined, formater.format(user.joinDate))

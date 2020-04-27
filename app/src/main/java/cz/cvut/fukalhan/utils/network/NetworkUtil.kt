@@ -6,7 +6,7 @@ import androidx.lifecycle.MutableLiveData
 import org.koin.core.KoinComponent
 import org.koin.core.inject
 
-object NetworkUtil: KoinComponent {
+object NetworkUtil : KoinComponent {
     private val context: Context by inject()
     val connected: MutableLiveData<Boolean> by lazy { MutableLiveData<Boolean>() }
 

@@ -6,7 +6,7 @@ import cz.cvut.fukalhan.repository.login.states.SignOutState
 import cz.cvut.fukalhan.repository.login.states.SignUpState
 
 interface ILoginFacade {
-    //suspend fun createUser(user: User): SignUpState
+    // suspend fun createUser(user: User): SignUpState
 
     suspend fun registerUser(userLogin: UserLogin): SignUpState
 
