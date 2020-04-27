@@ -16,6 +16,9 @@ import com.google.firebase.auth.FirebaseAuth
 import cz.cvut.fukalhan.R
 import cz.cvut.fukalhan.main.run.viewmodel.RunViewModel
 import cz.cvut.fukalhan.repository.useractivity.RunRecordState
+import kotlinx.android.synthetic.main.button_end_pause.end_button
+import kotlinx.android.synthetic.main.button_end_pause.pause_button
+import kotlinx.android.synthetic.main.button_start.start_button
 import kotlinx.android.synthetic.main.fragment_run.*
 import java.util.Calendar
 
@@ -50,7 +53,11 @@ class RunFragment : Fragment(), OnMapReadyCallback {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        start_run_fab.setOnClickListener {
+        start_button.setOnClickListener {
+
+        }
+
+        end_button.setOnClickListener {
             if (userAuth != null) {
                 runViewModel.saveRunRecord(userAuth.uid, Calendar.getInstance().timeInMillis, 5.6, 1800000, 10000)
             } else {
@@ -65,6 +72,7 @@ class RunFragment : Fragment(), OnMapReadyCallback {
             }
         })
     }
+
     override fun onMapReady(googleMap: GoogleMap) {
         map = googleMap
     }

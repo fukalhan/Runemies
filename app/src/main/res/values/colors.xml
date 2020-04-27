@@ -3,6 +3,9 @@
     <color name="white">#FFFFFF</color>
     <color name="grey">#9E9E9E</color>
     <color name="lightGrey">#D8D8D8</color>
+    <color name="red">#C70039</color>
+    <color name="green">#60B728</color>
+    <color name="orange">#E58022</color>
     <color name="colorPrimary">#82B1FF</color>
     <color name="colorPrimaryDark">#01579B</color>
     <color name="colorAccent">#03DAC5</color>
