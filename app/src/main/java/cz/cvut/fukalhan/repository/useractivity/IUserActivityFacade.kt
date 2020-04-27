@@ -4,4 +4,6 @@ import cz.cvut.fukalhan.repository.entity.RunRecord
 
 interface IUserActivityFacade {
     suspend fun getUserActivities(uid: String): List<RunRecord>
+
+    suspend fun saveRunRecord(userID: String, runRecord: RunRecord): RunRecordState
 }

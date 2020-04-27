@@ -5,10 +5,14 @@ import org.koin.core.KoinComponent
 import org.koin.core.inject
 
 class UserActivityFacade: IUserActivityFacade, KoinComponent {
-    val repository by inject<UserActivityRepository>()
-    val repositoryMock by inject<UserActivityRepositoryMock>()
+    private val repository by inject<UserActivityRepository>()
+    private val repositoryMock by inject<UserActivityRepositoryMock>()
 
     override suspend fun getUserActivities(uid: String): List<RunRecord> {
-        return repositoryMock.getUserActivities(uid)
+        return repository.getUserActivities(uid)
+    }
+
+    override suspend fun saveRunRecord(userID: String, runRecord: RunRecord): RunRecordState {
+        return repository.saveRunRecord(userID, runRecord)
     }
 }

@@ -16,11 +16,9 @@ class UserRepository: IUserRepository {
         return try {
             val snapshot = db.collection(Constants.USERS).get().await()
             snapshot.documents.forEach { doc ->
-                if (doc.exists()) {
                     val user = doc.toObject(User::class.java)
                     if (user != null){
                     users.add(user)
-                    }
                 }
             }
             users

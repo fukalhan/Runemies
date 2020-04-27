@@ -37,7 +37,12 @@ class UserActivityFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         userActivityViewModel.userActivity.observe(viewLifecycleOwner, Observer { activities ->
-            setAdapter(activities)
+            if (activities.isEmpty()) {
+                activity_state.text = getString(R.string.no_records)
+            } else {
+                activity_state.text = getString(R.string.records_count, activities.size)
+                setAdapter(activities)
+            }
         })
 
         if (userAuth != null) {

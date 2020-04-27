@@ -54,5 +54,7 @@
     <string name="distance_km">%1$s\nkm</string>
     <string name="time">%1$s\ntime</string>
     <string name="tempo_min_km">%1$s\nmin/km</string>
+    <string name="no_records">No activity records</string>
+    <string name="records_count">%1$d records</string>
 
 </resources>
