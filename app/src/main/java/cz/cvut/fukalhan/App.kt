@@ -14,6 +14,7 @@ class App: Application() {
             modules(Module.loginModule)
             modules(Module.challengeModule)
             modules(Module.userModule)
+            modules(Module.userActivityModule)
         }
     }
 }

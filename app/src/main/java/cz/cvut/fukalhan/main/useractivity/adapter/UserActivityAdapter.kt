@@ -1,19 +1,34 @@
 package cz.cvut.fukalhan.main.useractivity.adapter
 
-import androidx.fragment.app.Fragment
-import androidx.viewpager2.adapter.FragmentStateAdapter
-import cz.cvut.fukalhan.main.useractivity.fragment.ActivityCalendarFragment
-import cz.cvut.fukalhan.main.useractivity.fragment.ActivityFragment
-import cz.cvut.fukalhan.main.useractivity.fragment.ActivityOverviewFragment
+import android.content.Context
+import android.provider.Settings.Global.getString
+import android.view.LayoutInflater
+import android.view.ViewGroup
+import androidx.recyclerview.widget.RecyclerView
 
-class UserActivityAdapter(activityFragment: ActivityFragment): FragmentStateAdapter(activityFragment) {
-    override fun getItemCount(): Int = 2
+import cz.cvut.fukalhan.R
+import cz.cvut.fukalhan.common.TimeFormatter
+import cz.cvut.fukalhan.main.useractivity.viewholder.UserActivityViewHolder
+import cz.cvut.fukalhan.repository.entity.RunRecord
+import org.koin.core.KoinComponent
 
-    override fun createFragment(position: Int): Fragment {
-        return when(position) {
-            0 -> ActivityOverviewFragment()
-            1 -> ActivityCalendarFragment()
-            else -> throw IllegalStateException()
-        }
+class UserActivityAdapter(private val userActivities: List<RunRecord>, private val context: Context): RecyclerView.Adapter<UserActivityViewHolder>(), KoinComponent {
+
+    override fun getItemCount(): Int = userActivities.size
+
+
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): UserActivityViewHolder {
+        val view = LayoutInflater.from(parent.context).inflate(R.layout.item_run_record, parent, false)
+        return UserActivityViewHolder(view)
     }
+
+    override fun onBindViewHolder(holder: UserActivityViewHolder, position: Int) {
+        val record = userActivities[position]
+        holder.date.text = TimeFormatter.simpleDate.format(record.date)
+        val res = context.resources
+        holder.distance.text = res.getString(R.string.distance_km, record.distance.toString())
+        holder.time.text = res.getString(R.string.time, TimeFormatter.toHourMinSec(record.time))
+        holder.tempo.text = res.getString(R.string.tempo_min_km, TimeFormatter.toMinSec(record.tempo))
+    }
+
 }

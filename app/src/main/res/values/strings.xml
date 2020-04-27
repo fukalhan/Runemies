@@ -42,8 +42,17 @@
 
     <!-- Run -->
     <string name="distance_label">Distance (km)</string>
-    <string name="duration">Duration</string>
+    <string name="duration">Duration (min)</string>
     <string name="tempo_label">Tempo (min/km)</string>
     <string name="start">START</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="km">km</string>
+    <string name="min">min</string>
+    <string name="min_km">min/km</string>
+    <string name="distance_km">%1$s\nkm</string>
+    <string name="time">%1$s\ntime</string>
+    <string name="tempo_min_km">%1$s\nmin/km</string>
 
 </resources>

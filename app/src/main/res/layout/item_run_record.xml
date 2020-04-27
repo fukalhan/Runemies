@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="100dp"
+    android:layout_margin="10dp"
+    android:background="@drawable/record_background"
+    android:elevation="10dp">
+
+    <ImageView
+        android:id="@+id/runner_icon"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="20dp"
+        android:layout_marginBottom="20dp"
+        android:src="@drawable/ic_run"
+        android:adjustViewBounds="true"
+        tools:ignore="ContentDescription" />
+
+    <TextView
+        android:id="@+id/run_record_date"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_toEndOf="@+id/runner_icon"
+        android:gravity="center"
+        android:textSize="20sp"
+        tools:text="16.2.2019"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_toEndOf="@+id/runner_icon"
+        android:layout_below="@+id/run_record_date"
+        android:orientation="horizontal"
+        android:gravity="center">
+        <TextView
+            android:id="@+id/run_record_distance"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:textSize="16sp"
+            tools:text="5.6\nkm"/>
+        <TextView
+            android:id="@+id/run_record_time"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="40dp"
+            android:gravity="center"
+            android:textSize="16sp"
+            tools:text="29:32\ntime"/>
+        <TextView
+            android:id="@+id/run_record_tempo"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="40dp"
+            android:gravity="center"
+            android:textSize="16sp"
+            tools:text="5:10\nmin/km"/>
+    </LinearLayout>
+</RelativeLayout>

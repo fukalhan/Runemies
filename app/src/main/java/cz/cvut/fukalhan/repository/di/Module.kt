@@ -6,6 +6,9 @@ import cz.cvut.fukalhan.repository.challenges.ChallengesRepositoryMock
 import cz.cvut.fukalhan.repository.login.LoginFacade
 import cz.cvut.fukalhan.repository.login.LoginRepository
 import cz.cvut.fukalhan.repository.user.*
+import cz.cvut.fukalhan.repository.useractivity.UserActivityFacade
+import cz.cvut.fukalhan.repository.useractivity.UserActivityRepository
+import cz.cvut.fukalhan.repository.useractivity.UserActivityRepositoryMock
 import org.koin.dsl.module
 
 object Module {
@@ -24,5 +27,11 @@ object Module {
         single { UserFacade() }
         single { UserRepository() }
         single { UserRepositoryMock() }
+    }
+
+    val userActivityModule = module {
+        single { UserActivityFacade() }
+        single { UserActivityRepository() }
+        single { UserActivityRepositoryMock() }
     }
 }

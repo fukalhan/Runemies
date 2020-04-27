@@ -39,7 +39,7 @@ class MainActivity : AppCompatActivity(), ILoginNavigation {
         mainActivityViewModel = MainActivityViewModel()
         setSupportActionBar(toolbar_main)
         observeSignOutState()
-        setSideMenuView()
+        setBottomMenuView()
     }
 
     /** Observe if sign out was called, log out if was */
@@ -56,7 +56,7 @@ class MainActivity : AppCompatActivity(), ILoginNavigation {
      * Configure app bar to change according current top level destination,
      * set menu navigation view
      */
-    private fun setSideMenuView() {
+    private fun setBottomMenuView() {
         val navigationController = findNavController(R.id.nav_host_fragment)
         // Passing each menu ID as a set of Ids because each menu should be considered as top level destinations
         appBarConfiguration = AppBarConfiguration(

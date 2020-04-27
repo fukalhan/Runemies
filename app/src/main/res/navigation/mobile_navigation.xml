@@ -14,7 +14,7 @@
 
     <fragment
         android:id="@+id/nav_activity"
-        android:name="cz.cvut.fukalhan.main.useractivity.fragment.ActivityFragment"
+        android:name="cz.cvut.fukalhan.main.useractivity.fragment.UserActivityFragment"
         android:label="Activity"
         tools:layout="@layout/fragment_activity" />
 
