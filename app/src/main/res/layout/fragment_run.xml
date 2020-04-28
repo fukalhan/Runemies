@@ -88,21 +88,10 @@
             android:layout_height="match_parent"/>
 
         <include
-           android:layout_height="wrap_content"
-           android:layout_width="match_parent"
-           android:layout_alignParentBottom="true"
-           android:layout_marginBottom="20dp"
-           android:visibility="visible"
-           tools:visibility="gone"
-           layout="@layout/button_start"/>
-
-        <include
             android:layout_height="wrap_content"
             android:layout_width="match_parent"
             android:layout_alignParentBottom="true"
             android:layout_marginBottom="20dp"
-            android:visibility="gone"
-            tools:visibility="visible"
-            layout="@layout/button_end_pause"/>
+            layout="@layout/run_buttons"/>
     </RelativeLayout>
 </LinearLayout>

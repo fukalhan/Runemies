@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:gravity="center_horizontal">
+    <Button
+        android:id="@+id/start_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:elevation="15dp"
+        android:text="@string/start"
+        android:textAlignment="center"
+        android:textColor="@color/white"
+        app:backgroundTint="@color/green"
+        android:background="@drawable/button_start_background"/>
+
+    <Button
+        android:id="@+id/end_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="40dp"
+        android:elevation="15dp"
+        android:text="@string/end"
+        android:textAlignment="center"
+        android:textColor="@color/white"
+        app:backgroundTint="@color/red"
+        android:background="@drawable/button_end_background"
+        android:visibility="gone"
+        tools:visibility="visible"/>
+
+    <Button
+        android:id="@+id/pause_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_toEndOf="@+id/end_button"
+        android:elevation="15dp"
+        android:text="@string/pause"
+        android:textAlignment="center"
+        android:textColor="@color/white"
+        app:backgroundTint="@color/orange"
+        android:background="@drawable/button_pause_background"
+        android:visibility="gone"
+        tools:visibility="visible"/>
+
+    <Button
+        android:id="@+id/continue_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_toEndOf="@+id/end_button"
+        android:elevation="15dp"
+        android:text="@string/continue_label"
+        android:textAlignment="center"
+        android:textColor="@color/white"
+        app:backgroundTint="@color/green"
+        android:background="@drawable/button_start_background"
+        android:visibility="gone"
+        tools:visibility="visible"/>
+</RelativeLayout>

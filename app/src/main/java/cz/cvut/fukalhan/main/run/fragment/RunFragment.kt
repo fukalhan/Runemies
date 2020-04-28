@@ -16,10 +16,8 @@ import com.google.firebase.auth.FirebaseAuth
 import cz.cvut.fukalhan.R
 import cz.cvut.fukalhan.main.run.viewmodel.RunViewModel
 import cz.cvut.fukalhan.repository.useractivity.RunRecordState
-import kotlinx.android.synthetic.main.button_end_pause.end_button
-import kotlinx.android.synthetic.main.button_end_pause.pause_button
-import kotlinx.android.synthetic.main.button_start.start_button
-import kotlinx.android.synthetic.main.fragment_run.*
+import kotlinx.android.synthetic.main.run_buttons.*
+import kotlinx.android.synthetic.main.fragment_run.map_view
 import java.util.Calendar
 
 /**
@@ -29,7 +27,7 @@ class RunFragment : Fragment(), OnMapReadyCallback {
 
     private lateinit var runViewModel: RunViewModel
     private val userAuth = FirebaseAuth.getInstance().currentUser
-    lateinit var map: GoogleMap
+    private lateinit var map: GoogleMap
     private val MAPVIEW_BUNDLE_KEY = "MapViewBundleKey"
 
     override fun onCreateView(
@@ -52,25 +50,44 @@ class RunFragment : Fragment(), OnMapReadyCallback {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
-        start_button.setOnClickListener {
-
-        }
-
-        end_button.setOnClickListener {
-            if (userAuth != null) {
-                runViewModel.saveRunRecord(userAuth.uid, Calendar.getInstance().timeInMillis, 5.6, 1800000, 10000)
-            } else {
-                Toast.makeText(context, "No currently signed user", Toast.LENGTH_SHORT).show()
-            }
-        }
-
+        setButtonListeners()
         runViewModel.runRecordState.observe(viewLifecycleOwner, Observer { runRecordState ->
             when (runRecordState) {
                 RunRecordState.SUCCESS -> Toast.makeText(context, "Run record saved", Toast.LENGTH_SHORT).show()
                 RunRecordState.FAIL -> Toast.makeText(context, "Run record wasn't saved", Toast.LENGTH_SHORT).show()
             }
         })
+    }
+
+    private fun setButtonListeners() {
+        start_button.setOnClickListener {
+            start_button.visibility = View.GONE
+            end_button.visibility = View.VISIBLE
+            pause_button.visibility = View.VISIBLE
+        }
+
+        pause_button.setOnClickListener {
+            pause_button.visibility = View.GONE
+            continue_button.visibility = View.VISIBLE
+        }
+
+        continue_button.setOnClickListener {
+            pause_button.visibility = View.VISIBLE
+            continue_button.visibility = View.GONE
+        }
+
+        end_button.setOnClickListener {
+            end_button.visibility = View.GONE
+            pause_button.visibility = View.GONE
+            continue_button.visibility = View.GONE
+            start_button.visibility = View.VISIBLE
+
+            if (userAuth != null) {
+                runViewModel.saveRunRecord(userAuth.uid, Calendar.getInstance().timeInMillis, 5.6, 1800000, 10000)
+            } else {
+                Toast.makeText(context, "No currently signed user", Toast.LENGTH_SHORT).show()
+            }
+        }
     }
 
     override fun onMapReady(googleMap: GoogleMap) {
