@@ -9,7 +9,7 @@ import kotlinx.coroutines.launch
 import org.koin.core.KoinComponent
 import org.koin.core.inject
 
-class SingleEnemyViewModel : ViewModel(), KoinComponent {
+class EnemyProfileViewModel : ViewModel(), KoinComponent {
     val enemy: MutableLiveData<User?> by lazy { MutableLiveData<User?>() }
     private val userFacade by inject<UserFacade>()
 

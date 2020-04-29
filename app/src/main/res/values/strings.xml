@@ -23,8 +23,14 @@
     <string name="settings">Settings</string>
     <string name="sign_out">Sign out</string>
 
+    <!-- Enemies -->
+    <string name="enemies_count">%1$d enemies</string>
+    <string name="no_enemy_records">No enemies records</string>
+    <string name="enemies_unavailable">Unable to retrieve enemies records</string>
+
     <!-- Challenges -->
-    <string name="type">TYPE</string>
+    <string name="challenge_type">Challenge type: %1$s</string>
+    <string name="challenge_duration">%1$s-%2$s</string>
 
     <!-- Profile -->
     <string name="joined">Joined %1$s</string>
@@ -44,20 +50,16 @@
     <string name="distance_label">Distance (km)</string>
     <string name="duration">Duration (min)</string>
     <string name="tempo_label">Tempo (min/km)</string>
-    <string name="start">START</string>
-
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
-    <string name="km">km</string>
-    <string name="min">min</string>
-    <string name="min_km">min/km</string>
-    <string name="distance_km">%1$s\nkm</string>
-    <string name="time">%1$s\ntime</string>
-    <string name="tempo_min_km">%1$s\nmin/km</string>
-    <string name="no_records">No activity records</string>
-    <string name="records_count">%1$d records</string>
+    <string name="start">start</string>
     <string name="end">end</string>
     <string name="pause">pause</string>
     <string name="continue_label">continue</string>
 
+    <!-- Activity-->
+    <string name="distance_km">%1$s\nkm</string>
+    <string name="time">%1$s\ntime</string>
+    <string name="tempo_min_km">%1$s\nmin/km</string>
+    <string name="no_activity_records">No activity records</string>
+    <string name="records_count">%1$d records</string>
+    <string name="activities_unavailable">Unable to retrieve activity records</string>
 </resources>

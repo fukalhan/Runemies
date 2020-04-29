@@ -6,6 +6,14 @@
     android:orientation="vertical"
     tools:context=".main.enemies.fragment.EnemiesFragment">
 
+    <TextView
+        android:id="@+id/enemies_state"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:textSize="20sp"
+        tools:text="Enemies records"/>
+
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/enemiesRecyclerView"
         android:layout_height="match_parent"

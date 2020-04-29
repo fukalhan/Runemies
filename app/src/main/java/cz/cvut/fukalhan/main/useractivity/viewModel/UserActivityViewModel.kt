@@ -11,12 +11,12 @@ import org.koin.core.KoinComponent
 import org.koin.core.inject
 
 class UserActivityViewModel : ViewModel(), KoinComponent {
-    val userActivitiesState: MutableLiveData<DataWrapper<ArrayList<RunRecord>>> by lazy { MutableLiveData<DataWrapper<ArrayList<RunRecord>>>() }
+    val activitiesReceiver: MutableLiveData<DataWrapper<ArrayList<RunRecord>>> by lazy { MutableLiveData<DataWrapper<ArrayList<RunRecord>>>() }
     private val userActivityFacade by inject<UserActivityFacade>()
 
     fun getUserActivities(uid: String) {
         viewModelScope.launch {
-            userActivitiesState.postValue(userActivityFacade.getUserActivities(uid))
+            activitiesReceiver.postValue(userActivityFacade.getUserActivities(uid))
         }
     }
 }

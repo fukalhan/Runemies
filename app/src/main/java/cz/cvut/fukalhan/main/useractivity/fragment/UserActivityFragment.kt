@@ -50,10 +50,13 @@ class UserActivityFragment : Fragment() {
      * -> there are some activities
      */
     private fun setActivitiesObserver() {
-        userActivityViewModel.userActivitiesState.observe(viewLifecycleOwner, Observer { activities ->
+        userActivityViewModel.activitiesReceiver.observe(viewLifecycleOwner, Observer { activities ->
             when {
-                activities.error -> Toast.makeText(context, "Unable to retrieve user activities", Toast.LENGTH_SHORT).show()
-                activities.data?.isEmpty()!! -> activity_state.text = getString(R.string.no_records)
+                activities.error -> {
+                    activity_state.text = getString(R.string.activities_unavailable)
+                    Toast.makeText(context, "Something went wrong", Toast.LENGTH_SHORT).show()
+                }
+                activities.data?.isEmpty()!! -> activity_state.text = getString(R.string.no_activity_records)
                 else -> {
                     activity_state.text = getString(R.string.records_count, activities.data.size)
                     setAdapter(activities.data)

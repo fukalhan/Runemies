@@ -30,15 +30,15 @@
         android:label="Enemies"
         tools:layout="@layout/fragment_enemies">
         <action
-            android:id="@+id/showSingleEnemy"
+            android:id="@+id/showEnemyProfile"
             app:destination="@id/nav_enemy"/>
     </fragment>
 
     <fragment
         android:id="@+id/nav_enemy"
-        android:name="cz.cvut.fukalhan.main.enemies.fragment.SingleEnemyFragment"
+        android:name="cz.cvut.fukalhan.main.enemies.fragment.EnemyProfileFragment"
         android:label="Enemy"
-        tools:layout="@layout/fragment_single_enemy">
+        tools:layout="@layout/fragment_enemy_profile">
         <argument
             android:name="enemyID"
             app:argType="string"

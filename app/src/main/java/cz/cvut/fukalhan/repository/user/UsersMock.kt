@@ -3,7 +3,7 @@ package cz.cvut.fukalhan.repository.user
 import cz.cvut.fukalhan.repository.entity.User
 
 object UsersMock {
-    val users: ArrayList<User> = arrayListOf(
+    val users: List<User> = listOf(
         User(id = "1-Ilonka", username = "Ilonka"),
         User(id = "2-Dominik", username = "Dominik"),
         User(id = "3-Narek", username = "Narek"),

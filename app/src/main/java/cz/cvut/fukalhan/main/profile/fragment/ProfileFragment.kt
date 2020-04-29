@@ -16,6 +16,8 @@ import cz.cvut.fukalhan.common.TimeFormatter
 import cz.cvut.fukalhan.main.profile.viewmodel.ProfileViewModel
 import cz.cvut.fukalhan.repository.entity.User
 import kotlinx.android.synthetic.main.fragment_profile.*
+import kotlinx.android.synthetic.main.profile_activity_records.*
+import kotlinx.android.synthetic.main.profile_activity_summary.*
 
 /**
  * A simple [Fragment] subclass.

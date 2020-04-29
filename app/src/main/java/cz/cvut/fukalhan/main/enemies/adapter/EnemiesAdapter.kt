@@ -24,7 +24,7 @@ class EnemiesAdapter(private val fragment: EnemiesFragment, private val enemies:
         val enemy = enemies[position]
         holder.username.text = enemy.username
         holder.itemView.setOnClickListener {
-            fragment.showEnemy(enemy.id)
+            fragment.showEnemyProfile(enemy.id)
         }
     }
 }

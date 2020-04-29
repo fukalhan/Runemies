@@ -5,6 +5,7 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -37,12 +38,24 @@ class EnemiesFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        enemiesViewModel.enemies.observe(viewLifecycleOwner, Observer { enemies ->
-            setAdapter(enemies)
+        setEnemiesObserver()
+        userAuth?.let { enemiesViewModel.getEnemies(userAuth.uid) }
+    }
+
+    private fun setEnemiesObserver() {
+        enemiesViewModel.enemiesReceiver.observe(viewLifecycleOwner, Observer { enemies ->
+            when {
+                enemies.error -> {
+                    enemies_state.text = getString(R.string.enemies_unavailable)
+                    Toast.makeText(context, "Something went wrong", Toast.LENGTH_SHORT).show()
+                }
+                enemies.data?.isEmpty()!! -> enemies_state.text = getString(R.string.no_enemy_records)
+                else -> {
+                    enemies_state.text = getString(R.string.enemies_count, enemies.data.size)
+                    setAdapter(enemies.data)
+                }
+            }
         })
-        if (userAuth != null) {
-            enemiesViewModel.getEnemies(userAuth.uid)
-        }
     }
 
     private fun setAdapter(enemies: List<User>) {
@@ -55,8 +68,8 @@ class EnemiesFragment : Fragment() {
         }
     }
 
-    fun showEnemy(enemyID: String) {
-        val action = EnemiesFragmentDirections.showSingleEnemy(enemyID)
+    fun showEnemyProfile(enemyID: String) {
+        val action = EnemiesFragmentDirections.showEnemyProfile(enemyID)
         findNavController().navigate(action)
     }
 }

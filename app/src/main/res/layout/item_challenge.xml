@@ -1,44 +1,39 @@
 <?xml version="1.0" encoding="utf-8"?>
-<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="100dp"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_margin="10dp"
-    app:cardBackgroundColor="@color/lightGrey"
-    app:cardCornerRadius="15dp">
-
-    <RelativeLayout
+    android:background="@drawable/record_background"
+    android:elevation="10dp">
+    <ImageView
+        android:id="@+id/challenge_profile_pic"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:adjustViewBounds="true"
+        android:src="@drawable/ic_account_circle_black_24dp"
+        tools:ignore="ContentDescription" />
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
-        <ImageView
-            android:id="@+id/challenge_profile_pic"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:adjustViewBounds="true"
-            android:src="@drawable/ic_account_circle_black_24dp"
-            tools:ignore="ContentDescription" />
-        <LinearLayout
+        android:layout_height="match_parent"
+        android:layout_toEndOf="@+id/challenge_profile_pic"
+        android:orientation="vertical"
+        android:gravity="center_vertical">
+        <TextView
+            android:id="@+id/challengerUsername"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_toEndOf="@+id/challenge_profile_pic"
-            android:orientation="vertical"
-            android:gravity="center_vertical">
-            <TextView
-                android:id="@+id/challengerUsername"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                tools:text="Username"/>
-            <TextView
-                android:id="@+id/challengeType"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                tools:text="challenge type"/>
-            <TextView
-                android:id="@+id/challengeDuration"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                tools:text="from - to"/>
-        </LinearLayout>
-    </RelativeLayout>
-</com.google.android.material.card.MaterialCardView>
+            android:layout_height="wrap_content"
+            tools:text="Username"/>
+        <TextView
+            android:id="@+id/challengeType"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            tools:text="challenge type"/>
+        <TextView
+            android:id="@+id/challengeDuration"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            tools:text="from - to"/>
+    </LinearLayout>
+</RelativeLayout>
