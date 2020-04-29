@@ -33,10 +33,13 @@ class SignInFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        signInButton.setOnClickListener {
-            viewModel.signIn(emailSignIn.text.toString(), passwordSignIn.text.toString())
+        sign_in_button.setOnClickListener {
+            viewModel.signIn(sign_in_email.text.toString(), sign_in_password.text.toString())
         }
+        setSignInStateObserver()
+    }
 
+    private fun setSignInStateObserver() {
         viewModel.signInState.observe(viewLifecycleOwner, Observer { state ->
             when (state) {
                 SignInState.SUCCESS -> {

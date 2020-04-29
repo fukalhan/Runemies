@@ -1,7 +1,6 @@
 package cz.cvut.fukalhan.repository.login
 
 import cz.cvut.fukalhan.repository.login.states.SignInState
-import cz.cvut.fukalhan.repository.entity.UserLogin
 import cz.cvut.fukalhan.repository.login.states.SignOutState
 import cz.cvut.fukalhan.repository.login.states.SignUpState
 import org.koin.core.KoinComponent
@@ -14,12 +13,12 @@ class LoginFacade : ILoginFacade, KoinComponent {
         return repository.createUser(user)
     }*/
 
-    override suspend fun registerUser(userLogin: UserLogin): SignUpState {
-        return repository.registerUser(userLogin)
+    override suspend fun signUpUser(username: String, email: String, password: String): SignUpState {
+        return repository.signUpUser(username, email, password)
     }
 
-    override suspend fun signInUser(userLogin: UserLogin): SignInState {
-        return repository.signInUser(userLogin)
+    override suspend fun signInUser(email: String, password: String): SignInState {
+        return repository.signInUser(email, password)
     }
 
     override suspend fun signOutUser(): SignOutState {

@@ -9,7 +9,6 @@ import com.google.firebase.auth.FirebaseAuthInvalidUserException
 import com.google.firebase.firestore.FirebaseFirestore
 
 import cz.cvut.fukalhan.repository.entity.User
-import cz.cvut.fukalhan.repository.entity.UserLogin
 import cz.cvut.fukalhan.repository.login.states.SignInState
 import cz.cvut.fukalhan.repository.login.states.SignOutState
 import cz.cvut.fukalhan.repository.login.states.SignUpState
@@ -32,14 +31,16 @@ class LoginRepository : ILoginRepository {
         }
     }
 
-    override suspend fun registerUser(userLogin: UserLogin): SignUpState {
+    override suspend fun signUpUser(username: String, email: String, password: String): SignUpState {
         return try {
-            val credentials = FirebaseAuth.getInstance().createUserWithEmailAndPassword(userLogin.email.trim(), userLogin.password).await()
-            credentials.user?.updateProfile(UserProfileChangeRequest.Builder().setDisplayName(userLogin.username).build())
-            // Create user with given user auth id and set it to database
-            val id = credentials.user?.uid.toString()
-            val joinDate = credentials.user?.metadata?.creationTimestamp ?: 0
-            val user = User(id, userLogin.email.trim(), userLogin.username, joinDate = joinDate)
+            val credentials = FirebaseAuth.getInstance().createUserWithEmailAndPassword(email.trim(), password).await()
+            credentials.user?.updateProfile(UserProfileChangeRequest.Builder().setDisplayName(username).build())
+            // Create user with given user auth id and add it to database
+            val user = User(
+                id = credentials.user?.uid.toString(),
+                email = email.trim(),
+                username = username,
+                joinDate = credentials.user?.metadata?.creationTimestamp ?: 0)
             createUser(user)
         } catch (e: Exception) {
             e.printStackTrace()
@@ -52,9 +53,9 @@ class LoginRepository : ILoginRepository {
         }
     }
 
-    override suspend fun signInUser(userLogin: UserLogin): SignInState {
+    override suspend fun signInUser(email: String, password: String): SignInState {
         return try {
-            auth.signInWithEmailAndPassword(userLogin.email, userLogin.password).await()
+            auth.signInWithEmailAndPassword(email, password).await()
             SignInState.SUCCESS
         } catch (e: Exception) {
             e.printStackTrace()

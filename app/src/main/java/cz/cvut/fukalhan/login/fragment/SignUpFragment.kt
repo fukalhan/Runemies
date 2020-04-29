@@ -33,14 +33,16 @@ class SignUpFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
         // On Sign up button pressed send user info to signUp view model
-        signUpButton.setOnClickListener {
-            signUpProgressBar.visibility = View.VISIBLE
-            viewModel.signUp("${usernameSignUp.text}", "${emailSignUp.text}", "${passwordSignUp.text}")
+        sign_up_button.setOnClickListener {
+            sign_up_progress_bar.visibility = View.VISIBLE
+            viewModel.signUp(sign_up_username.text.toString(), sign_up_email.text.toString(), sign_up_password.text.toString())
         }
-
         // Observe data sent from view model
+        setSignUpStateObserver()
+    }
+
+    private fun setSignUpStateObserver() {
         viewModel.signUpState.observe(viewLifecycleOwner, Observer { state ->
             when (state) {
                 SignUpState.SUCCESS -> {
@@ -52,7 +54,7 @@ class SignUpFragment : Fragment() {
                 SignUpState.INVALID_EMAIL -> Toast.makeText(context, "Invalid email address", Toast.LENGTH_SHORT).show()
                 SignUpState.FAIL -> Toast.makeText(context, "Sign up failed", Toast.LENGTH_SHORT).show()
             }
-            signUpProgressBar.visibility = View.GONE
+            sign_up_progress_bar.visibility = View.GONE
         })
     }
 }

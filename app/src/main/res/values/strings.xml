@@ -4,13 +4,13 @@
     <string name="maxLength">Max length</string>
 
     <!--Login-->
-    <string name="signIn">Sign in</string>
-    <string name="signUp">Sign up</string>
-    <string name="hintUsername">Username</string>
-    <string name="hintEmail">Email</string>
-    <string name="hintPassword">Password</string>
-    <string name="hintConfirmPassword">Confirm password</string>
-    <string name="forgottenPassword">Forgotten password</string>
+    <string name="sign_in">Sign in</string>
+    <string name="sign_up">Sign up</string>
+    <string name="username">Username</string>
+    <string name="email">Email</string>
+    <string name="password">Password</string>
+    <string name="confirm_password">Confirm password</string>
+    <string name="forgotten_password">Forgotten password</string>
     <string name="loading">Loading</string>
 
     <!-- Bottom navigation and options menu labels -->
