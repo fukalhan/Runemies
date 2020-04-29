@@ -4,7 +4,7 @@ import cz.cvut.fukalhan.repository.entity.RunRecord
 import java.util.Calendar
 
 object UserActivitiesMock {
-    val runRecords = listOf<RunRecord>(
+    val runRecords = arrayListOf<RunRecord>(
         RunRecord("1", Calendar.getInstance().timeInMillis, 5.6, 1800000, 330000),
         RunRecord("2", Calendar.getInstance().timeInMillis, 6.7, 2220000, 330000),
         RunRecord("3", Calendar.getInstance().timeInMillis, 5.2, 1740000, 330000),

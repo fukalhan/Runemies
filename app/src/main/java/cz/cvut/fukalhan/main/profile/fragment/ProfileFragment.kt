@@ -23,7 +23,7 @@ import kotlinx.android.synthetic.main.fragment_profile.*
 class ProfileFragment : Fragment(), ILoginNavigation {
 
     private lateinit var profileViewModel: ProfileViewModel
-    val userAuth: FirebaseUser? = FirebaseAuth.getInstance().currentUser
+    private val userAuth: FirebaseUser? = FirebaseAuth.getInstance().currentUser
 
     override fun onCreateView(
         inflater: LayoutInflater,

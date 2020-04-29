@@ -5,6 +5,7 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.firebase.auth.FirebaseAuth
@@ -21,38 +22,49 @@ import kotlinx.android.synthetic.main.fragment_activity.*
  */
 class UserActivityFragment : Fragment() {
 
-    lateinit var userActivityViewModel: UserActivityViewModel
-    val userAuth: FirebaseUser? = FirebaseAuth.getInstance().currentUser
+    private lateinit var userActivityViewModel: UserActivityViewModel
+    private val userAuth: FirebaseUser? = FirebaseAuth.getInstance().currentUser
 
+    // Init fragment view model and inflate fragment layout
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
         userActivityViewModel = UserActivityViewModel()
-        // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_activity, container, false)
     }
 
+    // Request current user's activities and observe the result
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
-        userActivityViewModel.userActivity.observe(viewLifecycleOwner, Observer { activities ->
-            if (activities.isEmpty()) {
-                activity_state.text = getString(R.string.no_records)
-            } else {
-                activity_state.text = getString(R.string.records_count, activities.size)
-                setAdapter(activities)
-            }
-        })
-
-        if (userAuth != null) {
-            userActivityViewModel.getUserActivities(userAuth.uid)
-        }
+        setActivitiesObserver()
+        userAuth?.let { userActivityViewModel.getUserActivities(it.uid) }
     }
 
+    /**
+     * Observe user activity gotten in view model
+     * 3 options:
+     * -> exception thrown while trying to obtain activities
+     * -> there are no activities for current user
+     * -> there are some activities
+     */
+    private fun setActivitiesObserver() {
+        userActivityViewModel.userActivitiesState.observe(viewLifecycleOwner, Observer { activities ->
+            when {
+                activities.error -> Toast.makeText(context, "Unable to retrieve user activities", Toast.LENGTH_SHORT).show()
+                activities.data?.isEmpty()!! -> activity_state.text = getString(R.string.no_records)
+                else -> {
+                    activity_state.text = getString(R.string.records_count, activities.data.size)
+                    setAdapter(activities.data)
+                }
+            }
+        })
+    }
+
+    // Init userActivitiesAdapter in fragment layout's recycler view
     private fun setAdapter(userActivities: List<RunRecord>) {
-        val userActivityAdapter = context?.let { UserActivityAdapter(userActivities, it) }
+        val userActivityAdapter = context?.let { context -> UserActivityAdapter(userActivities, context.resources) }
         val viewManager = LinearLayoutManager(activity)
         user_activity_recycler_view.apply {
             setHasFixedSize(true)

@@ -5,18 +5,18 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import cz.cvut.fukalhan.repository.entity.RunRecord
 import cz.cvut.fukalhan.repository.useractivity.UserActivityFacade
+import cz.cvut.fukalhan.shared.DataWrapper
 import kotlinx.coroutines.launch
 import org.koin.core.KoinComponent
 import org.koin.core.inject
 
 class UserActivityViewModel : ViewModel(), KoinComponent {
-    val userActivity: MutableLiveData<List<RunRecord>> by lazy { MutableLiveData<List<RunRecord>>() }
-    val userActivityFacade by inject<UserActivityFacade>()
+    val userActivitiesState: MutableLiveData<DataWrapper<ArrayList<RunRecord>>> by lazy { MutableLiveData<DataWrapper<ArrayList<RunRecord>>>() }
+    private val userActivityFacade by inject<UserActivityFacade>()
 
     fun getUserActivities(uid: String) {
         viewModelScope.launch {
-            val userActivities = userActivityFacade.getUserActivities(uid)
-            userActivity.postValue(userActivities)
+            userActivitiesState.postValue(userActivityFacade.getUserActivities(uid))
         }
     }
 }
