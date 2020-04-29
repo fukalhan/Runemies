@@ -63,8 +63,8 @@ class ProfileFragment : Fragment(), ILoginNavigation {
         join_date.text = getString(R.string.joined, TimeFormatter.simpleDate.format(user.joinDate))
         lives.text = user.lives.toString()
         points.text = user.points.toString()
-        total_mileage.text = getString(R.string.total_mileage, user.totalMileage.toString())
-        total_hours.text = getString(R.string.total_time, user.totalTime.toString())
+        total_mileage.text = getString(R.string.total_mileage, String.format("%.2f", user.totalMileage))
+        total_hours.text = getString(R.string.total_time, TimeFormatter.toHourMinSec(user.totalTime))
         longest_run.text = getString(R.string.longest_run, user.longestRun.toString())
         fastest_1_km.text = getString(R.string.fastest_1_km, TimeFormatter.toMinSec(user.fastest1km))
     }

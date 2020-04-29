@@ -8,7 +8,7 @@ class UserActivityRepositoryMock : IUserActivityRepository {
         return DataWrapper(UserActivitiesMock.runRecords)
     }
 
-    override suspend fun saveRunRecord(userID: String, runRecord: RunRecord): RunRecordState {
+    override suspend fun saveRunRecord(userID: String, runRecord: RunRecord): RunRecordSaveState {
         TODO("Not yet implemented")
     }
 }

@@ -13,7 +13,7 @@ class UserActivityFacade : IUserActivityFacade, KoinComponent {
         return repository.getUserActivities(uid)
     }
 
-    override suspend fun saveRunRecord(userID: String, runRecord: RunRecord): RunRecordState {
+    override suspend fun saveRunRecord(userID: String, runRecord: RunRecord): RunRecordSaveState {
         return repository.saveRunRecord(userID, runRecord)
     }
 }

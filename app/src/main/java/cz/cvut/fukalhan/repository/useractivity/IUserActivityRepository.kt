@@ -6,5 +6,5 @@ import cz.cvut.fukalhan.shared.DataWrapper
 interface IUserActivityRepository {
     suspend fun getUserActivities(uid: String): DataWrapper<ArrayList<RunRecord>>
 
-    suspend fun saveRunRecord(userID: String, runRecord: RunRecord): RunRecordState
+    suspend fun saveRunRecord(userID: String, runRecord: RunRecord): RunRecordSaveState
 }

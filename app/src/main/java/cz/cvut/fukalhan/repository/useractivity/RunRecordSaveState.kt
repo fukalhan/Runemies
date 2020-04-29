@@ -1,5 +1,5 @@
 package cz.cvut.fukalhan.repository.useractivity
 
-enum class RunRecordState {
+enum class RunRecordSaveState {
     SUCCESS, FAIL
 }

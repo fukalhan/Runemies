@@ -5,5 +5,6 @@ data class RunRecord(
     var date: Long = 0,
     var distance: Double = 0.0,
     var time: Long = 0,
-    var tempo: Long = 0
+    var tempo: Long = 0,
+    var fastestKmTime: Long = 0
 )
