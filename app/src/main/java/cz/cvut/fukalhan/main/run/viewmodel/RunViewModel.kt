@@ -4,7 +4,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import cz.cvut.fukalhan.repository.entity.RunRecord
-import cz.cvut.fukalhan.repository.useractivity.RunRecordSaveState
+import cz.cvut.fukalhan.repository.useractivity.states.RunRecordSaveState
 import cz.cvut.fukalhan.repository.useractivity.UserActivityFacade
 import kotlinx.coroutines.launch
 import org.koin.core.KoinComponent

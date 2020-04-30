@@ -24,7 +24,7 @@ import kotlinx.android.synthetic.main.profile_activity_summary.*
  */
 class ProfileFragment : Fragment(), ILoginNavigation {
 
-    private lateinit var profileViewModel: ProfileViewModel
+    private lateinit var viewModel: ProfileViewModel
     private val userAuth: FirebaseUser? = FirebaseAuth.getInstance().currentUser
 
     override fun onCreateView(
@@ -32,7 +32,7 @@ class ProfileFragment : Fragment(), ILoginNavigation {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        profileViewModel = ProfileViewModel()
+        viewModel = ProfileViewModel()
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_profile, container, false)
     }
@@ -44,17 +44,16 @@ class ProfileFragment : Fragment(), ILoginNavigation {
 
     /** Request data of current user and set observer for the answer */
     private fun getUserData() {
-        profileViewModel.user.observe(viewLifecycleOwner, Observer { userData ->
+        viewModel.user.observe(viewLifecycleOwner, Observer { userData ->
             if (userData != null) {
                 setUserData(userData)
             } else {
                 Toast.makeText(context, "User data not available", Toast.LENGTH_SHORT).show()
+                userAuth?.let { viewModel.getUser(userAuth.uid) }
             }
         })
         // If there is current user signed in request for his data by his ID
-        if (userAuth != null) {
-            profileViewModel.getUser(userAuth.uid)
-        }
+        userAuth?.let { viewModel.getUser(userAuth.uid) }
     }
 
     /** Set data of given user on profile fragment screen */

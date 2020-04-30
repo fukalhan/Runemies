@@ -15,7 +15,7 @@ import com.google.firebase.auth.FirebaseAuth
 
 import cz.cvut.fukalhan.R
 import cz.cvut.fukalhan.main.run.viewmodel.RunViewModel
-import cz.cvut.fukalhan.repository.useractivity.RunRecordSaveState
+import cz.cvut.fukalhan.repository.useractivity.states.RunRecordSaveState
 import kotlinx.android.synthetic.main.run_buttons.*
 import kotlinx.android.synthetic.main.fragment_run.map_view
 import java.util.Calendar
@@ -55,6 +55,9 @@ class RunFragment : Fragment(), OnMapReadyCallback {
             when (runRecordState) {
                 RunRecordSaveState.SUCCESS -> Toast.makeText(context, "Run record saved", Toast.LENGTH_SHORT).show()
                 RunRecordSaveState.FAIL -> Toast.makeText(context, "Run record wasn't saved", Toast.LENGTH_SHORT).show()
+                RunRecordSaveState.CANNOT_ADD_RECORD -> TODO()
+                RunRecordSaveState.CANNOT_UPDATE_STATISTICS -> TODO()
+                RunRecordSaveState.NOT_EXISTING_USER -> TODO()
             }
         })
     }
