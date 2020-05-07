@@ -1,7 +1,6 @@
 package cz.cvut.fukalhan.main.run.fragment
 
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -14,10 +13,16 @@ import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.firebase.auth.FirebaseAuth
 
 import cz.cvut.fukalhan.R
+import cz.cvut.fukalhan.common.ILocationTracking
+import cz.cvut.fukalhan.main.activity.MainActivity
 import cz.cvut.fukalhan.main.run.viewmodel.RunViewModel
+import cz.cvut.fukalhan.repository.entity.LocationChanged
 import cz.cvut.fukalhan.repository.useractivity.states.RunRecordSaveState
+import kotlinx.android.synthetic.main.fragment_run.*
 import kotlinx.android.synthetic.main.run_buttons.*
-import kotlinx.android.synthetic.main.fragment_run.map_view
+import org.greenrobot.eventbus.EventBus
+import org.greenrobot.eventbus.Subscribe
+import org.greenrobot.eventbus.ThreadMode
 import java.util.Calendar
 
 /**
@@ -36,20 +41,20 @@ class RunFragment : Fragment(), OnMapReadyCallback {
         savedInstanceState: Bundle?
     ): View? {
         var mapViewBundle: Bundle? = null
-        if (savedInstanceState != null) {
-            mapViewBundle = savedInstanceState.getBundle(MAPVIEW_BUNDLE_KEY)
-        }
+        savedInstanceState?.let { mapViewBundle = savedInstanceState.getBundle(MAPVIEW_BUNDLE_KEY) }
+
         val view = inflater.inflate(R.layout.fragment_run, container, false)
         val mapView = view.findViewById(R.id.map_view) as MapView
         mapView.onCreate(mapViewBundle)
         mapView.getMapAsync(this)
+
         viewModel = RunViewModel()
-        // Inflate the layout for this fragment
         return view
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        distance.text = 0.0.toString()
         setButtonListeners()
         viewModel.runRecordState.observe(viewLifecycleOwner, Observer { runRecordState ->
             when (runRecordState) {
@@ -62,8 +67,12 @@ class RunFragment : Fragment(), OnMapReadyCallback {
         })
     }
 
+    /** Set functionality of the buttons controling the start and end of location tracking*/
     private fun setButtonListeners() {
         start_button.setOnClickListener {
+            // Start requesting location updates
+            (activity as ILocationTracking).startTracking()
+
             start_button.visibility = View.GONE
             end_button.visibility = View.VISIBLE
             pause_button.visibility = View.VISIBLE
@@ -80,6 +89,9 @@ class RunFragment : Fragment(), OnMapReadyCallback {
         }
 
         end_button.setOnClickListener {
+            // Stop requesting location updates
+            (activity as MainActivity).stopTracking()
+
             end_button.visibility = View.GONE
             pause_button.visibility = View.GONE
             continue_button.visibility = View.GONE
@@ -89,12 +101,24 @@ class RunFragment : Fragment(), OnMapReadyCallback {
         }
     }
 
+    @Subscribe(sticky = true, threadMode = ThreadMode.MAIN)
+    fun onListenLocation(event: LocationChanged?) {
+        event?.let {
+            val text = "${event.location.latitude}, ${event.location.longitude}"
+            Toast.makeText(context, text, Toast.LENGTH_SHORT).show()
+
+            val newDistance = event.distance
+            distance.text = newDistance.toString()
+        }
+    }
+
     override fun onMapReady(googleMap: GoogleMap) {
         map = googleMap
     }
 
     override fun onStart() {
         super.onStart()
+        EventBus.getDefault().register(this)
         map_view.onStart()
     }
 
@@ -110,21 +134,17 @@ class RunFragment : Fragment(), OnMapReadyCallback {
 
     override fun onStop() {
         map_view.onStop()
+        EventBus.getDefault().unregister(this)
         super.onStop()
     }
 
     override fun onDestroy() {
-        if (map_view != null) {
-            map_view.onDestroy()
-        }
-        Log.e("Run fragment", "destroying")
+        map_view?.onDestroy()
         super.onDestroy()
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
-        super.onSaveInstanceState(outState)
-
         var mapViewBundle = outState.getBundle(MAPVIEW_BUNDLE_KEY)
         if (mapViewBundle == null) {
             mapViewBundle = Bundle()
