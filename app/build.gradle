@@ -68,6 +68,9 @@ dependencies {
     implementation 'com.google.android.gms:play-services-maps:17.0.0'
     implementation 'com.google.android.gms:play-services-location:17.0.0'
 
+    // Leak Canary
+    debugImplementation 'com.squareup.leakcanary:leakcanary-android:2.2'
+
     // Dexter - permissions
     implementation 'com.karumi:dexter:4.2.0'
 

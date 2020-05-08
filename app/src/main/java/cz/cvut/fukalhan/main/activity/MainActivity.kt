@@ -26,6 +26,7 @@ import cz.cvut.fukalhan.common.ILoginNavigation
 import cz.cvut.fukalhan.login.activity.LoginActivity
 import cz.cvut.fukalhan.repository.login.states.SignOutState
 import cz.cvut.fukalhan.service.LocationTrackingService
+import cz.cvut.fukalhan.service.LocationTrackingServiceBinder
 import cz.cvut.fukalhan.shared.Constants
 import cz.cvut.fukalhan.utils.network.NetworkReceiver
 import kotlinx.android.synthetic.main.activity_main.*
@@ -42,7 +43,7 @@ class MainActivity : AppCompatActivity(), ILoginNavigation, ILocationTracking {
 
     private val serviceConnection: ServiceConnection = object : ServiceConnection {
         override fun onServiceConnected(name: ComponentName, iBinder: IBinder) {
-            val binder: LocationTrackingService.LocalBinder = iBinder as (LocationTrackingService.LocalBinder)
+            val binder = iBinder as (LocationTrackingServiceBinder)
             service = binder.service
             bound = true
         }
@@ -58,6 +59,7 @@ class MainActivity : AppCompatActivity(), ILoginNavigation, ILocationTracking {
         if (user == null) {
             logOut()
         }
+
         setContentView(R.layout.activity_main)
         viewModel = MainActivityViewModel()
         setSupportActionBar(toolbar_main)
@@ -158,13 +160,13 @@ class MainActivity : AppCompatActivity(), ILoginNavigation, ILocationTracking {
         startActivity(intent)
     }
 
-    /** Called from Run Fragment */
+    /** Start tracking service */
     override fun startTracking() {
-        service?.requestLocationUpdates()
+        service?.startLocationTracking(applicationContext)
     }
 
-    /** Called from Run Fragment */
+    /** Stop tracking service */
     override fun stopTracking() {
-        service?.removeLocationUpdates()
+        service?.stopLocationTracking()
     }
 }

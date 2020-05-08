@@ -14,26 +14,30 @@ import com.google.firebase.auth.FirebaseAuth
 
 import cz.cvut.fukalhan.R
 import cz.cvut.fukalhan.common.ILocationTracking
+import cz.cvut.fukalhan.common.TimeFormatter
 import cz.cvut.fukalhan.main.activity.MainActivity
 import cz.cvut.fukalhan.main.run.viewmodel.RunViewModel
 import cz.cvut.fukalhan.repository.entity.LocationChanged
+import cz.cvut.fukalhan.repository.entity.RunRecord
 import cz.cvut.fukalhan.repository.useractivity.states.RunRecordSaveState
 import kotlinx.android.synthetic.main.fragment_run.*
 import kotlinx.android.synthetic.main.run_buttons.*
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
-import java.util.Calendar
+import java.sql.Time
+import java.util.*
+import kotlin.math.roundToLong
 
 /**
  * A simple [Fragment] subclass.
  */
 class RunFragment : Fragment(), OnMapReadyCallback {
-
     private lateinit var viewModel: RunViewModel
     private val userAuth = FirebaseAuth.getInstance().currentUser
     private lateinit var map: GoogleMap
     private val MAPVIEW_BUNDLE_KEY = "MapViewBundleKey"
+    private var time: Long = 0
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -72,6 +76,7 @@ class RunFragment : Fragment(), OnMapReadyCallback {
         start_button.setOnClickListener {
             // Start requesting location updates
             (activity as ILocationTracking).startTracking()
+            time = System.currentTimeMillis()
 
             start_button.visibility = View.GONE
             end_button.visibility = View.VISIBLE
@@ -91,13 +96,12 @@ class RunFragment : Fragment(), OnMapReadyCallback {
         end_button.setOnClickListener {
             // Stop requesting location updates
             (activity as MainActivity).stopTracking()
+            time = System.currentTimeMillis() - time
 
             end_button.visibility = View.GONE
             pause_button.visibility = View.GONE
             continue_button.visibility = View.GONE
             start_button.visibility = View.VISIBLE
-
-            userAuth?.let { viewModel.saveRunRecord(userAuth.uid, Calendar.getInstance().timeInMillis, 5.6, 1800000, 10000) }
         }
     }
 
@@ -107,8 +111,20 @@ class RunFragment : Fragment(), OnMapReadyCallback {
             val text = "${event.location.latitude}, ${event.location.longitude}"
             Toast.makeText(context, text, Toast.LENGTH_SHORT).show()
 
-            val newDistance = event.distance
-            distance.text = newDistance.toString()
+            distance.text = String.format("%.2f", event.distance)
+            tempo.text = TimeFormatter.toMinSec(event.tempo)
+        }
+    }
+
+    @Subscribe(sticky = true, threadMode = ThreadMode.MAIN)
+    fun onListenRunRecord(event: RunRecord?) {
+        event?.let {
+            val runRecord = event
+            runRecord.time = time
+            runRecord.tempo = (time / runRecord.distance).roundToLong()
+            userAuth?.let {user ->
+                viewModel.saveRunRecord(user.uid, runRecord)
+            }
         }
     }
 
