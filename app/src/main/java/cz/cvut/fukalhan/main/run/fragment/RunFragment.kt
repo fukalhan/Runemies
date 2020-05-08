@@ -18,16 +18,12 @@ import cz.cvut.fukalhan.common.TimeFormatter
 import cz.cvut.fukalhan.main.activity.MainActivity
 import cz.cvut.fukalhan.main.run.viewmodel.RunViewModel
 import cz.cvut.fukalhan.repository.entity.LocationChanged
-import cz.cvut.fukalhan.repository.entity.RunRecord
 import cz.cvut.fukalhan.repository.useractivity.states.RunRecordSaveState
 import kotlinx.android.synthetic.main.fragment_run.*
 import kotlinx.android.synthetic.main.run_buttons.*
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
-import java.sql.Time
-import java.util.*
-import kotlin.math.roundToLong
 
 /**
  * A simple [Fragment] subclass.
@@ -116,7 +112,7 @@ class RunFragment : Fragment(), OnMapReadyCallback {
         }
     }
 
-    @Subscribe(sticky = true, threadMode = ThreadMode.MAIN)
+    /*@Subscribe(sticky = true, threadMode = ThreadMode.MAIN)
     fun onListenRunRecord(event: RunRecord?) {
         event?.let {
             val runRecord = event
@@ -126,7 +122,7 @@ class RunFragment : Fragment(), OnMapReadyCallback {
                 viewModel.saveRunRecord(user.uid, runRecord)
             }
         }
-    }
+    }*/
 
     override fun onMapReady(googleMap: GoogleMap) {
         map = googleMap

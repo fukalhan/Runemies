@@ -9,7 +9,6 @@ import cz.cvut.fukalhan.repository.useractivity.UserActivityFacade
 import kotlinx.coroutines.launch
 import org.koin.core.KoinComponent
 import org.koin.core.inject
-import java.util.*
 
 class RunViewModel : ViewModel(), KoinComponent {
     val runRecordState: MutableLiveData<RunRecordSaveState> by lazy { MutableLiveData<RunRecordSaveState>() }

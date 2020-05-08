@@ -1,6 +1,9 @@
 package cz.cvut.fukalhan.service
 
-import android.app.*
+import android.app.Service
+import android.app.NotificationManager
+import android.app.NotificationChannel
+import android.app.ActivityManager
 import android.content.Context
 import android.content.Intent
 import android.location.Location
@@ -8,21 +11,21 @@ import android.os.Build
 import android.os.IBinder
 import android.os.Looper
 import android.util.Log
-import com.google.android.gms.location.*
+import com.google.android.gms.location.FusedLocationProviderClient
+import com.google.android.gms.location.LocationCallback
+import com.google.android.gms.location.LocationRequest
+import com.google.android.gms.location.LocationServices
+import com.google.android.gms.location.LocationResult
 import cz.cvut.fukalhan.repository.entity.LocationChanged
 import cz.cvut.fukalhan.shared.Constants
 import org.greenrobot.eventbus.EventBus
 import cz.cvut.fukalhan.R
 import cz.cvut.fukalhan.repository.entity.RunRecord
 import cz.cvut.fukalhan.service.notification.LocationTrackingNotificationBuilder
-import org.koin.core.KoinComponent
-import org.koin.core.inject
-import java.util.*
-import java.util.concurrent.TimeUnit
 import kotlin.math.roundToInt
 
 class LocationTrackingService : Service() {
-    private val binder: IBinder = LocationTrackingServiceBinder()
+    private val binder: IBinder = LocationTrackingServiceBinder(this)
     private lateinit var fusedLocationProviderClient: FusedLocationProviderClient
     private lateinit var locationCallback: LocationCallback
     private lateinit var locationRequest: LocationRequest
@@ -60,7 +63,9 @@ class LocationTrackingService : Service() {
         location = lastLocation
         if (previousLocation != null) {
             val distanceBetween = location.distanceTo(previousLocation).roundToInt()
-            tempo = (1000/distanceBetween)*(System.currentTimeMillis() - time)
+            if (distanceBetween != 0) {
+                tempo = (1000 / distanceBetween) * (System.currentTimeMillis() - time)
+            }
             time = System.currentTimeMillis()
             distance += distanceBetween * 0.001
         }

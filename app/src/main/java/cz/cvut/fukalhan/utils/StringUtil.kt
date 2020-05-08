@@ -2,7 +2,7 @@ package cz.cvut.fukalhan.utils
 
 import android.location.Location
 import java.text.DateFormat
-import java.util.*
+import java.util.Date
 
 object StringUtil {
     val locationText: String
