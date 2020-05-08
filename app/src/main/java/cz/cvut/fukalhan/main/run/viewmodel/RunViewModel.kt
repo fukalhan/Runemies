@@ -14,11 +14,9 @@ class RunViewModel : ViewModel(), KoinComponent {
     val runRecordState: MutableLiveData<RunRecordSaveState> by lazy { MutableLiveData<RunRecordSaveState>() }
     private val userActivityFacade by inject<UserActivityFacade>()
 
-    fun saveRunRecord(userID: String, date: Long, distance: Double, time: Long, tempo: Long) {
-        val record = RunRecord(date = date, distance = distance, time = time, tempo = tempo)
+    fun saveRunRecord(userID: String, runRecord: RunRecord) {
         viewModelScope.launch {
-            val recordState = userActivityFacade.saveRunRecord(userID, record)
-            runRecordState.postValue(recordState)
+            runRecordState.postValue(userActivityFacade.saveRunRecord(userID, runRecord))
         }
     }
 }
