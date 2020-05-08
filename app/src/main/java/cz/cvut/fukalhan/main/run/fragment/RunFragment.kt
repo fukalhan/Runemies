@@ -91,7 +91,7 @@ class RunFragment : Fragment(), OnMapReadyCallback {
 
         end_button.setOnClickListener {
             // Stop requesting location updates
-            (activity as MainActivity).stopTracking()
+            (activity as ILocationTracking).stopTracking()
             time = System.currentTimeMillis() - time
 
             end_button.visibility = View.GONE
