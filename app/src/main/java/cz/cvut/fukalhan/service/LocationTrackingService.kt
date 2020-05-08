@@ -21,8 +21,7 @@ import java.util.*
 import java.util.concurrent.TimeUnit
 import kotlin.math.roundToInt
 
-class LocationTrackingService : Service(), KoinComponent {
-    private val appContext: Context by inject()
+class LocationTrackingService : Service() {
     private val binder: IBinder = LocationTrackingServiceBinder()
     private lateinit var fusedLocationProviderClient: FusedLocationProviderClient
     private lateinit var locationCallback: LocationCallback
@@ -115,8 +114,8 @@ class LocationTrackingService : Service(), KoinComponent {
     }
 
     /** Start requesting location updates */
-    fun startLocationTracking(context: Context) {
-        startService(Intent(context, LocationTrackingService::class.java))
+    fun startLocationTracking() {
+        startService(Intent(applicationContext, LocationTrackingService::class.java))
         try {
             fusedLocationProviderClient.requestLocationUpdates(locationRequest, locationCallback, Looper.myLooper())
             requesting = true
