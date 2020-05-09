@@ -82,6 +82,7 @@ class LocationTrackingService : Service() {
             LocationChanged(location, distance, tempo)
         )
 
+        // TODO nezobrazovat notifikace když ještě netrackujeme trasu
         // Update notification
         if (serviceIsRunningForeground(this)) {
             notificationManager.notify(Constants.NOTIFICATION_ID, notification.build(location))

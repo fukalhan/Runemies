@@ -1,15 +1,21 @@
 package cz.cvut.fukalhan.main.run.fragment
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
+import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.MapView
 import com.google.android.gms.maps.OnMapReadyCallback
+import com.google.android.gms.maps.model.Marker
+import com.google.android.gms.maps.model.MarkerOptions
+import com.google.android.gms.maps.model.BitmapDescriptorFactory
+import com.google.android.gms.maps.model.LatLng
 import com.google.firebase.auth.FirebaseAuth
 
 import cz.cvut.fukalhan.R
@@ -30,7 +36,12 @@ import org.greenrobot.eventbus.ThreadMode
 class RunFragment : Fragment(), OnMapReadyCallback {
     private lateinit var viewModel: RunViewModel
     private val userAuth = FirebaseAuth.getInstance().currentUser
+    private lateinit var mapView: MapView
     private lateinit var map: GoogleMap
+    private var marker: Marker? = null
+    private lateinit var markerOptions: MarkerOptions
+    private var tracking: Boolean = false
+    private var firstRequest: Boolean = true
     private val MAPVIEW_BUNDLE_KEY = "MapViewBundleKey"
     private var time: Long = 0
 
@@ -43,35 +54,27 @@ class RunFragment : Fragment(), OnMapReadyCallback {
         savedInstanceState?.let { mapViewBundle = savedInstanceState.getBundle(MAPVIEW_BUNDLE_KEY) }
 
         val view = inflater.inflate(R.layout.fragment_run, container, false)
-        val mapView = view.findViewById(R.id.map_view) as MapView
+        mapView = view.findViewById(R.id.map_view) as MapView
         mapView.onCreate(mapViewBundle)
         mapView.getMapAsync(this)
-
+        markerOptions = MarkerOptions().icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_location_marker))
         viewModel = RunViewModel()
         return view
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        distance.text = 0.0.toString()
+        (activity as ILocationTracking).startTracking()
         setButtonListeners()
-        viewModel.runRecordState.observe(viewLifecycleOwner, Observer { runRecordState ->
-            when (runRecordState) {
-                RunRecordSaveState.SUCCESS -> Toast.makeText(context, "Run record saved", Toast.LENGTH_SHORT).show()
-                RunRecordSaveState.FAIL -> Toast.makeText(context, "Run record wasn't saved", Toast.LENGTH_SHORT).show()
-                RunRecordSaveState.CANNOT_ADD_RECORD -> TODO()
-                RunRecordSaveState.CANNOT_UPDATE_STATISTICS -> TODO()
-                RunRecordSaveState.NOT_EXISTING_USER -> TODO()
-            }
-        })
+        observeSavingRunRecord()
     }
 
     /** Set functionality of the buttons controling the start and end of location tracking*/
     private fun setButtonListeners() {
         start_button.setOnClickListener {
             // Start requesting location updates
-            (activity as ILocationTracking).startTracking()
             time = System.currentTimeMillis()
+            tracking = true
 
             start_button.visibility = View.GONE
             end_button.visibility = View.VISIBLE
@@ -90,8 +93,8 @@ class RunFragment : Fragment(), OnMapReadyCallback {
 
         end_button.setOnClickListener {
             // Stop requesting location updates
-            (activity as ILocationTracking).stopTracking()
             time = System.currentTimeMillis() - time
+            tracking = false
 
             end_button.visibility = View.GONE
             pause_button.visibility = View.GONE
@@ -100,28 +103,41 @@ class RunFragment : Fragment(), OnMapReadyCallback {
         }
     }
 
-    @Subscribe(sticky = true, threadMode = ThreadMode.MAIN)
-    fun onListenLocation(event: LocationChanged?) {
-        event?.let {
-            val text = "${event.location.latitude}, ${event.location.longitude}"
-            Toast.makeText(context, text, Toast.LENGTH_SHORT).show()
-
-            distance.text = String.format("%.2f", event.distance)
-            tempo.text = TimeFormatter.toMinSec(event.tempo)
-        }
+    /** Set observer on state of saving run record */
+    private fun observeSavingRunRecord() {
+        viewModel.runRecordState.observe(viewLifecycleOwner, Observer { runRecordState ->
+            when (runRecordState) {
+                RunRecordSaveState.SUCCESS -> Toast.makeText(context, "Run record saved", Toast.LENGTH_SHORT).show()
+                RunRecordSaveState.FAIL -> Toast.makeText(context, "Run record wasn't saved", Toast.LENGTH_SHORT).show()
+                RunRecordSaveState.CANNOT_ADD_RECORD -> TODO()
+                RunRecordSaveState.CANNOT_UPDATE_STATISTICS -> TODO()
+                RunRecordSaveState.NOT_EXISTING_USER -> TODO()
+            }
+        })
     }
 
-    /*@Subscribe(sticky = true, threadMode = ThreadMode.MAIN)
-    fun onListenRunRecord(event: RunRecord?) {
+    @Subscribe(sticky = true, threadMode = ThreadMode.MAIN)
+    fun onListenLocation(event: LocationChanged?) {
+        // TODO vyřešit překreslovaní a hýbání mapy při aktualizaci pozice
         event?.let {
-            val runRecord = event
-            runRecord.time = time
-            runRecord.tempo = (time / runRecord.distance).roundToLong()
-            userAuth?.let {user ->
-                viewModel.saveRunRecord(user.uid, runRecord)
+            marker?.remove()
+            val coordinates = LatLng(event.location.latitude, event.location.longitude)
+            marker = map.addMarker(markerOptions.position(coordinates))
+            if (firstRequest) {
+                map.moveCamera(CameraUpdateFactory.zoomTo(15f))
+                firstRequest = false
+            }
+            map.moveCamera(CameraUpdateFactory.newLatLng(coordinates))
+
+            if (tracking) {
+                val text = "${event.location.latitude}, ${event.location.longitude}"
+                Toast.makeText(context, text, Toast.LENGTH_SHORT).show()
+
+                distance.text = String.format("%.2f", event.distance)
+                tempo.text = TimeFormatter.toMinSec(event.tempo)
             }
         }
-    }*/
+    }
 
     override fun onMapReady(googleMap: GoogleMap) {
         map = googleMap
@@ -130,27 +146,29 @@ class RunFragment : Fragment(), OnMapReadyCallback {
     override fun onStart() {
         super.onStart()
         EventBus.getDefault().register(this)
-        map_view.onStart()
+        mapView.onStart()
     }
 
     override fun onResume() {
         super.onResume()
-        map_view.onResume()
+        mapView.onResume()
     }
 
     override fun onPause() {
-        map_view.onPause()
+        mapView.onPause()
         super.onPause()
     }
 
     override fun onStop() {
-        map_view.onStop()
+        mapView.onStop()
         EventBus.getDefault().unregister(this)
         super.onStop()
     }
 
     override fun onDestroy() {
-        map_view?.onDestroy()
+        (activity as ILocationTracking).stopTracking()
+        Log.e("Run fragment", "is being destroyed")
+        mapView.onDestroy()
         super.onDestroy()
     }
 
@@ -161,11 +179,11 @@ class RunFragment : Fragment(), OnMapReadyCallback {
             mapViewBundle = Bundle()
             outState.putBundle(MAPVIEW_BUNDLE_KEY, mapViewBundle)
         }
-        map_view.onSaveInstanceState(mapViewBundle)
+        mapView.onSaveInstanceState(mapViewBundle)
     }
 
     override fun onLowMemory() {
         super.onLowMemory()
-        map_view.onLowMemory()
+        mapView.onLowMemory()
     }
 }
