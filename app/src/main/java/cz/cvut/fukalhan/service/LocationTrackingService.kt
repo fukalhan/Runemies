@@ -7,9 +7,10 @@ import android.app.ActivityManager
 import android.content.Context
 import android.content.Intent
 import android.location.Location
-import android.os.Build
 import android.os.IBinder
-import android.os.Looper
+import android.os.Build
+import android.os.Handler
+import android.os.HandlerThread
 import android.util.Log
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationCallback
@@ -25,6 +26,8 @@ import kotlin.math.roundToInt
 
 class LocationTrackingService : Service() {
     private val binder: IBinder = LocationTrackingServiceBinder(this)
+    private lateinit var handlerThread: HandlerThread
+    private lateinit var serviceHandler: Handler
     private lateinit var fusedLocationProviderClient: FusedLocationProviderClient
     private lateinit var locationCallback: LocationCallback
     private lateinit var locationRequest: LocationRequest
@@ -48,6 +51,10 @@ class LocationTrackingService : Service() {
         }
         createLocationRequest()
         updateLastLocation()
+
+        handlerThread = HandlerThread("locationTracking")
+        handlerThread.start()
+        serviceHandler = Handler(handlerThread.looper)
 
         notification = LocationTrackingNotificationBuilder(this)
         notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
@@ -120,18 +127,23 @@ class LocationTrackingService : Service() {
     /** Start requesting location updates */
     fun startLocationTracking() {
         startService(Intent(applicationContext, LocationTrackingService::class.java))
-        try {
-            fusedLocationProviderClient.requestLocationUpdates(locationRequest, locationCallback, Looper.myLooper())
-            requesting = true
-            previousLocation = null
-            time = System.currentTimeMillis()
-            distance = 0.0
-            tempo = 0
-        } catch (e: SecurityException) {
-            Log.e("Loc", "Lost location permission$e")
-        }
     }
 
+    override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
+        serviceHandler.post {
+            try {
+                fusedLocationProviderClient.requestLocationUpdates(locationRequest, locationCallback, handlerThread.looper)
+                requesting = true
+                previousLocation = null
+                time = System.currentTimeMillis()
+                distance = 0.0
+                tempo = 0
+            } catch (e: SecurityException) {
+                Log.e("Loc", "Lost location permission$e")
+            }
+        }
+        return START_STICKY
+    }
     /** Stop requesting location updates */
     fun stopLocationTracking() {
         try {
@@ -168,5 +180,10 @@ class LocationTrackingService : Service() {
             startForeground(Constants.NOTIFICATION_ID, notification.build(location))
         }
         return super.onUnbind(intent)
+    }
+
+    override fun onDestroy() {
+        handlerThread.quit()
+        super.onDestroy()
     }
 }
