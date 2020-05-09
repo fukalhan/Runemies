@@ -150,12 +150,17 @@ class MainActivity : AppCompatActivity(), ILoginNavigation, ILocationTracking {
 
     override fun onStop() {
         unregisterReceiver(networkReceiver)
+        service?.goForeground()
+        super.onStop()
+    }
+
+    override fun onDestroy() {
         // If service is bound to the Activity, unbind it
         if (bound) {
             unbindService(serviceConnection)
             bound = false
         }
-        super.onStop()
+        super.onDestroy()
     }
 
     /** Navigate to login activity */

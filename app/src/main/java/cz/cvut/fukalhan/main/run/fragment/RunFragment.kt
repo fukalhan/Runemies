@@ -15,7 +15,6 @@ import com.google.firebase.auth.FirebaseAuth
 import cz.cvut.fukalhan.R
 import cz.cvut.fukalhan.common.ILocationTracking
 import cz.cvut.fukalhan.common.TimeFormatter
-import cz.cvut.fukalhan.main.activity.MainActivity
 import cz.cvut.fukalhan.main.run.viewmodel.RunViewModel
 import cz.cvut.fukalhan.repository.entity.LocationChanged
 import cz.cvut.fukalhan.repository.useractivity.states.RunRecordSaveState

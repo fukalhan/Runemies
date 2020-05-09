@@ -20,7 +20,6 @@ import cz.cvut.fukalhan.repository.entity.LocationChanged
 import cz.cvut.fukalhan.shared.Constants
 import org.greenrobot.eventbus.EventBus
 import cz.cvut.fukalhan.R
-import cz.cvut.fukalhan.repository.entity.RunRecord
 import cz.cvut.fukalhan.service.notification.LocationTrackingNotificationBuilder
 import kotlin.math.roundToInt
 
@@ -34,7 +33,7 @@ class LocationTrackingService : Service() {
     private var distance: Double = 0.0
     private var time: Long = 0
     private var tempo: Long = 0
-    private lateinit var notificationBuilder: LocationTrackingNotificationBuilder
+    private lateinit var notification: LocationTrackingNotificationBuilder
     private lateinit var notificationManager: NotificationManager
     private var requesting: Boolean = false
 
@@ -50,10 +49,10 @@ class LocationTrackingService : Service() {
         createLocationRequest()
         updateLastLocation()
 
-        notificationBuilder = LocationTrackingNotificationBuilder(this)
+        notification = LocationTrackingNotificationBuilder(this)
         notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            val channel = NotificationChannel(Constants.CHANNEL_ID, resources.getString(R.string.appName), NotificationManager.IMPORTANCE_DEFAULT)
+            val channel = NotificationChannel(Constants.CHANNEL_ID, getString(R.string.appName), NotificationManager.IMPORTANCE_DEFAULT)
             notificationManager.createNotificationChannel(channel)
         }
     }
@@ -78,7 +77,7 @@ class LocationTrackingService : Service() {
 
         // Update notification
         if (serviceIsRunningForeground(this)) {
-            notificationManager.notify(Constants.NOTIFICATION_ID, notificationBuilder.build(location))
+            notificationManager.notify(Constants.NOTIFICATION_ID, notification.build(location))
         }
     }
 
@@ -137,9 +136,6 @@ class LocationTrackingService : Service() {
     fun stopLocationTracking() {
         try {
             fusedLocationProviderClient.removeLocationUpdates(locationCallback)
-            EventBus.getDefault().postSticky(
-                RunRecord(distance = distance)
-            )
             previousLocation = null
             distance = 0.0
             time = 0
@@ -161,9 +157,15 @@ class LocationTrackingService : Service() {
         super.onRebind(intent)
     }
 
+    fun goForeground() {
+        if (requesting) {
+            startForeground(Constants.NOTIFICATION_ID, notification.build(location))
+        }
+    }
+
     override fun onUnbind(intent: Intent): Boolean {
         if (requesting) {
-            startForeground(Constants.NOTIFICATION_ID, notificationBuilder.build(location))
+            startForeground(Constants.NOTIFICATION_ID, notification.build(location))
         }
         return super.onUnbind(intent)
     }
