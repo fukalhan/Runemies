@@ -89,6 +89,7 @@ class RunFragment : Fragment(), OnMapReadyCallback {
     /** Set functionality of the buttons controlling the start and end of location tracking*/
     private fun setButtonListeners() {
         start_button.setOnClickListener {
+            (activity as ILocationTracking).resetRecords()
             // Start requesting location updates
             time = System.currentTimeMillis()
             tracking = true

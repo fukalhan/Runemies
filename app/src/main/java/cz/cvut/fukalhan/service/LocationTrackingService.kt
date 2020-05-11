@@ -69,13 +69,15 @@ class LocationTrackingService : Service() {
         location = lastLocation
         if (previousLocation != null) {
             val distanceBetween = location.distanceTo(previousLocation).roundToInt()
+            // If distance between previous and current location isn't zero,
+            // we get tempo in milliseconds on km
             if (distanceBetween != 0) {
                 tempo = (1000 / distanceBetween) * (System.currentTimeMillis() - time)
             }
-            time = System.currentTimeMillis()
-            distance += distanceBetween * 0.001
+            distance += distanceBetween / 1000
         }
         previousLocation = location
+        time = System.currentTimeMillis()
 
         // Post new location to bus which updates UI in Run fragment
         EventBus.getDefault().postSticky(
@@ -136,15 +138,19 @@ class LocationTrackingService : Service() {
                 fusedLocationProviderClient.requestLocationUpdates(locationRequest, locationCallback, handlerThread.looper)
                 requesting = true
                 previousLocation = null
-                time = System.currentTimeMillis()
-                distance = 0.0
-                tempo = 0
             } catch (e: SecurityException) {
                 Log.e("Loc", "Lost location permission$e")
             }
         }
         return START_STICKY
     }
+
+    fun resetRecords() {
+        time = System.currentTimeMillis()
+        distance = 0.0
+        tempo = 0
+    }
+
     /** Stop requesting location updates */
     fun stopLocationTracking() {
         try {
