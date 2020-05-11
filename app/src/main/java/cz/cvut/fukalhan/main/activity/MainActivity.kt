@@ -10,6 +10,7 @@ import android.os.Bundle
 import android.os.IBinder
 import android.view.Menu
 import android.view.MenuItem
+import android.view.View
 import android.widget.Toast
 import androidx.lifecycle.Observer
 import androidx.navigation.findNavController
@@ -17,6 +18,7 @@ import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.navigateUp
 import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
+import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.karumi.dexter.Dexter
@@ -114,6 +116,10 @@ class MainActivity : AppCompatActivity(), ILoginNavigation, ILocationTracking {
                 viewModel.signOutUser()
                 return true
             }
+            R.id.settings -> {
+                findNavController(R.id.nav_host_fragment).navigate(R.id.nav_settings)
+                return true
+            }
             else -> super.onOptionsItemSelected(item)
         }
     }
@@ -121,6 +127,9 @@ class MainActivity : AppCompatActivity(), ILoginNavigation, ILocationTracking {
     /** Handles back navigation */
     override fun onSupportNavigateUp(): Boolean {
         val navController = findNavController(R.id.nav_host_fragment)
+        val view = this.findViewById<View>(android.R.id.content).rootView
+        val bottomNavBar = view.findViewById(R.id.nav_view) as BottomNavigationView
+        bottomNavBar.visibility = View.VISIBLE
         return navController.navigateUp(appBarConfiguration) || super.onSupportNavigateUp()
     }
 

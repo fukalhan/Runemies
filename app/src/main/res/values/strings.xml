@@ -62,4 +62,13 @@
     <string name="no_activity_records">No activity records</string>
     <string name="records_count">%1$d records</string>
     <string name="activities_unavailable">Unable to retrieve activity records</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="change_profile_picture">Change profile picture</string>
+    <string name="change_username">Change username</string>
+    <string name="change_email">Change email</string>
+    <string name="reset_activity_statistics">Reset activity statistics</string>
+    <string name="delete_activity_records">Delete activity records</string>
+    <string name="delete_account">Delete account</string>
 </resources>
