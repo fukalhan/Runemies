@@ -14,8 +14,11 @@ import com.google.android.gms.maps.MapView
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.model.Marker
 import com.google.android.gms.maps.model.MarkerOptions
+import com.google.android.gms.maps.model.Polyline
+import com.google.android.gms.maps.model.PolylineOptions
 import com.google.android.gms.maps.model.BitmapDescriptorFactory
 import com.google.android.gms.maps.model.LatLng
+import com.google.android.gms.maps.model.CustomCap
 import com.google.firebase.auth.FirebaseAuth
 
 import cz.cvut.fukalhan.R
@@ -24,6 +27,7 @@ import cz.cvut.fukalhan.common.TimeFormatter
 import cz.cvut.fukalhan.main.run.viewmodel.RunViewModel
 import cz.cvut.fukalhan.repository.entity.LocationChanged
 import cz.cvut.fukalhan.repository.useractivity.states.RunRecordSaveState
+import cz.cvut.fukalhan.utils.DrawableToBitmapUtil
 import kotlinx.android.synthetic.main.fragment_run.*
 import kotlinx.android.synthetic.main.run_buttons.*
 import org.greenrobot.eventbus.EventBus
@@ -40,6 +44,8 @@ class RunFragment : Fragment(), OnMapReadyCallback {
     private lateinit var map: GoogleMap
     private var marker: Marker? = null
     private lateinit var markerOptions: MarkerOptions
+    private var polyline: Polyline? = null
+    private lateinit var polylineOptions: PolylineOptions
     private var tracking: Boolean = false
     private var firstRequest: Boolean = true
     private val MAPVIEW_BUNDLE_KEY = "MapViewBundleKey"
@@ -58,6 +64,9 @@ class RunFragment : Fragment(), OnMapReadyCallback {
         mapView.onCreate(mapViewBundle)
         mapView.getMapAsync(this)
         markerOptions = MarkerOptions().icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_location_marker))
+        // val icon: Bitmap = BitmapFactory.decodeResource(resources, R.drawable.ic_cap)
+        val cap = CustomCap(DrawableToBitmapUtil.generateBitmapDescriptor(requireContext(), R.drawable.ic_cap))
+        polylineOptions = PolylineOptions().width(15f).endCap(cap)
         viewModel = RunViewModel()
         return view
     }
@@ -75,6 +84,7 @@ class RunFragment : Fragment(), OnMapReadyCallback {
             // Start requesting location updates
             time = System.currentTimeMillis()
             tracking = true
+            firstRequest = true
 
             start_button.visibility = View.GONE
             end_button.visibility = View.VISIBLE
@@ -122,19 +132,29 @@ class RunFragment : Fragment(), OnMapReadyCallback {
         event?.let {
             marker?.remove()
             val coordinates = LatLng(event.location.latitude, event.location.longitude)
-            marker = map.addMarker(markerOptions.position(coordinates))
+            // marker = map.addMarker(markerOptions.position(coordinates))
             if (firstRequest) {
-                map.moveCamera(CameraUpdateFactory.zoomTo(15f))
+                map.moveCamera(CameraUpdateFactory.newLatLngZoom(coordinates, 15f))
                 firstRequest = false
+            } else {
+                map.animateCamera(CameraUpdateFactory.newLatLng(coordinates))
             }
-            map.moveCamera(CameraUpdateFactory.newLatLng(coordinates))
 
             if (tracking) {
+                marker?.remove()
+                // Show coordinates in Toast
                 val text = "${event.location.latitude}, ${event.location.longitude}"
                 Toast.makeText(context, text, Toast.LENGTH_SHORT).show()
 
+                // Display distance and tempo
                 distance.text = String.format("%.2f", event.distance)
                 tempo.text = TimeFormatter.toMinSec(event.tempo)
+
+                // Draw polyline
+                polyline?.remove()
+                polylineOptions.add(coordinates)
+                polylineOptions.visible(true)
+                polyline = map.addPolyline(polylineOptions)
             }
         }
     }
