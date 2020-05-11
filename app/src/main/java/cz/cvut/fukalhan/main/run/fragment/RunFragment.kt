@@ -6,6 +6,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import com.google.android.gms.maps.CameraUpdateFactory
@@ -16,7 +17,6 @@ import com.google.android.gms.maps.model.Marker
 import com.google.android.gms.maps.model.MarkerOptions
 import com.google.android.gms.maps.model.Polyline
 import com.google.android.gms.maps.model.PolylineOptions
-import com.google.android.gms.maps.model.BitmapDescriptorFactory
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.CustomCap
 import com.google.firebase.auth.FirebaseAuth
@@ -27,6 +27,7 @@ import cz.cvut.fukalhan.common.TimeFormatter
 import cz.cvut.fukalhan.main.run.viewmodel.RunViewModel
 import cz.cvut.fukalhan.repository.entity.LocationChanged
 import cz.cvut.fukalhan.repository.useractivity.states.RunRecordSaveState
+import cz.cvut.fukalhan.shared.Constants
 import cz.cvut.fukalhan.utils.DrawableToBitmapUtil
 import kotlinx.android.synthetic.main.fragment_run.*
 import kotlinx.android.synthetic.main.run_buttons.*
@@ -48,7 +49,6 @@ class RunFragment : Fragment(), OnMapReadyCallback {
     private lateinit var polylineOptions: PolylineOptions
     private var tracking: Boolean = false
     private var firstRequest: Boolean = true
-    private val MAPVIEW_BUNDLE_KEY = "MapViewBundleKey"
     private var time: Long = 0
 
     override fun onCreateView(
@@ -56,19 +56,27 @@ class RunFragment : Fragment(), OnMapReadyCallback {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        var mapViewBundle: Bundle? = null
-        savedInstanceState?.let { mapViewBundle = savedInstanceState.getBundle(MAPVIEW_BUNDLE_KEY) }
-
         val view = inflater.inflate(R.layout.fragment_run, container, false)
+        viewModel = RunViewModel()
+        setMapView(savedInstanceState, view)
+        customizeMapObjects()
+        return view
+    }
+
+    /** Initialize mapView */
+    private fun setMapView(savedInstanceState: Bundle?, view: View) {
+        var mapViewBundle: Bundle? = null
+        savedInstanceState?.let { mapViewBundle = savedInstanceState.getBundle(Constants.MAPVIEW_BUNDLE_KEY) }
         mapView = view.findViewById(R.id.map_view) as MapView
         mapView.onCreate(mapViewBundle)
         mapView.getMapAsync(this)
-        markerOptions = MarkerOptions().icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_location_marker))
-        // val icon: Bitmap = BitmapFactory.decodeResource(resources, R.drawable.ic_cap)
-        val cap = CustomCap(DrawableToBitmapUtil.generateBitmapDescriptor(requireContext(), R.drawable.ic_cap))
-        polylineOptions = PolylineOptions().width(15f).endCap(cap)
-        viewModel = RunViewModel()
-        return view
+    }
+
+    /** Sets icon to map marker and width and end cap to map polyline */
+    private fun customizeMapObjects() {
+        val icon = DrawableToBitmapUtil.generateBitmapDescriptor(requireContext(), R.drawable.ic_map_marker)
+        markerOptions = MarkerOptions().icon(icon)
+        polylineOptions = PolylineOptions().color(ContextCompat.getColor(requireContext(), R.color.green)).endCap(CustomCap(icon))
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -78,7 +86,7 @@ class RunFragment : Fragment(), OnMapReadyCallback {
         observeSavingRunRecord()
     }
 
-    /** Set functionality of the buttons controling the start and end of location tracking*/
+    /** Set functionality of the buttons controlling the start and end of location tracking*/
     private fun setButtonListeners() {
         start_button.setOnClickListener {
             // Start requesting location updates
@@ -128,11 +136,12 @@ class RunFragment : Fragment(), OnMapReadyCallback {
 
     @Subscribe(sticky = true, threadMode = ThreadMode.MAIN)
     fun onListenLocation(event: LocationChanged?) {
-        // TODO vyřešit překreslovaní a hýbání mapy při aktualizaci pozice
         event?.let {
             marker?.remove()
+            polyline?.remove()
             val coordinates = LatLng(event.location.latitude, event.location.longitude)
-            // marker = map.addMarker(markerOptions.position(coordinates))
+
+            // TODO move this logic to onMapReady because we don't want to end up on equador everytime we open run fragment
             if (firstRequest) {
                 map.moveCamera(CameraUpdateFactory.newLatLngZoom(coordinates, 15f))
                 firstRequest = false
@@ -140,8 +149,12 @@ class RunFragment : Fragment(), OnMapReadyCallback {
                 map.animateCamera(CameraUpdateFactory.newLatLng(coordinates))
             }
 
-            if (tracking) {
-                marker?.remove()
+            // TODO find better solution for showing end cap before the tracking starts so the polyline wouldn't be shown prematurely
+            if (!tracking) {
+                // Show map marker instead of cap with polyline before the tracking starts
+                markerOptions.position(coordinates)
+                marker = map.addMarker(markerOptions)
+            } else {
                 // Show coordinates in Toast
                 val text = "${event.location.latitude}, ${event.location.longitude}"
                 Toast.makeText(context, text, Toast.LENGTH_SHORT).show()
@@ -151,7 +164,6 @@ class RunFragment : Fragment(), OnMapReadyCallback {
                 tempo.text = TimeFormatter.toMinSec(event.tempo)
 
                 // Draw polyline
-                polyline?.remove()
                 polylineOptions.add(coordinates)
                 polylineOptions.visible(true)
                 polyline = map.addPolyline(polylineOptions)
@@ -194,10 +206,10 @@ class RunFragment : Fragment(), OnMapReadyCallback {
 
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
-        var mapViewBundle = outState.getBundle(MAPVIEW_BUNDLE_KEY)
+        var mapViewBundle = outState.getBundle(Constants.MAPVIEW_BUNDLE_KEY)
         if (mapViewBundle == null) {
             mapViewBundle = Bundle()
-            outState.putBundle(MAPVIEW_BUNDLE_KEY, mapViewBundle)
+            outState.putBundle(Constants.MAPVIEW_BUNDLE_KEY, mapViewBundle)
         }
         mapView.onSaveInstanceState(mapViewBundle)
     }
