@@ -127,10 +127,15 @@ class MainActivity : AppCompatActivity(), ILoginNavigation, ILocationTracking {
     /** Handles back navigation */
     override fun onSupportNavigateUp(): Boolean {
         val navController = findNavController(R.id.nav_host_fragment)
+        showBottomNavigationBar()
+        return navController.navigateUp(appBarConfiguration) || super.onSupportNavigateUp()
+    }
+
+    /** Makes bottom navigation visible */
+    private fun showBottomNavigationBar() {
         val view = this.findViewById<View>(android.R.id.content).rootView
         val bottomNavBar = view.findViewById(R.id.nav_view) as BottomNavigationView
         bottomNavBar.visibility = View.VISIBLE
-        return navController.navigateUp(appBarConfiguration) || super.onSupportNavigateUp()
     }
 
     /** Check permissions and request for them */
