@@ -17,16 +17,17 @@ import com.google.android.gms.location.LocationCallback
 import com.google.android.gms.location.LocationRequest
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.location.LocationResult
-import cz.cvut.fukalhan.repository.entity.LocationChanged
 import cz.cvut.fukalhan.shared.Constants
-import org.greenrobot.eventbus.EventBus
 import cz.cvut.fukalhan.R
 import cz.cvut.fukalhan.service.notification.LocationTrackingNotificationBuilder
-import cz.cvut.fukalhan.shared.LocationTracking
+import cz.cvut.fukalhan.shared.LocationTrackingRecord
+import org.koin.core.KoinComponent
+import org.koin.core.inject
 import kotlin.math.roundToInt
 
-class LocationTrackingService : Service() {
+class LocationTrackingService : Service(), KoinComponent {
     private val binder: IBinder = LocationTrackingServiceBinder(this)
+    private val locationTrackingRecord by inject<LocationTrackingRecord>()
     private lateinit var handlerThread: HandlerThread
     private lateinit var serviceHandler: Handler
     private lateinit var fusedLocationProviderClient: FusedLocationProviderClient
@@ -80,12 +81,7 @@ class LocationTrackingService : Service() {
         previousLocation = location
         time = System.currentTimeMillis()
 
-        LocationTracking.addPathPoint(location)
-
-        // Post new location to bus which updates UI in Run fragment
-        EventBus.getDefault().postSticky(
-            LocationChanged(location, distance, tempo)
-        )
+        locationTrackingRecord.updateRecord(location)
 
         // TODO nezobrazovat notifikace když ještě netrackujeme trasu nebo když není appka v pozadí
         // Update notification
