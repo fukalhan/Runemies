@@ -5,6 +5,7 @@ import android.content.ComponentName
 import android.content.Intent
 import android.content.IntentFilter
 import android.content.Context
+import android.location.Location
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.IBinder
@@ -195,5 +196,9 @@ class MainActivity : AppCompatActivity(), ILoginNavigation, ILocationTracking {
 
     override fun resetRecords() {
         service?.resetRecords()
+    }
+
+    override fun getLastLocation(): Location? {
+        return service?.getLocation()
     }
 }

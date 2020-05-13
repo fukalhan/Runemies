@@ -9,12 +9,19 @@ import cz.cvut.fukalhan.repository.useractivity.UserActivityFacade
 import kotlinx.coroutines.launch
 import org.koin.core.KoinComponent
 import org.koin.core.inject
+import java.time.LocalDate
+import java.util.*
 
 class RunViewModel : ViewModel(), KoinComponent {
     val runRecordState: MutableLiveData<RunRecordSaveState> by lazy { MutableLiveData<RunRecordSaveState>() }
     private val userActivityFacade by inject<UserActivityFacade>()
 
-    fun saveRunRecord(userID: String, runRecord: RunRecord) {
+    fun saveRunRecord(userID: String, distance: Double, time: Long, tempo: Long) {
+        val runRecord = RunRecord(
+            date = System.currentTimeMillis(),
+            distance = distance,
+            time = time,
+            tempo = tempo)
         viewModelScope.launch {
             runRecordState.postValue(userActivityFacade.saveRunRecord(userID, runRecord))
         }

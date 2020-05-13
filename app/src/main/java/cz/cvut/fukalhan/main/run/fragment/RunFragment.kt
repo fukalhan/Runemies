@@ -1,5 +1,6 @@
 package cz.cvut.fukalhan.main.run.fragment
 
+import android.location.Location
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -19,6 +20,7 @@ import com.google.android.gms.maps.model.Polyline
 import com.google.android.gms.maps.model.PolylineOptions
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.CustomCap
+import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.firebase.auth.FirebaseAuth
 
 import cz.cvut.fukalhan.R
@@ -28,6 +30,7 @@ import cz.cvut.fukalhan.main.run.viewmodel.RunViewModel
 import cz.cvut.fukalhan.repository.entity.LocationChanged
 import cz.cvut.fukalhan.repository.useractivity.states.RunRecordSaveState
 import cz.cvut.fukalhan.shared.Constants
+import cz.cvut.fukalhan.shared.LocationTracking
 import cz.cvut.fukalhan.utils.DrawableToBitmapUtil
 import kotlinx.android.synthetic.main.fragment_run.*
 import kotlinx.android.synthetic.main.run_buttons.*
@@ -43,12 +46,11 @@ class RunFragment : Fragment(), OnMapReadyCallback {
     private val userAuth = FirebaseAuth.getInstance().currentUser
     private lateinit var mapView: MapView
     private lateinit var map: GoogleMap
+    private lateinit var location: Location
     private var marker: Marker? = null
     private lateinit var markerOptions: MarkerOptions
     private var polyline: Polyline? = null
     private lateinit var polylineOptions: PolylineOptions
-    private var tracking: Boolean = false
-    private var firstRequest: Boolean = true
     private var time: Long = 0
 
     override fun onCreateView(
@@ -79,9 +81,9 @@ class RunFragment : Fragment(), OnMapReadyCallback {
         polylineOptions = PolylineOptions().color(ContextCompat.getColor(requireContext(), R.color.green)).endCap(CustomCap(icon))
     }
 
+    /** Set actions to buttons and set observer on run record saving state */
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        (activity as ILocationTracking).startTracking()
         setButtonListeners()
         observeSavingRunRecord()
     }
@@ -89,11 +91,11 @@ class RunFragment : Fragment(), OnMapReadyCallback {
     /** Set functionality of the buttons controlling the start and end of location tracking*/
     private fun setButtonListeners() {
         start_button.setOnClickListener {
-            (activity as ILocationTracking).resetRecords()
+            (activity as ILocationTracking).startTracking()
+            // While location tracking is running the bottom navigation view is hidden
+            showBottomNavBar(false)
             // Start requesting location updates
             time = System.currentTimeMillis()
-            tracking = true
-            firstRequest = true
 
             start_button.visibility = View.GONE
             end_button.visibility = View.VISIBLE
@@ -112,8 +114,15 @@ class RunFragment : Fragment(), OnMapReadyCallback {
 
         end_button.setOnClickListener {
             // Stop requesting location updates
-            time = System.currentTimeMillis() - time
-            tracking = false
+            (activity as ILocationTracking).stopTracking()
+            userAuth?.let {
+                viewModel.saveRunRecord(userAuth.uid, LocationTracking.d)
+            }
+            // When location tracking stops, the bottom navigation view is visible again
+            showBottomNavBar(true)
+            polyline?.remove()
+            // Set marker on last known position
+            marker = map.addMarker(markerOptions.position(LatLng(location.latitude, location.longitude)))
 
             end_button.visibility = View.GONE
             pause_button.visibility = View.GONE
@@ -122,11 +131,24 @@ class RunFragment : Fragment(), OnMapReadyCallback {
         }
     }
 
+    /** Determines if bottom navigation should be visible*/
+    private fun showBottomNavBar(visible: Boolean) {
+        val bottomNavBar = activity?.findViewById(R.id.nav_view) as BottomNavigationView
+        if (visible) {
+            bottomNavBar.visibility = View.VISIBLE
+        } else {
+            bottomNavBar.visibility = View.GONE
+        }
+    }
+
     /** Set observer on state of saving run record */
     private fun observeSavingRunRecord() {
         viewModel.runRecordState.observe(viewLifecycleOwner, Observer { runRecordState ->
             when (runRecordState) {
-                RunRecordSaveState.SUCCESS -> Toast.makeText(context, "Run record saved", Toast.LENGTH_SHORT).show()
+                RunRecordSaveState.SUCCESS -> {
+
+                    Toast.makeText(context, "Run record saved", Toast.LENGTH_SHORT).show()
+                }
                 RunRecordSaveState.FAIL -> Toast.makeText(context, "Run record wasn't saved", Toast.LENGTH_SHORT).show()
                 RunRecordSaveState.CANNOT_ADD_RECORD -> TODO()
                 RunRecordSaveState.CANNOT_UPDATE_STATISTICS -> TODO()
@@ -138,42 +160,41 @@ class RunFragment : Fragment(), OnMapReadyCallback {
     @Subscribe(sticky = true, threadMode = ThreadMode.MAIN)
     fun onListenLocation(event: LocationChanged?) {
         event?.let {
+            location = event.location
             marker?.remove()
             polyline?.remove()
-            val coordinates = LatLng(event.location.latitude, event.location.longitude)
+            val coordinates = LatLng(location.latitude, location.longitude)
 
-            // TODO move this logic to onMapReady because we don't want to end up on equador everytime we open run fragment
-            if (firstRequest) {
-                map.moveCamera(CameraUpdateFactory.newLatLngZoom(coordinates, 15f))
-                firstRequest = false
-            } else {
-                map.animateCamera(CameraUpdateFactory.newLatLng(coordinates))
-            }
+            // Show coordinates in Toast
+            val text = "${location.latitude}, ${location.longitude}"
+            Toast.makeText(context, text, Toast.LENGTH_SHORT).show()
 
-            // TODO find better solution for showing end cap before the tracking starts so the polyline wouldn't be shown prematurely
-            if (!tracking) {
-                // Show map marker instead of cap with polyline before the tracking starts
-                markerOptions.position(coordinates)
-                marker = map.addMarker(markerOptions)
-            } else {
-                // Show coordinates in Toast
-                val text = "${event.location.latitude}, ${event.location.longitude}"
-                Toast.makeText(context, text, Toast.LENGTH_SHORT).show()
-
-                // Display distance and tempo
-                distance.text = String.format("%.2f", event.distance)
-                tempo.text = TimeFormatter.toMinSec(event.tempo)
-
-                // Draw polyline
-                polylineOptions.add(coordinates)
-                polylineOptions.visible(true)
-                polyline = map.addPolyline(polylineOptions)
-            }
+            // Display distance and tempo
+            distance.text = String.format("%.2f", event.distance)
+            tempo.text = TimeFormatter.toMinSec(event.tempo)
+            // Move camera to given coordinates
+            map.animateCamera(CameraUpdateFactory.newLatLng(coordinates))
+            // Draw polyline
+            polyline = map.addPolyline(LocationTracking.pathPoints)
         }
     }
 
+    /**
+     * Initial setting of map once it's available,
+     * this callback is triggered once the map is ready to be used
+     */
     override fun onMapReady(googleMap: GoogleMap) {
         map = googleMap
+        // Retrieve last known location from location tracking service
+        val lastLocation = (activity as ILocationTracking).getLastLocation()
+        lastLocation?.let {
+            location = lastLocation
+            val coordinates = LatLng(location.latitude, location.longitude)
+            // Move camera on given coordinates and set marker there
+            map.moveCamera(CameraUpdateFactory.newLatLngZoom(coordinates, 15f))
+            markerOptions.position(coordinates)
+            marker = map.addMarker(markerOptions)
+        }
     }
 
     override fun onStart() {
@@ -188,19 +209,20 @@ class RunFragment : Fragment(), OnMapReadyCallback {
     }
 
     override fun onPause() {
+        Log.e("Run fragment", "is paused")
         mapView.onPause()
         super.onPause()
     }
 
     override fun onStop() {
+        Log.e("Run fragment", "is stopped")
         mapView.onStop()
         EventBus.getDefault().unregister(this)
         super.onStop()
     }
 
     override fun onDestroy() {
-        (activity as ILocationTracking).stopTracking()
-        Log.e("Run fragment", "is being destroyed")
+        Log.e("Run fragment", "is destroyed")
         mapView.onDestroy()
         super.onDestroy()
     }

@@ -22,6 +22,7 @@ import cz.cvut.fukalhan.shared.Constants
 import org.greenrobot.eventbus.EventBus
 import cz.cvut.fukalhan.R
 import cz.cvut.fukalhan.service.notification.LocationTrackingNotificationBuilder
+import cz.cvut.fukalhan.shared.LocationTracking
 import kotlin.math.roundToInt
 
 class LocationTrackingService : Service() {
@@ -79,12 +80,14 @@ class LocationTrackingService : Service() {
         previousLocation = location
         time = System.currentTimeMillis()
 
+        LocationTracking.addPathPoint(location)
+
         // Post new location to bus which updates UI in Run fragment
         EventBus.getDefault().postSticky(
             LocationChanged(location, distance, tempo)
         )
 
-        // TODO nezobrazovat notifikace když ještě netrackujeme trasu
+        // TODO nezobrazovat notifikace když ještě netrackujeme trasu nebo když není appka v pozadí
         // Update notification
         if (serviceIsRunningForeground(this)) {
             notificationManager.notify(Constants.NOTIFICATION_ID, notification.build(location))
@@ -109,6 +112,11 @@ class LocationTrackingService : Service() {
         locationRequest = LocationRequest()
         locationRequest.interval = Constants.UPDATE_INTERVAL
         locationRequest.priority = LocationRequest.PRIORITY_BALANCED_POWER_ACCURACY
+    }
+
+    /** Get last known location */
+    fun getLocation(): Location {
+        return location
     }
 
     // TODO get rid of this, check if permissions are still given in one place
@@ -138,6 +146,9 @@ class LocationTrackingService : Service() {
                 fusedLocationProviderClient.requestLocationUpdates(locationRequest, locationCallback, handlerThread.looper)
                 requesting = true
                 previousLocation = null
+                time = System.currentTimeMillis()
+                distance = 0.0
+                tempo = 0
             } catch (e: SecurityException) {
                 Log.e("Loc", "Lost location permission$e")
             }
@@ -155,10 +166,6 @@ class LocationTrackingService : Service() {
     fun stopLocationTracking() {
         try {
             fusedLocationProviderClient.removeLocationUpdates(locationCallback)
-            previousLocation = null
-            distance = 0.0
-            time = 0
-            tempo = 0
             requesting = false
             stopSelf()
         } catch (e: SecurityException) {
