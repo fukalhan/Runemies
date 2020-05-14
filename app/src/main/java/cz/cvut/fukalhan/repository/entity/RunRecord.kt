@@ -1,13 +1,13 @@
 package cz.cvut.fukalhan.repository.entity
 
-import android.location.Location
+import com.google.android.gms.maps.model.LatLng
 
 data class RunRecord(
     var id: String = "",
-    var date: Long = 0,
-    var distance: Double = 0.0,
-    var time: Long = 0,
-    var pace: Long = 0,
-    val pathWay: List<Location>,
+    val date: Long,
+    val distance: Double,
+    val time: Long,
+    val pace: Long,
+    val pathWay: List<LatLng>,
     var fastestKmTime: Long = 0
 )

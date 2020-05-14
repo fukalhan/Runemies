@@ -2,6 +2,7 @@ package cz.cvut.fukalhan.shared
 
 import android.content.Context
 import android.location.Location
+import android.location.LocationManager
 import android.os.SystemClock
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.MutableLiveData
@@ -24,7 +25,6 @@ class LocationTrackingRecord : KoinComponent {
     private val context: Context by inject()
     val locationChanged: MutableLiveData<LocationChanged> by lazy { MutableLiveData<LocationChanged>() }
     val record: MutableLiveData<RunRecord> by lazy { MutableLiveData<RunRecord>() }
-    private val pathPoints = ArrayList<Location>()
     private var polylineOptions: PolylineOptions = PolylineOptions().color(ContextCompat.getColor(context, R.color.green))
     private var distance: Double = 0.0
     private var startTime: Long = 0
@@ -32,7 +32,6 @@ class LocationTrackingRecord : KoinComponent {
 
     /** Set all records to initial state */
     fun resetRecords() {
-        pathPoints.clear()
         polylineOptions = PolylineOptions().color(ContextCompat.getColor(context, R.color.green))
         distance = 0.0
         startTime = SystemClock.elapsedRealtime()
@@ -48,18 +47,20 @@ class LocationTrackingRecord : KoinComponent {
     /** Updates records according to new location */
     private fun updateRecords(location: Location) {
         // If there is any previous location saved
-        if (pathPoints.isNotEmpty()) {
-            // Add distance between new location and last location saved in pathPoints to overall distance
-            distance += location.distanceTo(pathPoints.last()).roundToInt() * 0.001
+        if (polylineOptions.points.isNotEmpty()) {
+            // Add distance between new location and last location saved in polylineOptions.points to overall distance
+            val previousLocation = polylineOptions.points.last()
+            distance += location.distanceTo(Location(LocationManager.GPS_PROVIDER).apply {
+                latitude = previousLocation.latitude
+                longitude = previousLocation.longitude
+            }).roundToInt() * 0.001
         }
 
         // The pace of the run is in milliseconds on kilometer
-        pace = SystemClock.elapsedRealtime() - startTime
         if (distance != 0.0) {
-            pace = (pace / distance).roundToLong()
+            pace = ((SystemClock.elapsedRealtime() - startTime) / distance).roundToLong()
         }
 
-        pathPoints.add(location)
         // Add location to be drawn by polyline
         polylineOptions.add(LatLng(location.latitude, location.longitude))
     }
@@ -67,11 +68,11 @@ class LocationTrackingRecord : KoinComponent {
     /** Post final result of location tracking results after the run is ended */
     fun postResult() {
         record.postValue(RunRecord(
-            date = SystemClock.elapsedRealtime(),
+            date = System.currentTimeMillis(),
             distance = distance,
             time = SystemClock.elapsedRealtime() - startTime,
             pace = pace,
-            pathWay = pathPoints
+            pathWay = polylineOptions.points
         ))
     }
 }
