@@ -150,20 +150,23 @@ class LocationTrackingService : Service(), KoinComponent {
         }
     }
 
-    override fun onBind(intent: Intent): IBinder? {
+    fun removeNotifications() {
         stopForeground(true)
+    }
+
+    fun startNotifications() {
+        if (requesting) {
+            startForeground(Constants.NOTIFICATION_ID, notification.build(location))
+        }
+    }
+
+    override fun onBind(intent: Intent): IBinder? {
         return binder
     }
 
     override fun onRebind(intent: Intent) {
         stopForeground(true)
         super.onRebind(intent)
-    }
-
-    fun goForeground() {
-        if (requesting) {
-            startForeground(Constants.NOTIFICATION_ID, notification.build(location))
-        }
     }
 
     override fun onUnbind(intent: Intent): Boolean {

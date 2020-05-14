@@ -158,6 +158,7 @@ class MainActivity : AppCompatActivity(), ILoginNavigation, ILocationTracking {
 
     override fun onStart() {
         super.onStart()
+        service?.removeNotifications()
         val intentFilter = IntentFilter("android.net.conn.CONNECTIVITY_CHANGE")
         intentFilter.addCategory(Intent.CATEGORY_DEFAULT)
         registerReceiver(networkReceiver, intentFilter)
@@ -165,7 +166,7 @@ class MainActivity : AppCompatActivity(), ILoginNavigation, ILocationTracking {
 
     override fun onStop() {
         unregisterReceiver(networkReceiver)
-        service?.goForeground()
+        service?.startNotifications()
         super.onStop()
     }
 
