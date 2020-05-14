@@ -23,7 +23,6 @@ import cz.cvut.fukalhan.service.notification.LocationTrackingNotificationBuilder
 import cz.cvut.fukalhan.shared.LocationTrackingRecord
 import org.koin.core.KoinComponent
 import org.koin.core.inject
-import kotlin.math.roundToInt
 
 class LocationTrackingService : Service(), KoinComponent {
     private val binder: IBinder = LocationTrackingServiceBinder(this)
@@ -34,10 +33,6 @@ class LocationTrackingService : Service(), KoinComponent {
     private lateinit var locationCallback: LocationCallback
     private lateinit var locationRequest: LocationRequest
     private lateinit var location: Location
-    private var previousLocation: Location? = null
-    private var distance: Double = 0.0
-    private var time: Long = 0
-    private var tempo: Long = 0
     private lateinit var notification: LocationTrackingNotificationBuilder
     private lateinit var notificationManager: NotificationManager
     private var requesting: Boolean = false
@@ -69,21 +64,9 @@ class LocationTrackingService : Service(), KoinComponent {
     /** On new location result received in location callback*/
     private fun onNewLocation(lastLocation: Location) {
         location = lastLocation
-        if (previousLocation != null) {
-            val distanceBetween = location.distanceTo(previousLocation).roundToInt()
-            // If distance between previous and current location isn't zero,
-            // we get tempo in milliseconds on km
-            if (distanceBetween != 0) {
-                tempo = (1000 / distanceBetween) * (System.currentTimeMillis() - time)
-            }
-            distance += distanceBetween / 1000
-        }
-        previousLocation = location
-        time = System.currentTimeMillis()
+        locationTrackingRecord.newLocation(location)
 
-        locationTrackingRecord.updateRecord(location)
-
-        // TODO nezobrazovat notifikace když ještě netrackujeme trasu nebo když není appka v pozadí
+        // TODO don't show notifications when app is no longer in background
         // Update notification
         if (serviceIsRunningForeground(this)) {
             notificationManager.notify(Constants.NOTIFICATION_ID, notification.build(location))
@@ -136,15 +119,13 @@ class LocationTrackingService : Service(), KoinComponent {
         startService(Intent(applicationContext, LocationTrackingService::class.java))
     }
 
+    /** After service is started these actions will be triggered */
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         serviceHandler.post {
             try {
                 fusedLocationProviderClient.requestLocationUpdates(locationRequest, locationCallback, handlerThread.looper)
                 requesting = true
-                previousLocation = null
-                time = System.currentTimeMillis()
-                distance = 0.0
-                tempo = 0
+                resetTrackingRecords()
             } catch (e: SecurityException) {
                 Log.e("Loc", "Lost location permission$e")
             }
@@ -152,10 +133,9 @@ class LocationTrackingService : Service(), KoinComponent {
         return START_STICKY
     }
 
-    fun resetRecords() {
-        time = System.currentTimeMillis()
-        distance = 0.0
-        tempo = 0
+    /** Resets all the records in location tracking record*/
+    private fun resetTrackingRecords() {
+        locationTrackingRecord.resetRecords()
     }
 
     /** Stop requesting location updates */
@@ -163,6 +143,7 @@ class LocationTrackingService : Service(), KoinComponent {
         try {
             fusedLocationProviderClient.removeLocationUpdates(locationCallback)
             requesting = false
+            locationTrackingRecord.postResult()
             stopSelf()
         } catch (e: SecurityException) {
             Log.e("Loc", "Lost Location permission")

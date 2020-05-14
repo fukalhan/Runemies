@@ -25,6 +25,6 @@ class UserActivityAdapter(private val userActivities: List<RunRecord>, private v
         holder.date.text = TimeFormatter.simpleDate.format(record.date)
         holder.distance.text = resources.getString(R.string.distance_km, record.distance.toString())
         holder.time.text = resources.getString(R.string.time, TimeFormatter.toHourMinSec(record.time))
-        holder.tempo.text = resources.getString(R.string.tempo_min_km, TimeFormatter.toMinSec(record.tempo))
+        holder.tempo.text = resources.getString(R.string.tempo_min_km, TimeFormatter.toMinSec(record.pace))
     }
 }

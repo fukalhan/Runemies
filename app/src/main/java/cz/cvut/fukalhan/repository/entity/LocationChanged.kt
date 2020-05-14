@@ -1,9 +1,9 @@
 package cz.cvut.fukalhan.repository.entity
 
-import android.location.Location
+import com.google.android.gms.maps.model.PolylineOptions
 
 data class LocationChanged(
-    var location: Location,
-    var distance: Double,
-    var tempo: Long
+    val pathWay: PolylineOptions,
+    val distance: Double,
+    val currentPace: Long
 )

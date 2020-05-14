@@ -194,10 +194,6 @@ class MainActivity : AppCompatActivity(), ILoginNavigation, ILocationTracking {
         service?.stopLocationTracking()
     }
 
-    override fun resetRecords() {
-        service?.resetRecords()
-    }
-
     override fun getLastLocation(): Location? {
         return service?.getLocation()
     }
