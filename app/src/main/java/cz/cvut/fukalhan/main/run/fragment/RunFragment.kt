@@ -1,5 +1,7 @@
 package cz.cvut.fukalhan.main.run.fragment
 
+import android.app.Activity
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -21,12 +23,14 @@ import com.google.firebase.auth.FirebaseAuth
 
 import cz.cvut.fukalhan.R
 import cz.cvut.fukalhan.common.ILocationTracking
+import cz.cvut.fukalhan.common.IOnGpsListener
 import cz.cvut.fukalhan.common.TimeFormatter
 import cz.cvut.fukalhan.main.run.viewmodel.RunViewModel
 import cz.cvut.fukalhan.repository.useractivity.states.RunRecordSaveState
 import cz.cvut.fukalhan.shared.Constants
 import cz.cvut.fukalhan.shared.LocationTrackingRecord
 import cz.cvut.fukalhan.utils.DrawableToBitmapUtil
+import cz.cvut.fukalhan.utils.GpsUtils
 import kotlinx.android.synthetic.main.fragment_run.*
 import kotlinx.android.synthetic.main.run_buttons.*
 import org.koin.core.KoinComponent
@@ -35,10 +39,11 @@ import org.koin.core.inject
 /**
  * A simple [Fragment] subclass.
  */
-class RunFragment : Fragment(), OnMapReadyCallback, KoinComponent {
+class RunFragment : Fragment(), OnMapReadyCallback, KoinComponent, IOnGpsListener {
     private lateinit var viewModel: RunViewModel
     private val locationTrackingRecord by inject<LocationTrackingRecord>()
     private val userAuth = FirebaseAuth.getInstance().currentUser
+    private lateinit var gpsUtil: GpsUtils
     private lateinit var mapView: MapView
     private lateinit var map: GoogleMap
     private lateinit var location: LatLng
@@ -54,6 +59,7 @@ class RunFragment : Fragment(), OnMapReadyCallback, KoinComponent {
     ): View? {
         val view = inflater.inflate(R.layout.fragment_run, container, false)
         viewModel = RunViewModel(viewLifecycleOwner)
+        gpsUtil = GpsUtils(requireContext())
         setMapView(savedInstanceState, view)
         customizeMapObjects()
         return view
@@ -77,6 +83,7 @@ class RunFragment : Fragment(), OnMapReadyCallback, KoinComponent {
     /** Set actions to buttons and set observer on run record saving state */
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        gpsUtil.turnGpsOn(this)
         setButtonListeners()
         observeSavingRunRecord()
     }
@@ -247,5 +254,22 @@ class RunFragment : Fragment(), OnMapReadyCallback, KoinComponent {
     override fun onLowMemory() {
         super.onLowMemory()
         mapView.onLowMemory()
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (resultCode == Activity.RESULT_OK) {
+            if (requestCode == Constants.GPS_REQUEST) {
+                gps_check.visibility = View.VISIBLE
+            }
+        }
+    }
+
+    override fun gpsStatus(isGpsEnabled: Boolean) {
+        if (isGpsEnabled) {
+            gps_check.visibility = View.VISIBLE
+        } else {
+            gps_check.visibility = View.GONE
+        }
     }
 }
