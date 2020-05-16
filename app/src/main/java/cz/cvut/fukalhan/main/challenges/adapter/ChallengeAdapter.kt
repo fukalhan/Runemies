@@ -5,7 +5,7 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import cz.cvut.fukalhan.R
-import cz.cvut.fukalhan.common.TimeFormatter
+import cz.cvut.fukalhan.utils.TimeFormatter
 import cz.cvut.fukalhan.main.challenges.viewholder.ChallengeViewHolder
 import cz.cvut.fukalhan.repository.entity.Challenge
 

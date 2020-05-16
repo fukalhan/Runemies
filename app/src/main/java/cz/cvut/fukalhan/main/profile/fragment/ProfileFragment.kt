@@ -12,7 +12,7 @@ import com.google.firebase.auth.FirebaseUser
 
 import cz.cvut.fukalhan.R
 import cz.cvut.fukalhan.common.ILoginNavigation
-import cz.cvut.fukalhan.common.TimeFormatter
+import cz.cvut.fukalhan.utils.TimeFormatter
 import cz.cvut.fukalhan.main.profile.viewmodel.ProfileViewModel
 import cz.cvut.fukalhan.repository.entity.User
 import kotlinx.android.synthetic.main.fragment_profile.*

@@ -6,7 +6,7 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 
 import cz.cvut.fukalhan.R
-import cz.cvut.fukalhan.common.TimeFormatter
+import cz.cvut.fukalhan.utils.TimeFormatter
 import cz.cvut.fukalhan.main.useractivity.viewholder.UserActivityViewHolder
 import cz.cvut.fukalhan.repository.entity.RunRecord
 import org.koin.core.KoinComponent

@@ -10,7 +10,7 @@ import androidx.lifecycle.Observer
 import androidx.navigation.fragment.navArgs
 
 import cz.cvut.fukalhan.R
-import cz.cvut.fukalhan.common.TimeFormatter
+import cz.cvut.fukalhan.utils.TimeFormatter
 import cz.cvut.fukalhan.main.enemies.viewmodel.EnemyProfileViewModel
 import cz.cvut.fukalhan.repository.entity.User
 import kotlinx.android.synthetic.main.fragment_enemy_profile.*

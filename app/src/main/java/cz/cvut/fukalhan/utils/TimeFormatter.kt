@@ -1,4 +1,4 @@
-package cz.cvut.fukalhan.common
+package cz.cvut.fukalhan.utils
 
 import android.annotation.SuppressLint
 import cz.cvut.fukalhan.shared.Constants

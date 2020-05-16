@@ -1,6 +1,6 @@
 package cz.cvut.fukalhan.timeformattertest
 
-import cz.cvut.fukalhan.common.TimeFormatter
+import cz.cvut.fukalhan.utils.TimeFormatter
 import org.junit.Test
 import org.junit.Assert.assertEquals
 
