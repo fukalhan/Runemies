@@ -23,7 +23,7 @@ import kotlinx.android.synthetic.main.fragment_enemies.*
  */
 class EnemiesFragment : Fragment() {
 
-    private lateinit var enemiesViewModel: EnemiesViewModel
+    private lateinit var viewModel: EnemiesViewModel
     private val userAuth: FirebaseUser? = FirebaseAuth.getInstance().currentUser
 
     override fun onCreateView(
@@ -31,7 +31,7 @@ class EnemiesFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        enemiesViewModel = EnemiesViewModel()
+        viewModel = EnemiesViewModel()
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_enemies, container, false)
     }
@@ -39,11 +39,11 @@ class EnemiesFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         setEnemiesObserver()
-        userAuth?.let { enemiesViewModel.getEnemies(userAuth.uid) }
+        userAuth?.let { viewModel.getEnemies(userAuth.uid) }
     }
 
     private fun setEnemiesObserver() {
-        enemiesViewModel.enemiesReceiver.observe(viewLifecycleOwner, Observer { enemies ->
+        viewModel.enemiesReceiver.observe(viewLifecycleOwner, Observer { enemies ->
             when {
                 enemies.error -> {
                     enemies_state.text = getString(R.string.enemies_unavailable)

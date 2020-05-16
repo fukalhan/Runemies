@@ -22,28 +22,28 @@ import kotlinx.android.synthetic.main.profile_activity_summary.*
  */
 class EnemyProfileFragment : Fragment() {
     val args: EnemyProfileFragmentArgs by navArgs()
-    private lateinit var enemyProfileViewModel: EnemyProfileViewModel
+    private lateinit var viewModel: EnemyProfileViewModel
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        enemyProfileViewModel = EnemyProfileViewModel()
+        viewModel = EnemyProfileViewModel()
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_enemy_profile, container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        enemyProfileViewModel.enemy.observe(viewLifecycleOwner, Observer { user ->
+        viewModel.enemy.observe(viewLifecycleOwner, Observer { user ->
             if (user != null) {
                 setUserData(user)
             } else {
                 Toast.makeText(context, "Enemy data not available", Toast.LENGTH_SHORT).show()
             }
         })
-        enemyProfileViewModel.getEnemy(args.enemyID)
+        viewModel.getEnemy(args.enemyID)
     }
 
     /** Set data of given user on profile fragment screen */
