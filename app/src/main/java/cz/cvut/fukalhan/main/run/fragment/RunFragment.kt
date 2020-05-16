@@ -1,13 +1,12 @@
 package cz.cvut.fukalhan.main.run.fragment
 
-import android.app.Activity
-import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import com.google.android.gms.maps.CameraUpdateFactory
@@ -30,7 +29,7 @@ import cz.cvut.fukalhan.repository.useractivity.states.RunRecordSaveState
 import cz.cvut.fukalhan.shared.Constants
 import cz.cvut.fukalhan.shared.LocationTrackingRecord
 import cz.cvut.fukalhan.utils.DrawableToBitmapUtil
-import cz.cvut.fukalhan.utils.GpsUtils
+import cz.cvut.fukalhan.utils.gps.GpsUtil
 import kotlinx.android.synthetic.main.fragment_run.*
 import kotlinx.android.synthetic.main.run_buttons.*
 import org.koin.core.KoinComponent
@@ -43,14 +42,13 @@ class RunFragment : Fragment(), OnMapReadyCallback, KoinComponent, IOnGpsListene
     private lateinit var viewModel: RunViewModel
     private val locationTrackingRecord by inject<LocationTrackingRecord>()
     private val userAuth = FirebaseAuth.getInstance().currentUser
-    private lateinit var gpsUtil: GpsUtils
+    private lateinit var gpsUtil: GpsUtil
     private lateinit var mapView: MapView
     private lateinit var map: GoogleMap
     private lateinit var location: LatLng
     private var marker: Marker? = null
     private lateinit var markerOptions: MarkerOptions
     private var polyline: Polyline? = null
-    private var time: Long = 0
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -59,7 +57,7 @@ class RunFragment : Fragment(), OnMapReadyCallback, KoinComponent, IOnGpsListene
     ): View? {
         val view = inflater.inflate(R.layout.fragment_run, container, false)
         viewModel = RunViewModel(viewLifecycleOwner)
-        gpsUtil = GpsUtils(requireContext())
+        gpsUtil = GpsUtil(requireContext())
         setMapView(savedInstanceState, view)
         customizeMapObjects()
         return view
@@ -160,6 +158,7 @@ class RunFragment : Fragment(), OnMapReadyCallback, KoinComponent, IOnGpsListene
             start_button.visibility = View.VISIBLE
         }
     }
+
     /** Determines if bottom navigation should be visible*/
     private fun showBottomNavBar(visible: Boolean) {
         val bottomNavBar = activity?.findViewById(R.id.nav_view) as BottomNavigationView
@@ -237,6 +236,7 @@ class RunFragment : Fragment(), OnMapReadyCallback, KoinComponent, IOnGpsListene
 
     override fun onDestroy() {
         Log.e("Run fragment", "is destroyed")
+        map.clear()
         mapView.onDestroy()
         super.onDestroy()
     }
@@ -256,19 +256,13 @@ class RunFragment : Fragment(), OnMapReadyCallback, KoinComponent, IOnGpsListene
         mapView.onLowMemory()
     }
 
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-        if (resultCode == Activity.RESULT_OK) {
-            if (requestCode == Constants.GPS_REQUEST) {
-                gps_check.visibility = View.VISIBLE
-            }
-        }
-    }
-
+    /** Change GPS flag view according to if GPS is turned on or off */
     override fun gpsStatus(isGpsEnabled: Boolean) {
         if (isGpsEnabled) {
+            gps_flag.setTextColor(ContextCompat.getColor(requireContext(), R.color.green))
             gps_check.visibility = View.VISIBLE
         } else {
+            gps_flag.setTextColor(ContextCompat.getColor(requireContext(), R.color.red))
             gps_check.visibility = View.GONE
         }
     }

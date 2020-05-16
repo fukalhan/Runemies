@@ -7,11 +7,8 @@ import cz.cvut.fukalhan.repository.login.LoginFacade
 import cz.cvut.fukalhan.repository.login.LoginRepository
 import cz.cvut.fukalhan.repository.user.UserFacade
 import cz.cvut.fukalhan.repository.user.UserRepository
-import cz.cvut.fukalhan.repository.user.UserRepositoryMock
-
 import cz.cvut.fukalhan.repository.useractivity.UserActivityFacade
 import cz.cvut.fukalhan.repository.useractivity.UserActivityRepository
-import cz.cvut.fukalhan.repository.useractivity.UserActivityRepositoryMock
 import cz.cvut.fukalhan.shared.LocationTrackingRecord
 import org.koin.dsl.module
 
@@ -30,13 +27,11 @@ object Module {
     val userModule = module {
         single { UserFacade() }
         single { UserRepository() }
-        single { UserRepositoryMock() }
     }
 
     val userActivityModule = module {
         single { UserActivityFacade() }
         single { UserActivityRepository() }
-        single { UserActivityRepositoryMock() }
     }
 
     val locationTrackingModule = module {

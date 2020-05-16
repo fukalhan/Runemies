@@ -8,7 +8,6 @@ import org.koin.core.inject
 
 class UserActivityFacade : IUserActivityFacade, KoinComponent {
     private val repository by inject<UserActivityRepository>()
-    private val repositoryMock by inject<UserActivityRepositoryMock>()
 
     override suspend fun getUserActivities(uid: String): DataWrapper<ArrayList<RunRecord>> {
         return repository.getUserActivities(uid)

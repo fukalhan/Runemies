@@ -4,10 +4,9 @@ import com.google.android.gms.maps.model.LatLng
 
 data class RunRecord(
     var id: String = "",
-    val date: Long,
-    val distance: Double,
-    val time: Long,
-    val pace: Long,
-    val pathWay: List<LatLng>,
-    var fastestKmTime: Long = 0
+    var date: Long = 0,
+    var distance: Double = 0.0,
+    var time: Long = 0,
+    var pace: Long = 0,
+    var pathWay: List<LatLng> = emptyList()
 )
