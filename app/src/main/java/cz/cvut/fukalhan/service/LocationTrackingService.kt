@@ -17,25 +17,22 @@ import com.google.android.gms.location.LocationCallback
 import com.google.android.gms.location.LocationRequest
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.location.LocationResult
-import cz.cvut.fukalhan.repository.entity.LocationChanged
 import cz.cvut.fukalhan.shared.Constants
-import org.greenrobot.eventbus.EventBus
 import cz.cvut.fukalhan.R
 import cz.cvut.fukalhan.service.notification.LocationTrackingNotificationBuilder
-import kotlin.math.roundToInt
+import cz.cvut.fukalhan.shared.LocationTrackingRecord
+import org.koin.core.KoinComponent
+import org.koin.core.inject
 
-class LocationTrackingService : Service() {
+class LocationTrackingService : Service(), KoinComponent {
     private val binder: IBinder = LocationTrackingServiceBinder(this)
+    private val locationTrackingRecord by inject<LocationTrackingRecord>()
     private lateinit var handlerThread: HandlerThread
     private lateinit var serviceHandler: Handler
     private lateinit var fusedLocationProviderClient: FusedLocationProviderClient
     private lateinit var locationCallback: LocationCallback
     private lateinit var locationRequest: LocationRequest
     private lateinit var location: Location
-    private var previousLocation: Location? = null
-    private var distance: Double = 0.0
-    private var time: Long = 0
-    private var tempo: Long = 0
     private lateinit var notification: LocationTrackingNotificationBuilder
     private lateinit var notificationManager: NotificationManager
     private var requesting: Boolean = false
@@ -67,24 +64,9 @@ class LocationTrackingService : Service() {
     /** On new location result received in location callback*/
     private fun onNewLocation(lastLocation: Location) {
         location = lastLocation
-        if (previousLocation != null) {
-            val distanceBetween = location.distanceTo(previousLocation).roundToInt()
-            // If distance between previous and current location isn't zero,
-            // we get tempo in milliseconds on km
-            if (distanceBetween != 0) {
-                tempo = (1000 / distanceBetween) * (System.currentTimeMillis() - time)
-            }
-            distance += distanceBetween / 1000
-        }
-        previousLocation = location
-        time = System.currentTimeMillis()
+        locationTrackingRecord.newLocation(location)
 
-        // Post new location to bus which updates UI in Run fragment
-        EventBus.getDefault().postSticky(
-            LocationChanged(location, distance, tempo)
-        )
-
-        // TODO nezobrazovat notifikace když ještě netrackujeme trasu
+        // TODO don't show notifications when app is no longer in background
         // Update notification
         if (serviceIsRunningForeground(this)) {
             notificationManager.notify(Constants.NOTIFICATION_ID, notification.build(location))
@@ -111,6 +93,11 @@ class LocationTrackingService : Service() {
         locationRequest.priority = LocationRequest.PRIORITY_BALANCED_POWER_ACCURACY
     }
 
+    /** Get last known location */
+    fun getLocation(): Location {
+        return location
+    }
+
     // TODO get rid of this, check if permissions are still given in one place
     /** Add listener on receiving location updates*/
     private fun updateLastLocation() {
@@ -132,12 +119,13 @@ class LocationTrackingService : Service() {
         startService(Intent(applicationContext, LocationTrackingService::class.java))
     }
 
+    /** After service is started these actions will be triggered */
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         serviceHandler.post {
             try {
                 fusedLocationProviderClient.requestLocationUpdates(locationRequest, locationCallback, handlerThread.looper)
                 requesting = true
-                previousLocation = null
+                resetTrackingRecords()
             } catch (e: SecurityException) {
                 Log.e("Loc", "Lost location permission$e")
             }
@@ -145,41 +133,40 @@ class LocationTrackingService : Service() {
         return START_STICKY
     }
 
-    fun resetRecords() {
-        time = System.currentTimeMillis()
-        distance = 0.0
-        tempo = 0
+    /** Resets all the records in location tracking record*/
+    private fun resetTrackingRecords() {
+        locationTrackingRecord.resetRecords()
     }
 
     /** Stop requesting location updates */
     fun stopLocationTracking() {
         try {
             fusedLocationProviderClient.removeLocationUpdates(locationCallback)
-            previousLocation = null
-            distance = 0.0
-            time = 0
-            tempo = 0
             requesting = false
+            locationTrackingRecord.postResult()
             stopSelf()
         } catch (e: SecurityException) {
             Log.e("Loc", "Lost Location permission")
         }
     }
 
-    override fun onBind(intent: Intent): IBinder? {
+    fun removeNotifications() {
         stopForeground(true)
+    }
+
+    fun startNotifications() {
+        if (requesting) {
+            startForeground(Constants.NOTIFICATION_ID, notification.build(location))
+        }
+    }
+
+    override fun onBind(intent: Intent): IBinder? {
         return binder
     }
 
     override fun onRebind(intent: Intent) {
         stopForeground(true)
         super.onRebind(intent)
-    }
-
-    fun goForeground() {
-        if (requesting) {
-            startForeground(Constants.NOTIFICATION_ID, notification.build(location))
-        }
     }
 
     override fun onUnbind(intent: Intent): Boolean {

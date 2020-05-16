@@ -1,18 +1,22 @@
 package cz.cvut.fukalhan.main.activity
 
+import android.app.Activity
 import android.content.ServiceConnection
 import android.content.ComponentName
 import android.content.Intent
 import android.content.IntentFilter
 import android.content.Context
+import android.location.Location
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.IBinder
+import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.widget.Toast
 import androidx.lifecycle.Observer
+import androidx.navigation.NavController
 import androidx.navigation.findNavController
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.navigateUp
@@ -39,14 +43,13 @@ import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.app_bar_main.*
 
 class MainActivity : AppCompatActivity(), ILoginNavigation, ILocationTracking {
-
     val user: FirebaseUser? = FirebaseAuth.getInstance().currentUser
     private lateinit var viewModel: MainActivityViewModel
     private lateinit var appBarConfiguration: AppBarConfiguration
+    private lateinit var navController: NavController
     private var networkReceiver: NetworkReceiver = NetworkReceiver()
     private var service: LocationTrackingService? = null
     private var bound = false
-
     private val serviceConnection: ServiceConnection = object : ServiceConnection {
         override fun onServiceConnected(name: ComponentName, iBinder: IBinder) {
             val binder = iBinder as (LocationTrackingServiceBinder)
@@ -65,7 +68,6 @@ class MainActivity : AppCompatActivity(), ILoginNavigation, ILocationTracking {
         if (user == null) {
             logOut()
         }
-
         setContentView(R.layout.activity_main)
         viewModel = MainActivityViewModel()
         setSupportActionBar(toolbar_main)
@@ -89,7 +91,7 @@ class MainActivity : AppCompatActivity(), ILoginNavigation, ILocationTracking {
      * set menu navigation view
      */
     private fun setBottomMenuView() {
-        val navigationController = findNavController(R.id.nav_host_fragment)
+        navController = findNavController(R.id.nav_host_fragment)
         // Passing each menu ID as a set of Ids because each menu should be considered as top level destinations
         appBarConfiguration = AppBarConfiguration(
             setOf(
@@ -98,8 +100,8 @@ class MainActivity : AppCompatActivity(), ILoginNavigation, ILocationTracking {
                 R.id.nav_activity,
                 R.id.nav_challenges,
                 R.id.nav_enemies))
-        setupActionBarWithNavController(navigationController, appBarConfiguration)
-        nav_view.setupWithNavController(navigationController)
+        setupActionBarWithNavController(navController, appBarConfiguration)
+        nav_view.setupWithNavController(navController)
     }
 
     /** Creates options menu in action bar */
@@ -117,7 +119,7 @@ class MainActivity : AppCompatActivity(), ILoginNavigation, ILocationTracking {
                 return true
             }
             R.id.settings -> {
-                findNavController(R.id.nav_host_fragment).navigate(R.id.nav_settings)
+                navController.navigate(R.id.nav_settings)
                 return true
             }
             else -> super.onOptionsItemSelected(item)
@@ -126,7 +128,6 @@ class MainActivity : AppCompatActivity(), ILoginNavigation, ILocationTracking {
 
     /** Handles back navigation */
     override fun onSupportNavigateUp(): Boolean {
-        val navController = findNavController(R.id.nav_host_fragment)
         showBottomNavigationBar()
         return navController.navigateUp(appBarConfiguration) || super.onSupportNavigateUp()
     }
@@ -157,6 +158,7 @@ class MainActivity : AppCompatActivity(), ILoginNavigation, ILocationTracking {
 
     override fun onStart() {
         super.onStart()
+        service?.removeNotifications()
         val intentFilter = IntentFilter("android.net.conn.CONNECTIVITY_CHANGE")
         intentFilter.addCategory(Intent.CATEGORY_DEFAULT)
         registerReceiver(networkReceiver, intentFilter)
@@ -164,7 +166,7 @@ class MainActivity : AppCompatActivity(), ILoginNavigation, ILocationTracking {
 
     override fun onStop() {
         unregisterReceiver(networkReceiver)
-        service?.goForeground()
+        service?.startNotifications()
         super.onStop()
     }
 
@@ -193,7 +195,16 @@ class MainActivity : AppCompatActivity(), ILoginNavigation, ILocationTracking {
         service?.stopLocationTracking()
     }
 
-    override fun resetRecords() {
-        service?.resetRecords()
+    override fun getLastLocation(): Location? {
+        return service?.getLocation()
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (resultCode == Activity.RESULT_OK) {
+            if (requestCode == Constants.GPS_REQUEST) {
+                Log.e("MainActivity", "request gps")
+            }
+        }
     }
 }

@@ -16,40 +16,39 @@ import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.model.Marker
 import com.google.android.gms.maps.model.MarkerOptions
 import com.google.android.gms.maps.model.Polyline
-import com.google.android.gms.maps.model.PolylineOptions
 import com.google.android.gms.maps.model.LatLng
-import com.google.android.gms.maps.model.CustomCap
+import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.firebase.auth.FirebaseAuth
 
 import cz.cvut.fukalhan.R
 import cz.cvut.fukalhan.common.ILocationTracking
+import cz.cvut.fukalhan.common.IOnGpsListener
 import cz.cvut.fukalhan.common.TimeFormatter
 import cz.cvut.fukalhan.main.run.viewmodel.RunViewModel
-import cz.cvut.fukalhan.repository.entity.LocationChanged
 import cz.cvut.fukalhan.repository.useractivity.states.RunRecordSaveState
 import cz.cvut.fukalhan.shared.Constants
+import cz.cvut.fukalhan.shared.LocationTrackingRecord
 import cz.cvut.fukalhan.utils.DrawableToBitmapUtil
+import cz.cvut.fukalhan.utils.gps.GpsUtil
 import kotlinx.android.synthetic.main.fragment_run.*
 import kotlinx.android.synthetic.main.run_buttons.*
-import org.greenrobot.eventbus.EventBus
-import org.greenrobot.eventbus.Subscribe
-import org.greenrobot.eventbus.ThreadMode
+import org.koin.core.KoinComponent
+import org.koin.core.inject
 
 /**
  * A simple [Fragment] subclass.
  */
-class RunFragment : Fragment(), OnMapReadyCallback {
+class RunFragment : Fragment(), OnMapReadyCallback, KoinComponent, IOnGpsListener {
     private lateinit var viewModel: RunViewModel
+    private val locationTrackingRecord by inject<LocationTrackingRecord>()
     private val userAuth = FirebaseAuth.getInstance().currentUser
+    private lateinit var gpsUtil: GpsUtil
     private lateinit var mapView: MapView
     private lateinit var map: GoogleMap
+    private lateinit var location: LatLng
     private var marker: Marker? = null
     private lateinit var markerOptions: MarkerOptions
     private var polyline: Polyline? = null
-    private lateinit var polylineOptions: PolylineOptions
-    private var tracking: Boolean = false
-    private var firstRequest: Boolean = true
-    private var time: Long = 0
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -57,7 +56,8 @@ class RunFragment : Fragment(), OnMapReadyCallback {
         savedInstanceState: Bundle?
     ): View? {
         val view = inflater.inflate(R.layout.fragment_run, container, false)
-        viewModel = RunViewModel()
+        viewModel = RunViewModel(viewLifecycleOwner)
+        gpsUtil = GpsUtil(requireContext())
         setMapView(savedInstanceState, view)
         customizeMapObjects()
         return view
@@ -76,29 +76,19 @@ class RunFragment : Fragment(), OnMapReadyCallback {
     private fun customizeMapObjects() {
         val icon = DrawableToBitmapUtil.generateBitmapDescriptor(requireContext(), R.drawable.ic_map_marker)
         markerOptions = MarkerOptions().icon(icon)
-        polylineOptions = PolylineOptions().color(ContextCompat.getColor(requireContext(), R.color.green)).endCap(CustomCap(icon))
     }
 
+    /** Set actions to buttons and set observer on run record saving state */
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        (activity as ILocationTracking).startTracking()
+        gpsUtil.turnGpsOn(this)
         setButtonListeners()
         observeSavingRunRecord()
     }
 
     /** Set functionality of the buttons controlling the start and end of location tracking*/
     private fun setButtonListeners() {
-        start_button.setOnClickListener {
-            (activity as ILocationTracking).resetRecords()
-            // Start requesting location updates
-            time = System.currentTimeMillis()
-            tracking = true
-            firstRequest = true
-
-            start_button.visibility = View.GONE
-            end_button.visibility = View.VISIBLE
-            pause_button.visibility = View.VISIBLE
-        }
+        setStartButtonAction()
 
         pause_button.setOnClickListener {
             pause_button.visibility = View.GONE
@@ -110,10 +100,57 @@ class RunFragment : Fragment(), OnMapReadyCallback {
             continue_button.visibility = View.GONE
         }
 
+        setEndButtonAction()
+    }
+
+    /**
+     * Set action on start click
+     * - start location tracking service
+     * - hide bottom navigation bar so user can't go to other parts of app while tracking location
+     * to not mess with map view (which is really messy) - workaround, maybe improve later
+     * - observe for new location update from location tracking record
+     * - show and hide buttons according to determined behaviour
+     */
+    private fun setStartButtonAction() {
+        start_button.setOnClickListener {
+            // Start requesting location updates
+            (activity as ILocationTracking).startTracking()
+            // While location tracking is running the bottom navigation view is hidden
+            showBottomNavBar(false)
+            locationTrackingRecord.locationChanged.observe(viewLifecycleOwner, Observer { locationChanged ->
+                // Remove previous marker, set marker on a new location and move camera on that location
+                marker?.remove()
+                location = locationChanged.pathWay.points.last()
+                Toast.makeText(context, "${location.latitude}, ${location.longitude}", Toast.LENGTH_SHORT).show()
+                markerOptions.position(location)
+                marker = map.addMarker(markerOptions)
+                map.animateCamera(CameraUpdateFactory.newLatLng(location))
+
+                // Redraw the polyline according to new data
+                polyline?.remove()
+                polyline = map.addPolyline(locationChanged.pathWay)
+
+                // Update distance count and pace
+                distance.text = String.format("%.2f", locationChanged.distance)
+                tempo.text = TimeFormatter.toMinSec(locationChanged.currentPace)
+            })
+
+            start_button.visibility = View.GONE
+            end_button.visibility = View.VISIBLE
+            pause_button.visibility = View.VISIBLE
+        }
+    }
+
+    private fun setEndButtonAction() {
         end_button.setOnClickListener {
             // Stop requesting location updates
-            time = System.currentTimeMillis() - time
-            tracking = false
+            (activity as ILocationTracking).stopTracking()
+
+            userAuth?.let {
+                viewModel.saveRunRecord(userAuth.uid)
+            }
+            // When location tracking stops, the bottom navigation view is visible again
+            showBottomNavBar(true)
 
             end_button.visibility = View.GONE
             pause_button.visibility = View.GONE
@@ -122,11 +159,24 @@ class RunFragment : Fragment(), OnMapReadyCallback {
         }
     }
 
+    /** Determines if bottom navigation should be visible*/
+    private fun showBottomNavBar(visible: Boolean) {
+        val bottomNavBar = activity?.findViewById(R.id.nav_view) as BottomNavigationView
+        if (visible) {
+            bottomNavBar.visibility = View.VISIBLE
+        } else {
+            bottomNavBar.visibility = View.GONE
+        }
+    }
+
     /** Set observer on state of saving run record */
     private fun observeSavingRunRecord() {
         viewModel.runRecordState.observe(viewLifecycleOwner, Observer { runRecordState ->
             when (runRecordState) {
-                RunRecordSaveState.SUCCESS -> Toast.makeText(context, "Run record saved", Toast.LENGTH_SHORT).show()
+                RunRecordSaveState.SUCCESS -> {
+                    Toast.makeText(context, "Run record saved", Toast.LENGTH_SHORT).show()
+                    resetRunData()
+                }
                 RunRecordSaveState.FAIL -> Toast.makeText(context, "Run record wasn't saved", Toast.LENGTH_SHORT).show()
                 RunRecordSaveState.CANNOT_ADD_RECORD -> TODO()
                 RunRecordSaveState.CANNOT_UPDATE_STATISTICS -> TODO()
@@ -135,50 +185,35 @@ class RunFragment : Fragment(), OnMapReadyCallback {
         })
     }
 
-    @Subscribe(sticky = true, threadMode = ThreadMode.MAIN)
-    fun onListenLocation(event: LocationChanged?) {
-        event?.let {
-            marker?.remove()
-            polyline?.remove()
-            val coordinates = LatLng(event.location.latitude, event.location.longitude)
-
-            // TODO move this logic to onMapReady because we don't want to end up on equador everytime we open run fragment
-            if (firstRequest) {
-                map.moveCamera(CameraUpdateFactory.newLatLngZoom(coordinates, 15f))
-                firstRequest = false
-            } else {
-                map.animateCamera(CameraUpdateFactory.newLatLng(coordinates))
-            }
-
-            // TODO find better solution for showing end cap before the tracking starts so the polyline wouldn't be shown prematurely
-            if (!tracking) {
-                // Show map marker instead of cap with polyline before the tracking starts
-                markerOptions.position(coordinates)
-                marker = map.addMarker(markerOptions)
-            } else {
-                // Show coordinates in Toast
-                val text = "${event.location.latitude}, ${event.location.longitude}"
-                Toast.makeText(context, text, Toast.LENGTH_SHORT).show()
-
-                // Display distance and tempo
-                distance.text = String.format("%.2f", event.distance)
-                tempo.text = TimeFormatter.toMinSec(event.tempo)
-
-                // Draw polyline
-                polylineOptions.add(coordinates)
-                polylineOptions.visible(true)
-                polyline = map.addPolyline(polylineOptions)
-            }
-        }
+    private fun resetRunData() {
+        polyline?.remove()
+        marker?.remove()
+        // Set marker on last known position
+        marker = map.addMarker(markerOptions.position(LatLng(location.latitude, location.longitude)))
+        distance.text = getString(R.string.distance_reset)
+        timer.text = getString(R.string.timer_reset)
+        tempo.text = getString(R.string.tempo_reset)
     }
 
+    /**
+     * Initial setting of map once it's available,
+     * this callback is triggered once the map is ready to be used
+     */
     override fun onMapReady(googleMap: GoogleMap) {
         map = googleMap
+        // Retrieve last known location from location tracking service
+        val lastLocation = (activity as ILocationTracking).getLastLocation()
+        lastLocation?.let {
+            location = LatLng(lastLocation.latitude, lastLocation.longitude)
+            // Move camera on given location and set marker there
+            map.moveCamera(CameraUpdateFactory.newLatLngZoom(location, 15f))
+            markerOptions.position(location)
+            marker = map.addMarker(markerOptions)
+        }
     }
 
     override fun onStart() {
         super.onStart()
-        EventBus.getDefault().register(this)
         mapView.onStart()
     }
 
@@ -188,19 +223,20 @@ class RunFragment : Fragment(), OnMapReadyCallback {
     }
 
     override fun onPause() {
+        Log.e("Run fragment", "is paused")
         mapView.onPause()
         super.onPause()
     }
 
     override fun onStop() {
+        Log.e("Run fragment", "is stopped")
         mapView.onStop()
-        EventBus.getDefault().unregister(this)
         super.onStop()
     }
 
     override fun onDestroy() {
-        (activity as ILocationTracking).stopTracking()
-        Log.e("Run fragment", "is being destroyed")
+        Log.e("Run fragment", "is destroyed")
+        map.clear()
         mapView.onDestroy()
         super.onDestroy()
     }
@@ -218,5 +254,16 @@ class RunFragment : Fragment(), OnMapReadyCallback {
     override fun onLowMemory() {
         super.onLowMemory()
         mapView.onLowMemory()
+    }
+
+    /** Change GPS flag view according to if GPS is turned on or off */
+    override fun gpsStatus(isGpsEnabled: Boolean) {
+        if (isGpsEnabled) {
+            gps_flag.setTextColor(ContextCompat.getColor(requireContext(), R.color.green))
+            gps_check.visibility = View.VISIBLE
+        } else {
+            gps_flag.setTextColor(ContextCompat.getColor(requireContext(), R.color.red))
+            gps_check.visibility = View.GONE
+        }
     }
 }

@@ -1,11 +1,13 @@
 package cz.cvut.fukalhan.repository.useractivity
 
+import com.google.android.gms.maps.model.LatLng
 import com.google.firebase.firestore.FirebaseFirestore
 import cz.cvut.fukalhan.repository.entity.RunRecord
 import cz.cvut.fukalhan.repository.entity.User
 import cz.cvut.fukalhan.repository.useractivity.states.RunRecordSaveState
 import cz.cvut.fukalhan.shared.Constants
 import cz.cvut.fukalhan.shared.DataWrapper
+import kotlinx.android.synthetic.main.fragment_run.view.*
 import kotlinx.coroutines.tasks.await
 import java.lang.Exception
 
@@ -14,19 +16,36 @@ class UserActivityRepository : IUserActivityRepository {
     private val db = FirebaseFirestore.getInstance()
 
     override suspend fun getUserActivities(uid: String): DataWrapper<ArrayList<RunRecord>> {
-        val records = ArrayList<RunRecord>()
+        val runRecords = ArrayList<RunRecord>()
         return try {
             val snapshot = db.collection(Constants.RUN_RECORDS).document(uid)
                 .collection(Constants.USER_RECORDS).get().await()
             snapshot.forEach { doc ->
-                val record = doc.toObject(RunRecord::class.java)
-                records.add(record)
+                runRecords.add(RunRecord(
+                    id = doc.data["id"] as String,
+                    date = doc.data["date"] as Long,
+                    distance = doc.data["distance"] as Double,
+                    time = doc.data["time"] as Long,
+                    pace = doc.data["pace"] as Long,
+                    pathWay = convertToObjectList(doc.data["pathWay"] as ArrayList<Map<String, Double>>)
+                ))
             }
-            DataWrapper(records)
+            DataWrapper(runRecords)
         } catch (e: Exception) {
             e.printStackTrace()
-            DataWrapper(records, true, e.message, e)
+            DataWrapper(runRecords, true, e.message, e)
         }
+    }
+
+    /** Converts Firestore way of storing list of LatLng to actual List<LatLng> */
+    private fun convertToObjectList(objects: ArrayList<Map<String, Double>>): List<LatLng> {
+        val pathWay = ArrayList<LatLng>()
+        objects.forEach { map ->
+            val latitude = map["latitude"]
+            val longitude = map["longitude"]
+            pathWay.add(LatLng(latitude!!, longitude!!))
+        }
+        return pathWay.toList()
     }
 
     /**
@@ -82,9 +101,6 @@ class UserActivityRepository : IUserActivityRepository {
         user.totalTime += runRecord.time
         if (user.longestRun < runRecord.distance) {
             user.longestRun = runRecord.distance
-        }
-        if (user.fastest1km > runRecord.fastestKmTime) {
-            user.fastest1km = runRecord.fastestKmTime
         }
         return updateUserLivesCount(user, runRecord)
     }

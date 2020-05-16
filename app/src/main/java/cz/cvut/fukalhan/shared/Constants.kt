@@ -7,12 +7,12 @@ object Constants {
     const val RUN_RECORDS = "runRecords"
     const val USER_RECORDS = "userRecords"
     const val DATE_PATTERN = "dd.MM.yyyy"
-    const val UPDATE_INTERVAL: Long = 5000
+    const val UPDATE_INTERVAL: Long = 700
     const val NOTIFICATION_ID = 1223
-    const val EXTRA_STARTED_FROM_NOTIFICATION = "cz.cvut.fukalhan"
     const val CHANNEL_ID = "location_channel"
     const val MAPVIEW_BUNDLE_KEY = "MapViewBundleKey"
     const val PICK_IMAGE_REQUEST = 22
+    const val GPS_REQUEST = 42
 
     val permissions = listOf(
         Manifest.permission.ACCESS_FINE_LOCATION,

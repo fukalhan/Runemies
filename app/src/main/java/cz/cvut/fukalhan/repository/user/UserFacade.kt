@@ -7,7 +7,6 @@ import org.koin.core.inject
 
 class UserFacade : IUserFacade, KoinComponent {
     val repository by inject<UserRepository>()
-    val repositoryMock by inject<UserRepositoryMock>()
 
     override suspend fun getUsers(exceptUser: String?): DataWrapper<List<User>> {
         return repository.getUsers(exceptUser)

@@ -71,4 +71,8 @@
     <string name="reset_activity_statistics">Reset activity statistics</string>
     <string name="delete_activity_records">Delete activity records</string>
     <string name="delete_account">Delete account</string>
+    <string name="tempo_reset">00:00</string>
+    <string name="timer_reset">00:00:00</string>
+    <string name="distance_reset">0,00</string>
+    <string name="gps">GPS</string>
 </resources>
