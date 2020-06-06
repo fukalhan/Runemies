@@ -42,7 +42,6 @@ class RunFragment : Fragment(), OnMapReadyCallback, KoinComponent, IOnGpsListene
     private lateinit var viewModel: RunViewModel
     private val locationTrackingRecord by inject<LocationTrackingRecord>()
     private val userAuth = FirebaseAuth.getInstance().currentUser
-    private lateinit var gpsUtil: GpsUtil
     private lateinit var mapView: MapView
     private lateinit var map: GoogleMap
     private lateinit var location: LatLng
@@ -57,7 +56,6 @@ class RunFragment : Fragment(), OnMapReadyCallback, KoinComponent, IOnGpsListene
     ): View? {
         val view = inflater.inflate(R.layout.fragment_run, container, false)
         viewModel = RunViewModel(viewLifecycleOwner)
-        gpsUtil = GpsUtil(requireContext())
         setMapView(savedInstanceState, view)
         customizeMapObjects()
         return view
@@ -81,9 +79,26 @@ class RunFragment : Fragment(), OnMapReadyCallback, KoinComponent, IOnGpsListene
     /** Set actions to buttons and set observer on run record saving state */
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        gpsUtil.turnGpsOn(this)
+        setGpsStateListener()
         setButtonListeners()
         observeSavingRunRecord()
+    }
+
+    /** */
+    private fun setGpsStateListener() {
+        GpsUtil.enabled.observe(viewLifecycleOwner, Observer { isEnabled ->
+            when (isEnabled) {
+                true -> {
+                    gps_flag.setTextColor(ContextCompat.getColor(requireContext(), R.color.green))
+                    gps_check.visibility = View.VISIBLE
+                }
+                false -> {
+                    gps_flag.setTextColor(ContextCompat.getColor(requireContext(), R.color.red))
+                    gps_check.visibility = View.GONE
+                    GpsUtil.turnGpsOn(this)
+                }
+            }
+        })
     }
 
     /** Set functionality of the buttons controlling the start and end of location tracking*/

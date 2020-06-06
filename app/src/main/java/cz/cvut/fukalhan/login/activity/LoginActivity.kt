@@ -11,16 +11,23 @@ import cz.cvut.fukalhan.main.activity.MainActivity
 import kotlinx.android.synthetic.main.activity_login.*
 import java.lang.IllegalStateException
 
+/**
+ * Application login screen,
+ * implement navigation between sign in and sign up screens,
+ * and navigation to main screen if user is successfully logged in
+ */
 class LoginActivity : AppCompatActivity(),
     ILoginNavigation {
 
+    /** Inflates the view */
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_login)
-        setView()
+        setTabNavigation()
     }
 
-    private fun setView() {
+    /** Set tabs for sign in and sign up screen and enable navigation between them */
+    private fun setTabNavigation() {
         loginViewPager.adapter = LoginAdapter(this)
         TabLayoutMediator(loginTabLayout, loginViewPager) { tab, position ->
             tab.text = when (position) {
@@ -31,7 +38,7 @@ class LoginActivity : AppCompatActivity(),
         }.attach()
     }
 
-    // On login screen if back pressed without sign in/up do nothing
+    /** On login screen if back pressed without sign in or sign up do nothing */
     override fun onBackPressed() {}
 
     override fun navigateToMainScreen() {

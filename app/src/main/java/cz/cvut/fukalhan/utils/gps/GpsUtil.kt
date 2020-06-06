@@ -6,6 +6,7 @@ import android.content.IntentSender
 import android.location.LocationManager
 import android.util.Log
 import android.widget.Toast
+import androidx.lifecycle.MutableLiveData
 import com.google.android.gms.common.api.ApiException
 import com.google.android.gms.common.api.ResolvableApiException
 import com.google.android.gms.location.LocationRequest
@@ -15,14 +16,25 @@ import com.google.android.gms.location.LocationSettingsStatusCodes
 import cz.cvut.fukalhan.common.IOnGpsListener
 import cz.cvut.fukalhan.main.activity.MainActivity
 import cz.cvut.fukalhan.shared.Constants
+import org.koin.core.KoinComponent
+import org.koin.core.inject
 
 /**
  * Determine if GPS is turned on in the device,
  * if yes, change set gpsStatus in IOnGpsListener to true,
  * if not, make dialog for user to turn the gps on
  */
-class GpsUtil(private val context: Context) {
+object GpsUtil : KoinComponent {
+    private val context: Context by inject()
     private val locationManager = context.getSystemService(Context.LOCATION_SERVICE) as LocationManager
+    val enabled: MutableLiveData<Boolean> by lazy { MutableLiveData<Boolean>() }
+    val isGpsEnabled: Boolean
+        get() {
+            val isEnabled = locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)
+            enabled.postValue(isEnabled)
+            return isEnabled
+        }
+
     private val settingsClient = LocationServices.getSettingsClient(context)
     private val locationRequest =
         LocationRequest.create()

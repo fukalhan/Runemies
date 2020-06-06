@@ -42,6 +42,11 @@ import cz.cvut.fukalhan.utils.network.NetworkReceiver
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.app_bar_main.*
 
+/**
+ * Application main screen,
+ * implement navigation between individual sections of application (fragments) and
+ * bound location tracking service to application
+ */
 class MainActivity : AppCompatActivity(), ILoginNavigation, ILocationTracking {
     val user: FirebaseUser? = FirebaseAuth.getInstance().currentUser
     private lateinit var viewModel: MainActivityViewModel
@@ -65,9 +70,8 @@ class MainActivity : AppCompatActivity(), ILoginNavigation, ILocationTracking {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        if (user == null) {
-            logOut()
-        }
+        user?.let { logOut() }
+
         setContentView(R.layout.activity_main)
         viewModel = MainActivityViewModel()
         setSupportActionBar(toolbar_main)

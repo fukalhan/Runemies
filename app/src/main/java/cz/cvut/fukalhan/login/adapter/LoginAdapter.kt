@@ -7,6 +7,7 @@ import cz.cvut.fukalhan.login.fragment.SignInFragment
 import cz.cvut.fukalhan.login.fragment.SignUpFragment
 import java.lang.IllegalStateException
 
+/** Handle navigation between sign in and sign up screens */
 class LoginAdapter(loginActivity: FragmentActivity) : FragmentStateAdapter(loginActivity) {
     override fun getItemCount(): Int = 2
 

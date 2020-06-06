@@ -15,32 +15,34 @@ import cz.cvut.fukalhan.repository.login.states.SignInState
 import kotlinx.android.synthetic.main.fragment_sign_in.*
 
 /**
- * A simple [Fragment] subclass.
+ * Sign in screen,
+ * communicate to SignInViewModel to sign user with given email and password in and
+ * observe the outcome SignInState on SignInViewModel,
+ * if successful navigate to main screen
  */
 class SignInFragment : Fragment() {
-
-    private lateinit var viewModel: SignInViewModel
+    private lateinit var signInViewModel: SignInViewModel
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        viewModel = SignInViewModel()
-        // Inflate the layout for this fragment
+        signInViewModel = SignInViewModel()
         return inflater.inflate(R.layout.fragment_sign_in, container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         sign_in_button.setOnClickListener {
-            viewModel.signIn(sign_in_email.text.toString(), sign_in_password.text.toString())
+            // Sign in user with given email address and password
+            signInViewModel.signIn(sign_in_email.text.toString(), sign_in_password.text.toString())
         }
-        setSignInStateObserver()
+        observeSignInState()
     }
 
-    private fun setSignInStateObserver() {
-        viewModel.signInState.observe(viewLifecycleOwner, Observer { state ->
+    private fun observeSignInState() {
+        signInViewModel.signInState.observe(viewLifecycleOwner, Observer { state ->
             when (state) {
                 SignInState.SUCCESS -> {
                     Toast.makeText(context, "Sign in", Toast.LENGTH_SHORT).show()
