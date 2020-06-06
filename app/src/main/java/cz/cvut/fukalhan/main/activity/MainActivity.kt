@@ -49,7 +49,7 @@ import kotlinx.android.synthetic.main.app_bar_main.*
  */
 class MainActivity : AppCompatActivity(), ILoginNavigation, ILocationTracking {
     val user: FirebaseUser? = FirebaseAuth.getInstance().currentUser
-    private lateinit var viewModel: MainActivityViewModel
+    private lateinit var mainActivityViewModel: MainActivityViewModel
     private lateinit var appBarConfiguration: AppBarConfiguration
     private lateinit var navController: NavController
     private var networkReceiver: NetworkReceiver = NetworkReceiver()
@@ -68,12 +68,16 @@ class MainActivity : AppCompatActivity(), ILoginNavigation, ILocationTracking {
         }
     }
 
+    /**
+     * If there is no user signed in, logout
+     * else set view
+     */
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         user?.let { logOut() }
 
         setContentView(R.layout.activity_main)
-        viewModel = MainActivityViewModel()
+        mainActivityViewModel = MainActivityViewModel()
         setSupportActionBar(toolbar_main)
         observeSignOutState()
         setBottomMenuView()
@@ -82,7 +86,7 @@ class MainActivity : AppCompatActivity(), ILoginNavigation, ILocationTracking {
 
     /** Observe if sign out was called, log out if was */
     private fun observeSignOutState() {
-        viewModel.signOutState.observe(this, Observer { signOutState ->
+        mainActivityViewModel.signOutState.observe(this, Observer { signOutState ->
             when (signOutState) {
                 SignOutState.SUCCESS -> logOut()
                 SignOutState.FAIL -> Toast.makeText(this, "Sign out failed", Toast.LENGTH_SHORT).show()
@@ -119,7 +123,7 @@ class MainActivity : AppCompatActivity(), ILoginNavigation, ILocationTracking {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {
             R.id.sign_out -> {
-                viewModel.signOutUser()
+                mainActivityViewModel.signOutUser()
                 return true
             }
             R.id.settings -> {
@@ -143,7 +147,10 @@ class MainActivity : AppCompatActivity(), ILoginNavigation, ILocationTracking {
         bottomNavBar.visibility = View.VISIBLE
     }
 
-    /** Check permissions and request for them */
+    /**
+     * Request for permissons and
+     * if permissions are granted bind location tracking service
+     */
     private fun checkPermissions() {
         Dexter.withActivity(this)
             .withPermissions(Constants.permissions)

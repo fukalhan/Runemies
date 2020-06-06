@@ -36,10 +36,11 @@ import org.koin.core.KoinComponent
 import org.koin.core.inject
 
 /**
- * A simple [Fragment] subclass.
+ * Run recording screen,
+ * show current run statistics, map view and buttons handling run recording
  */
 class RunFragment : Fragment(), OnMapReadyCallback, KoinComponent, IOnGpsListener {
-    private lateinit var viewModel: RunViewModel
+    private lateinit var runViewModel: RunViewModel
     private val locationTrackingRecord by inject<LocationTrackingRecord>()
     private val userAuth = FirebaseAuth.getInstance().currentUser
     private lateinit var mapView: MapView
@@ -55,7 +56,7 @@ class RunFragment : Fragment(), OnMapReadyCallback, KoinComponent, IOnGpsListene
         savedInstanceState: Bundle?
     ): View? {
         val view = inflater.inflate(R.layout.fragment_run, container, false)
-        viewModel = RunViewModel(viewLifecycleOwner)
+        runViewModel = RunViewModel(viewLifecycleOwner)
         setMapView(savedInstanceState, view)
         customizeMapObjects()
         return view
@@ -64,13 +65,13 @@ class RunFragment : Fragment(), OnMapReadyCallback, KoinComponent, IOnGpsListene
     /** Initialize mapView */
     private fun setMapView(savedInstanceState: Bundle?, view: View) {
         var mapViewBundle: Bundle? = null
-        savedInstanceState?.let { mapViewBundle = savedInstanceState.getBundle(Constants.MAPVIEW_BUNDLE_KEY) }
+        savedInstanceState?.let { mapViewBundle = it.getBundle(Constants.MAPVIEW_BUNDLE_KEY) }
         mapView = view.findViewById(R.id.map_view) as MapView
         mapView.onCreate(mapViewBundle)
         mapView.getMapAsync(this)
     }
 
-    /** Sets icon to map marker and width and end cap to map polyline */
+    /** Set icon to map marker*/
     private fun customizeMapObjects() {
         val icon = DrawableToBitmapUtil.generateBitmapDescriptor(requireContext(), R.drawable.ic_map_marker)
         markerOptions = MarkerOptions().icon(icon)
@@ -81,7 +82,7 @@ class RunFragment : Fragment(), OnMapReadyCallback, KoinComponent, IOnGpsListene
         super.onViewCreated(view, savedInstanceState)
         setGpsStateListener()
         setButtonListeners()
-        observeSavingRunRecord()
+        observeSaveRunRecord()
     }
 
     /** */
@@ -161,9 +162,7 @@ class RunFragment : Fragment(), OnMapReadyCallback, KoinComponent, IOnGpsListene
             // Stop requesting location updates
             (activity as ILocationTracking).stopTracking()
 
-            userAuth?.let {
-                viewModel.saveRunRecord(userAuth.uid)
-            }
+            userAuth?.let { runViewModel.saveRunRecord(userAuth.uid) }
             // When location tracking stops, the bottom navigation view is visible again
             showBottomNavBar(true)
 
@@ -185,8 +184,8 @@ class RunFragment : Fragment(), OnMapReadyCallback, KoinComponent, IOnGpsListene
     }
 
     /** Set observer on state of saving run record */
-    private fun observeSavingRunRecord() {
-        viewModel.runRecordState.observe(viewLifecycleOwner, Observer { runRecordState ->
+    private fun observeSaveRunRecord() {
+        runViewModel.runRecordState.observe(viewLifecycleOwner, Observer { runRecordState ->
             when (runRecordState) {
                 RunRecordSaveState.SUCCESS -> {
                     Toast.makeText(context, "Run record saved", Toast.LENGTH_SHORT).show()
@@ -259,7 +258,7 @@ class RunFragment : Fragment(), OnMapReadyCallback, KoinComponent, IOnGpsListene
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
         var mapViewBundle = outState.getBundle(Constants.MAPVIEW_BUNDLE_KEY)
-        if (mapViewBundle == null) {
+        mapViewBundle?.let {
             mapViewBundle = Bundle()
             outState.putBundle(Constants.MAPVIEW_BUNDLE_KEY, mapViewBundle)
         }
