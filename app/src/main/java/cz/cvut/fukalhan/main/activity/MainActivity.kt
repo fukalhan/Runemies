@@ -74,7 +74,9 @@ class MainActivity : AppCompatActivity(), ILoginNavigation, ILocationTracking {
      */
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        user?.let { logOut() }
+        if (user == null) {
+            logOut()
+        }
 
         setContentView(R.layout.activity_main)
         mainActivityViewModel = MainActivityViewModel()

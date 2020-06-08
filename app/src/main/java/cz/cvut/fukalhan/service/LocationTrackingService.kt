@@ -94,8 +94,12 @@ class LocationTrackingService : Service(), KoinComponent {
     }
 
     /** Get last known location */
-    fun getLocation(): Location {
-        return location
+    fun getLocation(): Location? {
+        if (this::location.isInitialized) {
+            return location
+        } else {
+            return null
+        }
     }
 
     // TODO get rid of this, check if permissions are still given in one place
