@@ -1,5 +1,6 @@
 package cz.cvut.fukalhan.utils.gps
 
+import android.app.Activity
 import android.content.ContentValues.TAG
 import android.content.Context
 import android.content.IntentSender
@@ -14,7 +15,6 @@ import com.google.android.gms.location.LocationServices
 import com.google.android.gms.location.LocationSettingsRequest
 import com.google.android.gms.location.LocationSettingsStatusCodes
 import cz.cvut.fukalhan.common.IOnGpsListener
-import cz.cvut.fukalhan.main.activity.MainActivity
 import cz.cvut.fukalhan.shared.Constants
 import org.koin.core.KoinComponent
 import org.koin.core.inject
@@ -25,8 +25,8 @@ import org.koin.core.inject
  * if not, make dialog for user to turn the gps on
  */
 object GpsUtil : KoinComponent {
-    private val context: Context by inject()
-    private val locationManager = context.getSystemService(Context.LOCATION_SERVICE) as LocationManager
+    private val appContext: Context by inject()
+    private val locationManager = appContext.getSystemService(Context.LOCATION_SERVICE) as LocationManager
     val enabled: MutableLiveData<Boolean> by lazy { MutableLiveData<Boolean>() }
     val isGpsEnabled: Boolean
         get() {
@@ -35,7 +35,7 @@ object GpsUtil : KoinComponent {
             return isEnabled
         }
 
-    private val settingsClient = LocationServices.getSettingsClient(context)
+    private val settingsClient = LocationServices.getSettingsClient(appContext)
     private val locationRequest =
         LocationRequest.create()
         .setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY)
@@ -45,7 +45,7 @@ object GpsUtil : KoinComponent {
             .addLocationRequest(locationRequest)
             .setAlwaysShow(true).build()
 
-    fun turnGpsOn(onGpsListener: IOnGpsListener) {
+    fun turnGpsOn(onGpsListener: IOnGpsListener, context: Context) {
         if (locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
             onGpsListener.gpsStatus(true)
         } else {
@@ -59,7 +59,7 @@ object GpsUtil : KoinComponent {
                         LocationSettingsStatusCodes.RESOLUTION_REQUIRED -> {
                             try {
                                 val rae = e as ResolvableApiException
-                                rae.startResolutionForResult(context as MainActivity, Constants.GPS_REQUEST)
+                                rae.startResolutionForResult(context as Activity, Constants.GPS_REQUEST)
                             } catch (e: IntentSender.SendIntentException) {
                                 Log.e(TAG, "PendingIntent unable to execute request.")
                             }

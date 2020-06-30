@@ -25,6 +25,7 @@ import cz.cvut.fukalhan.common.ILocationTracking
 import cz.cvut.fukalhan.common.IOnGpsListener
 import cz.cvut.fukalhan.utils.TimeFormatter
 import cz.cvut.fukalhan.main.run.viewmodel.RunViewModel
+import cz.cvut.fukalhan.repository.entity.LocationChanged
 import cz.cvut.fukalhan.repository.useractivity.states.RunRecordSaveState
 import cz.cvut.fukalhan.shared.Constants
 import cz.cvut.fukalhan.shared.LocationTrackingRecord
@@ -50,11 +51,7 @@ class RunFragment : Fragment(), OnMapReadyCallback, KoinComponent, IOnGpsListene
     private lateinit var markerOptions: MarkerOptions
     private var polyline: Polyline? = null
 
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val view = inflater.inflate(R.layout.fragment_run, container, false)
         runViewModel = RunViewModel(viewLifecycleOwner)
         setMapView(savedInstanceState, view)
@@ -62,7 +59,7 @@ class RunFragment : Fragment(), OnMapReadyCallback, KoinComponent, IOnGpsListene
         return view
     }
 
-    /** Initialize mapView */
+    /** Initialize Map View */
     private fun setMapView(savedInstanceState: Bundle?, view: View) {
         var mapViewBundle: Bundle? = null
         savedInstanceState?.let { mapViewBundle = it.getBundle(Constants.MAPVIEW_BUNDLE_KEY) }
@@ -71,7 +68,7 @@ class RunFragment : Fragment(), OnMapReadyCallback, KoinComponent, IOnGpsListene
         mapView.getMapAsync(this)
     }
 
-    /** Set icon to map marker*/
+    /** Customize design of map marker*/
     private fun customizeMapObjects() {
         val icon = DrawableToBitmapUtil.generateBitmapDescriptor(requireContext(), R.drawable.ic_map_marker)
         markerOptions = MarkerOptions().icon(icon)
@@ -80,7 +77,7 @@ class RunFragment : Fragment(), OnMapReadyCallback, KoinComponent, IOnGpsListene
     /** Set actions to buttons and set observer on run record saving state */
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        setGpsStateListener()
+        // setGpsStateListener()
         setButtonListeners()
         observeSaveRunRecord()
     }
@@ -96,7 +93,7 @@ class RunFragment : Fragment(), OnMapReadyCallback, KoinComponent, IOnGpsListene
                 false -> {
                     gps_flag.setTextColor(ContextCompat.getColor(requireContext(), R.color.red))
                     gps_check.visibility = View.GONE
-                    GpsUtil.turnGpsOn(this)
+                    GpsUtil.turnGpsOn(this, requireContext())
                 }
             }
         })
@@ -104,7 +101,9 @@ class RunFragment : Fragment(), OnMapReadyCallback, KoinComponent, IOnGpsListene
 
     /** Set functionality of the buttons controlling the start and end of location tracking*/
     private fun setButtonListeners() {
-        setStartButtonAction()
+        start_button.setOnClickListener {
+            runStarted()
+        }
 
         pause_button.setOnClickListener {
             pause_button.visibility = View.GONE
@@ -116,61 +115,64 @@ class RunFragment : Fragment(), OnMapReadyCallback, KoinComponent, IOnGpsListene
             continue_button.visibility = View.GONE
         }
 
-        setEndButtonAction()
+        end_button.setOnClickListener {
+            runEnded()
+        }
     }
 
     /**
-     * Set action on start click
      * - start location tracking service
      * - hide bottom navigation bar so user can't go to other parts of app while tracking location
      * to not mess with map view (which is really messy) - workaround, maybe improve later
      * - observe for new location update from location tracking record
      * - show and hide buttons according to determined behaviour
      */
-    private fun setStartButtonAction() {
-        start_button.setOnClickListener {
-            // Start requesting location updates
-            (activity as ILocationTracking).startTracking()
-            // While location tracking is running the bottom navigation view is hidden
-            showBottomNavBar(false)
-            locationTrackingRecord.locationChanged.observe(viewLifecycleOwner, Observer { locationChanged ->
-                // Remove previous marker, set marker on a new location and move camera on that location
-                marker?.remove()
-                location = locationChanged.pathWay.points.last()
-                Toast.makeText(context, "${location.latitude}, ${location.longitude}", Toast.LENGTH_SHORT).show()
-                markerOptions.position(location)
-                marker = map.addMarker(markerOptions)
-                map.animateCamera(CameraUpdateFactory.newLatLng(location))
+    private fun runStarted() {
+        GpsUtil.turnGpsOn(this, requireContext())
+        // Start requesting location updates
+        (activity as ILocationTracking).startTracking()
+        // While location tracking is running the bottom navigation view is hidden
+        showBottomNavBar(false)
+        // Observe location changes
+        locationTrackingRecord.locationChanged.observe(viewLifecycleOwner, Observer { locationChanged ->
+            updateLocation(locationChanged)
+        })
 
-                // Redraw the polyline according to new data
-                polyline?.remove()
-                polyline = map.addPolyline(locationChanged.pathWay)
-
-                // Update distance count and pace
-                distance.text = String.format("%.2f", locationChanged.distance)
-                tempo.text = TimeFormatter.toMinSec(locationChanged.currentPace)
-            })
-
-            start_button.visibility = View.GONE
-            end_button.visibility = View.VISIBLE
-            pause_button.visibility = View.VISIBLE
-        }
+        start_button.visibility = View.GONE
+        end_button.visibility = View.VISIBLE
+        pause_button.visibility = View.VISIBLE
     }
 
-    private fun setEndButtonAction() {
-        end_button.setOnClickListener {
-            // Stop requesting location updates
-            (activity as ILocationTracking).stopTracking()
+    private fun updateLocation(locationChanged: LocationChanged) {
+        // Remove previous marker, set marker on a new location and move camera on that location
+        marker?.remove()
+        location = locationChanged.pathWay.points.last()
+        Toast.makeText(context, "${location.latitude}, ${location.longitude}", Toast.LENGTH_SHORT).show()
+        markerOptions.position(location)
+        marker = map.addMarker(markerOptions)
+        map.animateCamera(CameraUpdateFactory.newLatLng(location))
 
-            userAuth?.let { runViewModel.saveRunRecord(userAuth.uid) }
-            // When location tracking stops, the bottom navigation view is visible again
-            showBottomNavBar(true)
+        // Redraw the polyline according to new data
+        polyline?.remove()
+        polyline = map.addPolyline(locationChanged.pathWay)
 
-            end_button.visibility = View.GONE
-            pause_button.visibility = View.GONE
-            continue_button.visibility = View.GONE
-            start_button.visibility = View.VISIBLE
-        }
+        // Update distance count and pace
+        distance.text = String.format("%.2f", locationChanged.distance)
+        tempo.text = TimeFormatter.toMinSec(locationChanged.currentPace)
+    }
+
+    private fun runEnded() {
+        // Stop requesting location updates
+        (activity as ILocationTracking).stopTracking()
+
+        userAuth?.let { runViewModel.saveRunRecord(userAuth.uid) }
+        // When location tracking stops, the bottom navigation view is visible again
+        showBottomNavBar(true)
+
+        end_button.visibility = View.GONE
+        pause_button.visibility = View.GONE
+        continue_button.visibility = View.GONE
+        start_button.visibility = View.VISIBLE
     }
 
     /** Determines if bottom navigation should be visible*/
