@@ -7,7 +7,7 @@ object Constants {
     const val RUN_RECORDS = "runRecords"
     const val USER_RECORDS = "userRecords"
     const val DATE_PATTERN = "dd.MM.yyyy"
-    const val UPDATE_INTERVAL: Long = 700
+    const val UPDATE_INTERVAL: Long = 5000
     const val NOTIFICATION_ID = 1223
     const val CHANNEL_ID = "location_channel"
     const val MAPVIEW_BUNDLE_KEY = "MapViewBundleKey"
