@@ -4,15 +4,16 @@ import android.app.Activity
 import android.content.ContentValues.TAG
 import android.content.Context
 import android.content.IntentSender
-import android.location.LocationManager
 import android.util.Log
 import android.widget.Toast
 import com.google.android.gms.common.api.ApiException
 import com.google.android.gms.common.api.ResolvableApiException
-import com.google.android.gms.location.LocationRequest
 import com.google.android.gms.location.LocationServices
+import com.google.android.gms.location.LocationRequest
+import com.google.android.gms.location.LocationSettingsResponse
 import com.google.android.gms.location.LocationSettingsRequest
 import com.google.android.gms.location.LocationSettingsStatusCodes
+import com.google.android.gms.tasks.Task
 import cz.cvut.fukalhan.common.IOnGpsListener
 import cz.cvut.fukalhan.shared.Constants
 import org.koin.core.KoinComponent
@@ -25,7 +26,6 @@ import org.koin.core.inject
  */
 object GpsUtil : KoinComponent {
     private val appContext: Context by inject()
-    private val locationManager = appContext.getSystemService(Context.LOCATION_SERVICE) as LocationManager
     private val settingsClient = LocationServices.getSettingsClient(appContext)
 
     private val locationRequest =
@@ -38,32 +38,37 @@ object GpsUtil : KoinComponent {
             .addLocationRequest(locationRequest)
             .setAlwaysShow(true).build()
 
+    private val task: Task<LocationSettingsResponse> = settingsClient.checkLocationSettings(locationSettingsRequest)
+
     fun turnGpsOn(onGpsListener: IOnGpsListener, context: Context) {
-        if (locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
-            onGpsListener.gpsStatus(true)
-        } else {
-            settingsClient
-                .checkLocationSettings(locationSettingsRequest)
-                .addOnSuccessListener {
-                    onGpsListener.gpsStatus(true)
-                }
-                .addOnFailureListener { e ->
-                    when ((e as ApiException).statusCode) {
-                        LocationSettingsStatusCodes.RESOLUTION_REQUIRED -> {
-                            try {
-                                val rae = e as ResolvableApiException
-                                rae.startResolutionForResult(context as Activity, Constants.GPS_REQUEST)
-                            } catch (e: IntentSender.SendIntentException) {
-                                Log.e(TAG, "PendingIntent unable to execute request.")
+        task.addOnCompleteListener { response ->
+            if (response.isSuccessful) {
+                onGpsListener.gpsStatus(true)
+                Log.e("GPS", "enabled")
+            } else {
+                settingsClient
+                    .checkLocationSettings(locationSettingsRequest)
+                    .addOnSuccessListener {
+                        onGpsListener.gpsStatus(true)
+                    }
+                    .addOnFailureListener { e ->
+                        when ((e as ApiException).statusCode) {
+                            LocationSettingsStatusCodes.RESOLUTION_REQUIRED -> {
+                                try {
+                                    val rae = e as ResolvableApiException
+                                    rae.startResolutionForResult(context as Activity, Constants.GPS_REQUEST)
+                                } catch (e: IntentSender.SendIntentException) {
+                                    Log.e(TAG, "PendingIntent unable to execute request.")
+                                }
+                            }
+                            LocationSettingsStatusCodes.SETTINGS_CHANGE_UNAVAILABLE -> {
+                                val errorMessage = "Location settings are inadequate and cannot be fixed here. Fix in Settings."
+                                Log.e(TAG, errorMessage)
+                                Toast.makeText(context, errorMessage, Toast.LENGTH_LONG).show()
                             }
                         }
-                        LocationSettingsStatusCodes.SETTINGS_CHANGE_UNAVAILABLE -> {
-                            val errorMessage = "Location settings are inadequate and cannot be fixed here. Fix in Settings."
-                            Log.e(TAG, errorMessage)
-                            Toast.makeText(context, errorMessage, Toast.LENGTH_LONG).show()
-                        }
                     }
-                }
+            }
         }
     }
 }
