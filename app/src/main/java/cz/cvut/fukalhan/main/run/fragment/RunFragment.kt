@@ -30,7 +30,7 @@ import cz.cvut.fukalhan.repository.useractivity.states.RunRecordSaveState
 import cz.cvut.fukalhan.shared.Constants
 import cz.cvut.fukalhan.shared.LocationTrackingRecord
 import cz.cvut.fukalhan.utils.DrawableToBitmapUtil
-import cz.cvut.fukalhan.utils.gps.GpsUtil
+import cz.cvut.fukalhan.utils.GpsUtil
 import kotlinx.android.synthetic.main.fragment_run.*
 import kotlinx.android.synthetic.main.run_buttons.*
 import org.koin.core.KoinComponent
@@ -77,26 +77,8 @@ class RunFragment : Fragment(), OnMapReadyCallback, KoinComponent, IOnGpsListene
     /** Set actions to buttons and set observer on run record saving state */
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        // setGpsStateListener()
         setButtonListeners()
         observeSaveRunRecord()
-    }
-
-    /** */
-    private fun setGpsStateListener() {
-        GpsUtil.enabled.observe(viewLifecycleOwner, Observer { isEnabled ->
-            when (isEnabled) {
-                true -> {
-                    gps_flag.setTextColor(ContextCompat.getColor(requireContext(), R.color.green))
-                    gps_check.visibility = View.VISIBLE
-                }
-                false -> {
-                    gps_flag.setTextColor(ContextCompat.getColor(requireContext(), R.color.red))
-                    gps_check.visibility = View.GONE
-                    GpsUtil.turnGpsOn(this, requireContext())
-                }
-            }
-        })
     }
 
     /** Set functionality of the buttons controlling the start and end of location tracking*/
@@ -120,13 +102,6 @@ class RunFragment : Fragment(), OnMapReadyCallback, KoinComponent, IOnGpsListene
         }
     }
 
-    /**
-     * - start location tracking service
-     * - hide bottom navigation bar so user can't go to other parts of app while tracking location
-     * to not mess with map view (which is really messy) - workaround, maybe improve later
-     * - observe for new location update from location tracking record
-     * - show and hide buttons according to determined behaviour
-     */
     private fun runStarted() {
         GpsUtil.turnGpsOn(this, requireContext())
         // Start requesting location updates

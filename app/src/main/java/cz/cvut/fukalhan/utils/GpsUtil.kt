@@ -1,4 +1,4 @@
-package cz.cvut.fukalhan.utils.gps
+package cz.cvut.fukalhan.utils
 
 import android.app.Activity
 import android.content.ContentValues.TAG

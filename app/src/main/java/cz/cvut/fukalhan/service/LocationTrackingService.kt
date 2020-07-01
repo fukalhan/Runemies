@@ -90,7 +90,7 @@ class LocationTrackingService : Service(), KoinComponent {
     private fun createLocationRequest() {
         locationRequest = LocationRequest()
         locationRequest.interval = Constants.UPDATE_INTERVAL
-        locationRequest.priority = LocationRequest.PRIORITY_BALANCED_POWER_ACCURACY
+        locationRequest.priority = LocationRequest.PRIORITY_HIGH_ACCURACY
     }
 
     /** Get last known location */
