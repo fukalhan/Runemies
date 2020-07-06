@@ -74,6 +74,13 @@ class RunFragment : Fragment(), OnMapReadyCallback, KoinComponent, IOnGpsListene
      */
     override fun onMapReady(googleMap: GoogleMap) {
         map = googleMap
+        val lastLocation = (activity as ILocationTracking).getLastLocation()
+        lastLocation?.let {
+            val newLocation = LatLng(lastLocation.latitude, lastLocation.longitude)
+            markerOptions.position(newLocation)
+            marker = map.addMarker(markerOptions)
+            map.moveCamera(CameraUpdateFactory.newLatLngZoom(newLocation, 15f))
+        }
         runViewModel.runRecord.observe(viewLifecycleOwner, Observer { runRecord ->
             updateLocation(runRecord)
         })
@@ -84,7 +91,7 @@ class RunFragment : Fragment(), OnMapReadyCallback, KoinComponent, IOnGpsListene
             marker?.remove()
             markerOptions.position(newLocation)
             marker = map.addMarker(markerOptions)
-            map.animateCamera(CameraUpdateFactory.newLatLngZoom(newLocation, 15f))
+            map.animateCamera(CameraUpdateFactory.newLatLng(newLocation))
             Toast.makeText(context, "${newLocation.latitude}, ${newLocation.longitude}", Toast.LENGTH_SHORT).show()
 
             if (recording) {

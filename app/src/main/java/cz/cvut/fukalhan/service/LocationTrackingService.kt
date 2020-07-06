@@ -19,7 +19,6 @@ import com.google.android.gms.location.LocationServices
 import com.google.android.gms.location.LocationResult
 import cz.cvut.fukalhan.shared.Constants
 import cz.cvut.fukalhan.R
-import cz.cvut.fukalhan.service.notification.LocationTrackingNotificationBuilder
 import org.greenrobot.eventbus.EventBus
 import org.koin.core.KoinComponent
 
@@ -30,7 +29,7 @@ class LocationTrackingService : Service(), KoinComponent {
     private lateinit var fusedLocationProviderClient: FusedLocationProviderClient
     private lateinit var locationCallback: LocationCallback
     private lateinit var locationRequest: LocationRequest
-    private lateinit var currentLocation: Location
+    private lateinit var lastLocation: Location
     private lateinit var notification: LocationTrackingNotificationBuilder
     private lateinit var notificationManager: NotificationManager
     private var requesting: Boolean = false
@@ -45,12 +44,14 @@ class LocationTrackingService : Service(), KoinComponent {
             }
         }
         createLocationRequest()
+        updateLastLocation()
 
         handlerThread = HandlerThread("locationTracking")
         handlerThread.start()
         serviceHandler = Handler(handlerThread.looper)
 
-        notification = LocationTrackingNotificationBuilder(this)
+        notification =
+            LocationTrackingNotificationBuilder(this)
         notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             val channel = NotificationChannel(Constants.CHANNEL_ID, getString(R.string.appName), NotificationManager.IMPORTANCE_DEFAULT)
@@ -58,15 +59,36 @@ class LocationTrackingService : Service(), KoinComponent {
         }
     }
 
+    private fun updateLastLocation() {
+        try {
+            fusedLocationProviderClient.lastLocation.addOnCompleteListener { task ->
+                if (task.isSuccessful && task.result != null) {
+                    lastLocation = task.result!!
+                } else {
+                    Log.e("LOC", "Failed to get location")
+                }
+            }
+        } catch (e: SecurityException) {
+            Log.e("LOC", "No location permission$e")
+        }
+    }
+
     /** On new location result received in location callback*/
     private fun onNewLocation(location: Location) {
-        currentLocation = location
+        lastLocation = location
         EventBus.getDefault().post(location)
 
         // Update notification
         if (serviceIsRunningForeground(this)) {
             notificationManager.notify(Constants.NOTIFICATION_ID, notification.build(location))
         }
+    }
+
+    fun getLastLocation(): Location? {
+        return if (this::lastLocation.isInitialized)
+            lastLocation
+        else
+            null
     }
 
     /** Determine if the service is running foreground */
@@ -120,7 +142,7 @@ class LocationTrackingService : Service(), KoinComponent {
 
     fun startNotifications() {
         if (requesting) {
-            startForeground(Constants.NOTIFICATION_ID, notification.build(currentLocation))
+            startForeground(Constants.NOTIFICATION_ID, notification.build(lastLocation))
         }
     }
 
@@ -135,7 +157,7 @@ class LocationTrackingService : Service(), KoinComponent {
 
     override fun onUnbind(intent: Intent): Boolean {
         if (requesting) {
-            startForeground(Constants.NOTIFICATION_ID, notification.build(currentLocation))
+            startForeground(Constants.NOTIFICATION_ID, notification.build(lastLocation))
         }
         return super.onUnbind(intent)
     }

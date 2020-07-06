@@ -1,4 +1,4 @@
-package cz.cvut.fukalhan.service.notification
+package cz.cvut.fukalhan.service
 
 import android.app.Notification
 import android.app.PendingIntent
