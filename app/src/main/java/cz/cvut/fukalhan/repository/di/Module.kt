@@ -9,7 +9,6 @@ import cz.cvut.fukalhan.repository.user.UserFacade
 import cz.cvut.fukalhan.repository.user.UserRepository
 import cz.cvut.fukalhan.repository.useractivity.UserActivityFacade
 import cz.cvut.fukalhan.repository.useractivity.UserActivityRepository
-import cz.cvut.fukalhan.shared.LocationTrackingRecord
 import org.koin.dsl.module
 
 object Module {
@@ -32,9 +31,5 @@ object Module {
     val userActivityModule = module {
         single { UserActivityFacade() }
         single { UserActivityRepository() }
-    }
-
-    val locationTrackingModule = module {
-        single { LocationTrackingRecord() }
     }
 }
