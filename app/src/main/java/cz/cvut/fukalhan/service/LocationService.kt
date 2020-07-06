@@ -3,7 +3,6 @@ package cz.cvut.fukalhan.service
 import android.app.Service
 import android.app.NotificationManager
 import android.app.NotificationChannel
-import android.app.ActivityManager
 import android.content.Context
 import android.content.Intent
 import android.location.Location
@@ -22,8 +21,8 @@ import cz.cvut.fukalhan.R
 import org.greenrobot.eventbus.EventBus
 import org.koin.core.KoinComponent
 
-class LocationTrackingService : Service(), KoinComponent {
-    private val binder: IBinder = LocationTrackingServiceBinder(this)
+class LocationService : Service(), KoinComponent {
+    private val binder: IBinder = LocationServiceBinder(this)
     private lateinit var handlerThread: HandlerThread
     private lateinit var serviceHandler: Handler
     private lateinit var fusedLocationProviderClient: FusedLocationProviderClient
@@ -32,7 +31,6 @@ class LocationTrackingService : Service(), KoinComponent {
     private lateinit var lastLocation: Location
     private lateinit var notification: LocationTrackingNotificationBuilder
     private lateinit var notificationManager: NotificationManager
-    private var requesting: Boolean = false
 
     override fun onCreate() {
         super.onCreate()
@@ -59,6 +57,20 @@ class LocationTrackingService : Service(), KoinComponent {
         }
     }
 
+    /** On new location result received in location callback*/
+    private fun onNewLocation(location: Location) {
+        lastLocation = location
+        EventBus.getDefault().post(location)
+        notificationManager.notify(Constants.NOTIFICATION_ID, notification.build(location))
+    }
+
+    /** Set parameters for quality of location requests */
+    private fun createLocationRequest() {
+        locationRequest = LocationRequest()
+        locationRequest.interval = Constants.UPDATE_INTERVAL
+        locationRequest.priority = LocationRequest.PRIORITY_HIGH_ACCURACY
+    }
+
     private fun updateLastLocation() {
         try {
             fusedLocationProviderClient.lastLocation.addOnCompleteListener { task ->
@@ -73,17 +85,6 @@ class LocationTrackingService : Service(), KoinComponent {
         }
     }
 
-    /** On new location result received in location callback*/
-    private fun onNewLocation(location: Location) {
-        lastLocation = location
-        EventBus.getDefault().post(location)
-
-        // Update notification
-        if (serviceIsRunningForeground(this)) {
-            notificationManager.notify(Constants.NOTIFICATION_ID, notification.build(location))
-        }
-    }
-
     fun getLastLocation(): Location? {
         return if (this::lastLocation.isInitialized)
             lastLocation
@@ -91,29 +92,9 @@ class LocationTrackingService : Service(), KoinComponent {
             null
     }
 
-    /** Determine if the service is running foreground */
-    private fun serviceIsRunningForeground(context: Context): Boolean {
-        val manager = context.getSystemService(Context.ACTIVITY_SERVICE) as ActivityManager
-        for (service in manager.getRunningServices(Int.MAX_VALUE)) {
-            if (javaClass.name == service.service.className) {
-                if (service.foreground) {
-                    return true
-                }
-            }
-        }
-        return false
-    }
-
-    /** Set parameters for quality of location requests */
-    private fun createLocationRequest() {
-        locationRequest = LocationRequest()
-        locationRequest.interval = Constants.UPDATE_INTERVAL
-        locationRequest.priority = LocationRequest.PRIORITY_HIGH_ACCURACY
-    }
-
     /** Start requesting location updates */
     fun startLocationTracking() {
-        startService(Intent(applicationContext, LocationTrackingService::class.java))
+        startService(Intent(applicationContext, LocationService::class.java))
     }
 
     /** After service is started these actions will be triggered */
@@ -121,7 +102,6 @@ class LocationTrackingService : Service(), KoinComponent {
         serviceHandler.post {
             try {
                 fusedLocationProviderClient.requestLocationUpdates(locationRequest, locationCallback, handlerThread.looper)
-                requesting = true
             } catch (e: SecurityException) {
                 Log.e("Loc", "Lost location permission$e")
             }
@@ -132,34 +112,11 @@ class LocationTrackingService : Service(), KoinComponent {
     /** Stop requesting location updates */
     fun stopLocationTracking() {
         fusedLocationProviderClient.removeLocationUpdates(locationCallback)
-        requesting = false
         stopSelf()
-    }
-
-    fun removeNotifications() {
-        stopForeground(true)
-    }
-
-    fun startNotifications() {
-        if (requesting) {
-            startForeground(Constants.NOTIFICATION_ID, notification.build(lastLocation))
-        }
     }
 
     override fun onBind(intent: Intent): IBinder? {
         return binder
-    }
-
-    override fun onRebind(intent: Intent) {
-        stopForeground(true)
-        super.onRebind(intent)
-    }
-
-    override fun onUnbind(intent: Intent): Boolean {
-        if (requesting) {
-            startForeground(Constants.NOTIFICATION_ID, notification.build(lastLocation))
-        }
-        return super.onUnbind(intent)
     }
 
     override fun onDestroy() {
