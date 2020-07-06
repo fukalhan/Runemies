@@ -6,7 +6,6 @@ import android.content.ComponentName
 import android.content.Intent
 import android.content.IntentFilter
 import android.content.Context
-import android.location.Location
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.IBinder
@@ -203,10 +202,6 @@ class MainActivity : AppCompatActivity(), ILoginNavigation, ILocationTracking {
     /** Stop tracking service */
     override fun stopTracking() {
         service?.stopLocationTracking()
-    }
-
-    override fun getLastLocation(): Location? {
-        return service?.getLastLocation()
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {

@@ -3,10 +3,12 @@ package cz.cvut.fukalhan.main.run.viewmodel
 import android.location.Location
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.google.android.gms.maps.model.LatLng
 import cz.cvut.fukalhan.repository.entity.RunRecord
-import cz.cvut.fukalhan.repository.useractivity.states.RunRecordSaveState
+import cz.cvut.fukalhan.repository.useractivity.states.RecordSaveState
 import cz.cvut.fukalhan.repository.useractivity.UserActivityFacade
+import kotlinx.coroutines.launch
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
 import org.koin.core.KoinComponent
@@ -19,8 +21,9 @@ class RunViewModel : ViewModel(), KoinComponent {
     private var startTime: Long = 0
     private var distance: Double = 0.0
     private var pathWay: List<LatLng> = emptyList()
+    private var pace: Long = 0
     private val userActivityFacade by inject<UserActivityFacade>()
-    val recordSaveState: MutableLiveData<RunRecordSaveState> by lazy { MutableLiveData<RunRecordSaveState>() }
+    val recordSaveResult: MutableLiveData<RecordSaveState> by lazy { MutableLiveData<RecordSaveState>() }
 
     fun registerBus() {
         EventBus.getDefault().register(this)
@@ -34,15 +37,15 @@ class RunViewModel : ViewModel(), KoinComponent {
         startTime = System.currentTimeMillis()
         distance = 0.0
         pathWay = emptyList()
+        pace = 0
     }
 
     @Subscribe
     fun onLocationChanged(newLocation: Location) {
-        // location.postValue(LatLng(newLocation.latitude, newLocation.longitude))
-        runRecord.postValue(updateRecords(newLocation))
+        runRecord.postValue(updateRecord(newLocation))
     }
 
-    private fun updateRecords(location: Location): RunRecord {
+    private fun updateRecord(location: Location): RunRecord {
         val newLocation = LatLng(location.latitude, location.longitude)
         if (pathWay.isNotEmpty()) {
             val previousLocation = pathWay.last()
@@ -58,10 +61,18 @@ class RunViewModel : ViewModel(), KoinComponent {
         }
         pathWay = pathWay + newLocation
 
-        val runRecord = RunRecord(distance = distance, pathWay = pathWay)
-        if (distance != 0.0) {
-            runRecord.pace = ((System.currentTimeMillis() - startTime) / distance).toLong()
+        pace = if (distance != 0.0) {
+            ((System.currentTimeMillis() - startTime) / distance).toLong()
+        } else {
+            System.currentTimeMillis() - startTime
         }
-        return runRecord
+        return RunRecord(distance = distance, pathWay = pathWay, pace = pace)
+    }
+
+    fun saveRecord(userId: String) {
+        val runRecord = RunRecord(startTime, distance, System.currentTimeMillis() - startTime, pace, pathWay)
+        viewModelScope.launch {
+            recordSaveResult.postValue(userActivityFacade.saveRunRecord(userId, runRecord))
+        }
     }
 }

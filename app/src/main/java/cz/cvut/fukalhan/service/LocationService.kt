@@ -42,7 +42,6 @@ class LocationService : Service(), KoinComponent {
             }
         }
         createLocationRequest()
-        updateLastLocation()
 
         handlerThread = HandlerThread("locationTracking")
         handlerThread.start()
@@ -69,27 +68,6 @@ class LocationService : Service(), KoinComponent {
         locationRequest = LocationRequest()
         locationRequest.interval = Constants.UPDATE_INTERVAL
         locationRequest.priority = LocationRequest.PRIORITY_HIGH_ACCURACY
-    }
-
-    private fun updateLastLocation() {
-        try {
-            fusedLocationProviderClient.lastLocation.addOnCompleteListener { task ->
-                if (task.isSuccessful && task.result != null) {
-                    lastLocation = task.result!!
-                } else {
-                    Log.e("LOC", "Failed to get location")
-                }
-            }
-        } catch (e: SecurityException) {
-            Log.e("LOC", "No location permission$e")
-        }
-    }
-
-    fun getLastLocation(): Location? {
-        return if (this::lastLocation.isInitialized)
-            lastLocation
-        else
-            null
     }
 
     /** Start requesting location updates */

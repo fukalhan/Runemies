@@ -13,7 +13,6 @@ import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.MapView
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.model.Marker
-import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MarkerOptions
 import com.google.android.gms.maps.model.Polyline
 import com.google.android.gms.maps.model.PolylineOptions
@@ -25,7 +24,7 @@ import cz.cvut.fukalhan.common.IOnGpsListener
 import cz.cvut.fukalhan.utils.TimeFormatter
 import cz.cvut.fukalhan.main.run.viewmodel.RunViewModel
 import cz.cvut.fukalhan.repository.entity.RunRecord
-import cz.cvut.fukalhan.repository.useractivity.states.RunRecordSaveState
+import cz.cvut.fukalhan.repository.useractivity.states.RecordSaveState
 import cz.cvut.fukalhan.shared.Constants
 import cz.cvut.fukalhan.utils.DrawableToBitmapUtil
 import cz.cvut.fukalhan.utils.GpsUtil
@@ -38,12 +37,12 @@ import org.koin.core.KoinComponent
  * show current run statistics, map view and buttons handling run recording
  */
 class RunFragment : Fragment(), OnMapReadyCallback, KoinComponent, IOnGpsListener {
+    private val user = FirebaseAuth.getInstance().currentUser
     private lateinit var runViewModel: RunViewModel
     private var recording: Boolean = false
-    private val userAuth = FirebaseAuth.getInstance().currentUser
     private lateinit var mapView: MapView
     private lateinit var map: GoogleMap
-    private lateinit var location: LatLng
+    private var firstLocationSetting: Boolean = true
     private var marker: Marker? = null
     private lateinit var markerOptions: MarkerOptions
     private var polyline: Polyline? = null
@@ -74,13 +73,6 @@ class RunFragment : Fragment(), OnMapReadyCallback, KoinComponent, IOnGpsListene
      */
     override fun onMapReady(googleMap: GoogleMap) {
         map = googleMap
-        val lastLocation = (activity as ILocationTracking).getLastLocation()
-        lastLocation?.let {
-            val newLocation = LatLng(lastLocation.latitude, lastLocation.longitude)
-            markerOptions.position(newLocation)
-            marker = map.addMarker(markerOptions)
-            map.moveCamera(CameraUpdateFactory.newLatLngZoom(newLocation, 15f))
-        }
         runViewModel.runRecord.observe(viewLifecycleOwner, Observer { runRecord ->
             updateLocation(runRecord)
         })
@@ -88,22 +80,27 @@ class RunFragment : Fragment(), OnMapReadyCallback, KoinComponent, IOnGpsListene
 
     private fun updateLocation(runRecord: RunRecord) {
         val newLocation = runRecord.pathWay.last()
-            marker?.remove()
-            markerOptions.position(newLocation)
-            marker = map.addMarker(markerOptions)
+        marker?.remove()
+        markerOptions.position(newLocation)
+        marker = map.addMarker(markerOptions)
+        if (firstLocationSetting) {
+            firstLocationSetting = false
+            map.moveCamera(CameraUpdateFactory.newLatLngZoom(newLocation, 15f))
+        } else {
             map.animateCamera(CameraUpdateFactory.newLatLng(newLocation))
-            Toast.makeText(context, "${newLocation.latitude}, ${newLocation.longitude}", Toast.LENGTH_SHORT).show()
+        }
+        Toast.makeText(context, "${newLocation.latitude}, ${newLocation.longitude}", Toast.LENGTH_SHORT).show()
 
-            if (recording) {
-                // Redraw the polyline according to new data
-                polyline?.remove()
-                polylineOptions = PolylineOptions().color(R.color.green).addAll(runRecord.pathWay)
-                polyline = map.addPolyline(polylineOptions)
+        if (recording) {
+            // Redraw the polyline according to new data
+            polyline?.remove()
+            polylineOptions = PolylineOptions().color(R.color.green).addAll(runRecord.pathWay)
+            polyline = map.addPolyline(polylineOptions)
 
-                // Update distance count and pace
-                distance.text = String.format("%.2f", runRecord.distance)
-                tempo.text = TimeFormatter.toMinSec(runRecord.pace)
-            }
+            // Update distance count and pace
+            distance.text = String.format("%.2f", runRecord.distance)
+            tempo.text = TimeFormatter.toMinSec(runRecord.pace)
+        }
     }
 
     /** Design map marker*/
@@ -142,8 +139,8 @@ class RunFragment : Fragment(), OnMapReadyCallback, KoinComponent, IOnGpsListene
 
     private fun runStarted() {
         recording = true
-        runViewModel.startRecord()
         GpsUtil.turnGpsOn(this, requireContext())
+        runViewModel.startRecord()
         showBottomNavBar(false)
 
         start_button.visibility = View.GONE
@@ -153,6 +150,9 @@ class RunFragment : Fragment(), OnMapReadyCallback, KoinComponent, IOnGpsListene
 
     private fun runEnded() {
         recording = false
+        user?.let {
+            runViewModel.saveRecord(it.uid)
+        }
         showBottomNavBar(true)
 
         end_button.visibility = View.GONE
@@ -161,27 +161,15 @@ class RunFragment : Fragment(), OnMapReadyCallback, KoinComponent, IOnGpsListene
         start_button.visibility = View.VISIBLE
     }
 
-    /** Determines if bottom navigation should be visible*/
-    private fun showBottomNavBar(visible: Boolean) {
-        val bottomNavBar = activity?.findViewById(R.id.nav_view) as BottomNavigationView
-        if (visible) {
-            bottomNavBar.visibility = View.VISIBLE
-        } else {
-            bottomNavBar.visibility = View.GONE
-        }
-    }
-
     /** Set observer on state of saving run record */
     private fun observeSaveRunRecord() {
-        runViewModel.recordSaveState.observe(viewLifecycleOwner, Observer { runRecordState ->
-            when (runRecordState) {
-                RunRecordSaveState.SUCCESS -> {
-                    Toast.makeText(context, "Run record saved", Toast.LENGTH_SHORT).show()
-                }
-                RunRecordSaveState.FAIL -> Toast.makeText(context, "Run record wasn't saved", Toast.LENGTH_SHORT).show()
-                RunRecordSaveState.CANNOT_ADD_RECORD -> TODO()
-                RunRecordSaveState.CANNOT_UPDATE_STATISTICS -> TODO()
-                RunRecordSaveState.NOT_EXISTING_USER -> TODO()
+        runViewModel.recordSaveResult.observe(viewLifecycleOwner, Observer { recordSaveState ->
+            when (recordSaveState) {
+                RecordSaveState.SUCCESS -> Toast.makeText(context, "Run record saved", Toast.LENGTH_SHORT).show()
+                RecordSaveState.CANNOT_ADD_RECORD -> TODO()
+                RecordSaveState.CANNOT_UPDATE_STATISTICS -> TODO()
+                RecordSaveState.NOT_EXISTING_USER -> TODO()
+                RecordSaveState.FAIL -> Toast.makeText(context, "Run record wasn't saved", Toast.LENGTH_SHORT).show()
             }
         })
     }
@@ -233,5 +221,15 @@ class RunFragment : Fragment(), OnMapReadyCallback, KoinComponent, IOnGpsListene
     }
 
     override fun gpsStatus(isGpsEnabled: Boolean) {
+    }
+
+    /** Determines if bottom navigation should be visible*/
+    private fun showBottomNavBar(visible: Boolean) {
+        val bottomNavBar = activity?.findViewById(R.id.nav_view) as BottomNavigationView
+        if (visible) {
+            bottomNavBar.visibility = View.VISIBLE
+        } else {
+            bottomNavBar.visibility = View.GONE
+        }
     }
 }
