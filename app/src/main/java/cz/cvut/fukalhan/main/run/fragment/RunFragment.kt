@@ -1,6 +1,7 @@
 package cz.cvut.fukalhan.main.run.fragment
 
 import android.os.Bundle
+import android.os.SystemClock
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -12,10 +13,11 @@ import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.MapView
 import com.google.android.gms.maps.OnMapReadyCallback
-import com.google.android.gms.maps.model.Marker
 import com.google.android.gms.maps.model.MarkerOptions
-import com.google.android.gms.maps.model.Polyline
+import com.google.android.gms.maps.model.Marker
 import com.google.android.gms.maps.model.PolylineOptions
+import com.google.android.gms.maps.model.Polyline
+import com.google.android.gms.maps.model.LatLng
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.firebase.auth.FirebaseAuth
 import cz.cvut.fukalhan.R
@@ -47,12 +49,10 @@ class RunFragment : Fragment(), OnMapReadyCallback, KoinComponent, IOnGpsListene
     private lateinit var markerOptions: MarkerOptions
     private var polyline: Polyline? = null
     private lateinit var polylineOptions: PolylineOptions
-
+    private val recordObserver: Observer<RunRecord> = Observer { updateRecord(it) }
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val view = inflater.inflate(R.layout.fragment_run, container, false)
-        runViewModel = RunViewModel()
-        runViewModel.registerBus()
-        (activity as ILocationTracking).startTracking()
+        runViewModel = RunViewModel(requireContext())
         setMapView(savedInstanceState, view)
         customizeMarker()
         return view
@@ -73,34 +73,32 @@ class RunFragment : Fragment(), OnMapReadyCallback, KoinComponent, IOnGpsListene
      */
     override fun onMapReady(googleMap: GoogleMap) {
         map = googleMap
-        runViewModel.runRecord.observe(viewLifecycleOwner, Observer { runRecord ->
-            updateLocation(runRecord)
+        runViewModel.location.observe(viewLifecycleOwner, Observer { location ->
+            updateLocation(location)
         })
     }
 
-    private fun updateLocation(runRecord: RunRecord) {
-        val newLocation = runRecord.pathWay.last()
+    private fun updateLocation(location: LatLng) {
         marker?.remove()
-        markerOptions.position(newLocation)
+        markerOptions.position(location)
         marker = map.addMarker(markerOptions)
         if (firstLocationSetting) {
             firstLocationSetting = false
-            map.moveCamera(CameraUpdateFactory.newLatLngZoom(newLocation, 15f))
+            map.moveCamera(CameraUpdateFactory.newLatLngZoom(location, 15f))
         } else {
-            map.animateCamera(CameraUpdateFactory.newLatLng(newLocation))
+            map.animateCamera(CameraUpdateFactory.newLatLng(location))
         }
-        Toast.makeText(context, "${newLocation.latitude}, ${newLocation.longitude}", Toast.LENGTH_SHORT).show()
+    }
 
-        if (recording) {
-            // Redraw the polyline according to new data
-            polyline?.remove()
-            polylineOptions = PolylineOptions().color(R.color.green).addAll(runRecord.pathWay)
-            polyline = map.addPolyline(polylineOptions)
+    private fun updateRecord(runRecord: RunRecord) {
+        // Redraw the polyline according to new data
+        polyline?.remove()
+        polylineOptions = PolylineOptions().color(R.color.green).addAll(runRecord.pathWay)
+        polyline = map.addPolyline(polylineOptions)
 
-            // Update distance count and pace
-            distance.text = String.format("%.2f", runRecord.distance)
-            tempo.text = TimeFormatter.toMinSec(runRecord.pace)
-        }
+        // Update distance count and pace
+        distance.text = String.format("%.2f", runRecord.distance)
+        tempo.text = TimeFormatter.toMinSec(runRecord.pace)
     }
 
     /** Design map marker*/
@@ -140,8 +138,12 @@ class RunFragment : Fragment(), OnMapReadyCallback, KoinComponent, IOnGpsListene
     private fun runStarted() {
         recording = true
         GpsUtil.turnGpsOn(this, requireContext())
+        (activity as ILocationTracking).startTracking()
         runViewModel.startRecord()
-        showBottomNavBar(false)
+        runViewModel.record.observeForever(recordObserver)
+        timer.base = SystemClock.elapsedRealtime()
+        timer.start()
+        bottomNavBarVisibility(false)
 
         start_button.visibility = View.GONE
         end_button.visibility = View.VISIBLE
@@ -150,10 +152,12 @@ class RunFragment : Fragment(), OnMapReadyCallback, KoinComponent, IOnGpsListene
 
     private fun runEnded() {
         recording = false
-        user?.let {
-            runViewModel.saveRecord(it.uid)
-        }
-        showBottomNavBar(true)
+        runViewModel.stopRecord()
+        runViewModel.record.removeObserver(recordObserver)
+        user?.let { runViewModel.saveRecord(it.uid) }
+        (activity as ILocationTracking).stopTracking()
+        timer.stop()
+        bottomNavBarVisibility(true)
 
         end_button.visibility = View.GONE
         pause_button.visibility = View.GONE
@@ -198,8 +202,6 @@ class RunFragment : Fragment(), OnMapReadyCallback, KoinComponent, IOnGpsListene
 
     override fun onDestroy() {
         Log.e("Run fragment", "is destroyed")
-        runViewModel.unregisterBus()
-        (activity as ILocationTracking).stopTracking()
         map.clear()
         mapView.onDestroy()
         super.onDestroy()
@@ -224,7 +226,7 @@ class RunFragment : Fragment(), OnMapReadyCallback, KoinComponent, IOnGpsListene
     }
 
     /** Determines if bottom navigation should be visible*/
-    private fun showBottomNavBar(visible: Boolean) {
+    private fun bottomNavBarVisibility(visible: Boolean) {
         val bottomNavBar = activity?.findViewById(R.id.nav_view) as BottomNavigationView
         if (visible) {
             bottomNavBar.visibility = View.VISIBLE

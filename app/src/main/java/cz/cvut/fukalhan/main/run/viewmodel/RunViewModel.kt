@@ -1,78 +1,73 @@
 package cz.cvut.fukalhan.main.run.viewmodel
 
-import android.location.Location
+import android.content.Context
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.android.gms.maps.model.LatLng
+import cz.cvut.fukalhan.repository.entity.Route
 import cz.cvut.fukalhan.repository.entity.RunRecord
 import cz.cvut.fukalhan.repository.useractivity.states.RecordSaveState
 import cz.cvut.fukalhan.repository.useractivity.UserActivityFacade
+import cz.cvut.fukalhan.service.LocationTrackingRecord
 import kotlinx.coroutines.launch
-import org.greenrobot.eventbus.EventBus
-import org.greenrobot.eventbus.Subscribe
 import org.koin.core.KoinComponent
 import org.koin.core.inject
-import kotlin.math.roundToInt
 
-class RunViewModel : ViewModel(), KoinComponent {
-    val location: MutableLiveData<LatLng> by lazy { MutableLiveData<LatLng>() }
-    val runRecord: MutableLiveData<RunRecord> by lazy { MutableLiveData<RunRecord>() }
+class RunViewModel(context: Context) : ViewModel(), KoinComponent {
     private var startTime: Long = 0
-    private var distance: Double = 0.0
-    private var pathWay: List<LatLng> = emptyList()
-    private var pace: Long = 0
+    private var runRecord = RunRecord()
+    private val locationUpdateObserver: Observer<LatLng> = Observer { location.postValue(it) }
+    private val locationRecordObserver: Observer<Route> = Observer {
+        updateRecord(it)
+    }
+    val location: MutableLiveData<LatLng> by lazy { MutableLiveData<LatLng>().also {
+        locationUpdate.location.observeForever(locationUpdateObserver)
+    } }
+    private val locationUpdate = LocationUpdate(context).also { it.startLocationUpdates() }
+    private val locationTrackingRecord by inject<LocationTrackingRecord>()
+    val record: MutableLiveData<RunRecord> by lazy { MutableLiveData<RunRecord>() }
     private val userActivityFacade by inject<UserActivityFacade>()
     val recordSaveResult: MutableLiveData<RecordSaveState> by lazy { MutableLiveData<RecordSaveState>() }
 
-    fun registerBus() {
-        EventBus.getDefault().register(this)
-    }
-
-    fun unregisterBus() {
-        EventBus.getDefault().unregister(this)
-    }
-
     fun startRecord() {
         startTime = System.currentTimeMillis()
-        distance = 0.0
-        pathWay = emptyList()
-        pace = 0
+        runRecord = RunRecord(startTime)
+        location.removeObserver(locationUpdateObserver)
+        locationTrackingRecord.record.observeForever(locationRecordObserver)
     }
 
-    @Subscribe
-    fun onLocationChanged(newLocation: Location) {
-        runRecord.postValue(updateRecord(newLocation))
+    private fun updateRecord(route: Route) {
+        location.postValue(route.pathPoints.last())
+        runRecord.pace =
+            if (route.distance != 0.0) {
+                ((System.currentTimeMillis() - startTime) / route.distance).toLong()
+            } else {
+                0
+            }
+        runRecord.distance = route.distance
+        runRecord.pathWay = route.pathPoints
+        record.postValue(runRecord)
     }
 
-    private fun updateRecord(location: Location): RunRecord {
-        val newLocation = LatLng(location.latitude, location.longitude)
-        if (pathWay.isNotEmpty()) {
-            val previousLocation = pathWay.last()
-            val result = FloatArray(1)
-            Location.distanceBetween(
-                previousLocation.latitude,
-                previousLocation.longitude,
-                newLocation.latitude,
-                newLocation.longitude,
-                result
-            )
-            distance += (result[0] * 0.1).roundToInt() * 0.01
-        }
-        pathWay = pathWay + newLocation
-
-        pace = if (distance != 0.0) {
-            ((System.currentTimeMillis() - startTime) / distance).toLong()
-        } else {
-            System.currentTimeMillis() - startTime
-        }
-        return RunRecord(distance = distance, pathWay = pathWay, pace = pace)
+    fun stopRecord() {
+        locationUpdate.location.observeForever(locationUpdateObserver)
+        locationTrackingRecord.record.removeObserver(locationRecordObserver)
     }
 
     fun saveRecord(userId: String) {
-        val runRecord = RunRecord(startTime, distance, System.currentTimeMillis() - startTime, pace, pathWay)
         viewModelScope.launch {
-            recordSaveResult.postValue(userActivityFacade.saveRunRecord(userId, runRecord))
+            runRecord.time = System.currentTimeMillis() - startTime
+            val recordSaveState = userActivityFacade.saveRunRecord(userId, runRecord)
+            recordSaveResult.postValue(recordSaveState)
         }
+    }
+
+    override fun onCleared() {
+        locationUpdate.stopLocationUpdates()
+        locationTrackingRecord.record.removeObserver(locationRecordObserver)
+        locationUpdate.location.removeObserver(locationUpdateObserver)
+        super.onCleared()
     }
 }

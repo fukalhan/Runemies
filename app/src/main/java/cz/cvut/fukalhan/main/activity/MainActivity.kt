@@ -54,45 +54,34 @@ class MainActivity : AppCompatActivity(), ILoginNavigation, ILocationTracking {
     private var networkReceiver: NetworkReceiver = NetworkReceiver()
     private var service: LocationService? = null
     private var bound = false
-    private val serviceConnection: ServiceConnection = object : ServiceConnection {
-        override fun onServiceConnected(name: ComponentName, iBinder: IBinder) {
-            val binder = iBinder as (LocationServiceBinder)
-            service = binder.service
-            bound = true
-        }
+    private lateinit var serviceConnection: ServiceConnection
 
-        override fun onServiceDisconnected(name: ComponentName) {
-            service = null
-            bound = false
-        }
-    }
-
-    /**
-     * If there is no user signed in, logout
-     * else set view
-     */
+    /** If there is no user signed in => logout, else => create view */
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        if (user == null) {
-            logOut()
-        }
-
+        if (user == null) logOut()
         setContentView(R.layout.activity_main)
         mainActivityViewModel = MainActivityViewModel()
+        connectLocationService()
         setSupportActionBar(toolbar_main)
-        observeSignOutState()
         setBottomMenuView()
+        observeSignOutState()
         checkPermissions()
     }
 
-    /** Observe if sign out was called, log out if was */
-    private fun observeSignOutState() {
-        mainActivityViewModel.signOutState.observe(this, Observer { signOutState ->
-            when (signOutState) {
-                SignOutState.SUCCESS -> logOut()
-                SignOutState.FAIL -> Toast.makeText(this, "Sign out failed", Toast.LENGTH_SHORT).show()
+    private fun connectLocationService() {
+        serviceConnection = object : ServiceConnection {
+            override fun onServiceConnected(name: ComponentName, iBinder: IBinder) {
+                val binder = iBinder as (LocationServiceBinder)
+                service = binder.service
+                bound = true
             }
-        })
+
+            override fun onServiceDisconnected(name: ComponentName) {
+                service = null
+                bound = false
+            }
+        }
     }
 
     /**
@@ -120,7 +109,7 @@ class MainActivity : AppCompatActivity(), ILoginNavigation, ILocationTracking {
         return true
     }
 
-    /** Defines navigation for clicking on options menu items */
+    /** Defines navigation for individual options menu items */
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {
             R.id.sign_out -> {
@@ -133,6 +122,16 @@ class MainActivity : AppCompatActivity(), ILoginNavigation, ILocationTracking {
             }
             else -> super.onOptionsItemSelected(item)
         }
+    }
+
+    /** Observe if sign out was called, log out if was */
+    private fun observeSignOutState() {
+        mainActivityViewModel.signOutState.observe(this, Observer { signOutState ->
+            when (signOutState) {
+                SignOutState.SUCCESS -> logOut()
+                SignOutState.FAIL -> Toast.makeText(this, "Sign out failed", Toast.LENGTH_SHORT).show()
+            }
+        })
     }
 
     /** Handles back navigation */
@@ -149,8 +148,8 @@ class MainActivity : AppCompatActivity(), ILoginNavigation, ILocationTracking {
     }
 
     /**
-     * Request for permissons and
-     * if permissions are granted bind location tracking service
+     * Request for permissions,
+     * if permissions are granted => bind location tracking service
      */
     private fun checkPermissions() {
         Dexter.withActivity(this)

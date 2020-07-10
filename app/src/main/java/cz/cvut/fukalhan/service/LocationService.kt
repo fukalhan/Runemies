@@ -1,36 +1,34 @@
 package cz.cvut.fukalhan.service
 
-import android.app.Service
-import android.app.NotificationManager
-import android.app.NotificationChannel
-import android.content.Context
 import android.content.Intent
-import android.location.Location
 import android.os.IBinder
-import android.os.Build
 import android.os.Handler
 import android.os.HandlerThread
 import android.util.Log
+import androidx.lifecycle.LifecycleService
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationCallback
 import com.google.android.gms.location.LocationRequest
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.location.LocationResult
 import cz.cvut.fukalhan.shared.Constants
-import cz.cvut.fukalhan.R
-import org.greenrobot.eventbus.EventBus
 import org.koin.core.KoinComponent
+import org.koin.core.inject
 
-class LocationService : Service(), KoinComponent {
+class LocationService : LifecycleService(), KoinComponent {
     private val binder: IBinder = LocationServiceBinder(this)
-    private lateinit var handlerThread: HandlerThread
-    private lateinit var serviceHandler: Handler
     private lateinit var fusedLocationProviderClient: FusedLocationProviderClient
     private lateinit var locationCallback: LocationCallback
     private lateinit var locationRequest: LocationRequest
-    private lateinit var lastLocation: Location
-    private lateinit var notification: LocationTrackingNotificationBuilder
-    private lateinit var notificationManager: NotificationManager
+    private val locationTrackingRecord by inject<LocationTrackingRecord>()
+    private lateinit var handlerThread: HandlerThread
+    private lateinit var serviceHandler: Handler
+    private lateinit var locationTrackingNotification: LocationTrackingNotification
+
+    override fun onBind(intent: Intent): IBinder? {
+        super.onBind(intent)
+        return binder
+    }
 
     override fun onCreate() {
         super.onCreate()
@@ -38,7 +36,7 @@ class LocationService : Service(), KoinComponent {
         locationCallback = object : LocationCallback() {
             override fun onLocationResult(locationResult: LocationResult) {
                 super.onLocationResult(locationResult)
-                onNewLocation(locationResult.lastLocation)
+                locationTrackingRecord.onNewLocation(locationResult.lastLocation)
             }
         }
         createLocationRequest()
@@ -47,20 +45,7 @@ class LocationService : Service(), KoinComponent {
         handlerThread.start()
         serviceHandler = Handler(handlerThread.looper)
 
-        notification =
-            LocationTrackingNotificationBuilder(this)
-        notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            val channel = NotificationChannel(Constants.CHANNEL_ID, getString(R.string.appName), NotificationManager.IMPORTANCE_DEFAULT)
-            notificationManager.createNotificationChannel(channel)
-        }
-    }
-
-    /** On new location result received in location callback*/
-    private fun onNewLocation(location: Location) {
-        lastLocation = location
-        EventBus.getDefault().post(location)
-        notificationManager.notify(Constants.NOTIFICATION_ID, notification.build(location))
+        locationTrackingNotification = LocationTrackingNotification(this)
     }
 
     /** Set parameters for quality of location requests */
@@ -70,31 +55,33 @@ class LocationService : Service(), KoinComponent {
         locationRequest.priority = LocationRequest.PRIORITY_HIGH_ACCURACY
     }
 
-    /** Start requesting location updates */
+    /** Start location service */
     fun startLocationTracking() {
         startService(Intent(applicationContext, LocationService::class.java))
     }
 
-    /** After service is started these actions will be triggered */
+    /** Callback after service is started, start requesting location updates */
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
+        super.onStartCommand(intent, flags, startId)
         serviceHandler.post {
             try {
                 fusedLocationProviderClient.requestLocationUpdates(locationRequest, locationCallback, handlerThread.looper)
             } catch (e: SecurityException) {
-                Log.e("Loc", "Lost location permission$e")
+                Log.e("LocationService", "Lost location permission$e")
             }
         }
+        locationTrackingRecord.reset()
+        locationTrackingNotification.startNotifications()
+        startForeground(Constants.NOTIFICATION_ID, locationTrackingNotification.notification)
         return START_STICKY
     }
 
     /** Stop requesting location updates */
     fun stopLocationTracking() {
         fusedLocationProviderClient.removeLocationUpdates(locationCallback)
+        locationTrackingNotification.stopNotifications()
+        stopForeground(true)
         stopSelf()
-    }
-
-    override fun onBind(intent: Intent): IBinder? {
-        return binder
     }
 
     override fun onDestroy() {
