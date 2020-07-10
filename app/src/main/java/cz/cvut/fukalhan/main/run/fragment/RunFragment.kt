@@ -7,6 +7,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import com.google.android.gms.maps.CameraUpdateFactory
@@ -38,7 +39,7 @@ import org.koin.core.KoinComponent
  * Run recording screen,
  * show current run statistics, map view and buttons handling run recording
  */
-class RunFragment : Fragment(), OnMapReadyCallback, KoinComponent, IOnGpsListener {
+class RunFragment : Fragment(), OnMapReadyCallback, KoinComponent, IOnGpsListener, ISaveDialogListener {
     private val user = FirebaseAuth.getInstance().currentUser
     private lateinit var runViewModel: RunViewModel
     private var recording: Boolean = false
@@ -50,6 +51,7 @@ class RunFragment : Fragment(), OnMapReadyCallback, KoinComponent, IOnGpsListene
     private var polyline: Polyline? = null
     private lateinit var polylineOptions: PolylineOptions
     private val recordObserver: Observer<RunRecord> = Observer { updateRecord(it) }
+
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val view = inflater.inflate(R.layout.fragment_run, container, false)
         runViewModel = RunViewModel(requireContext())
@@ -154,7 +156,8 @@ class RunFragment : Fragment(), OnMapReadyCallback, KoinComponent, IOnGpsListene
         recording = false
         runViewModel.stopRecord()
         runViewModel.record.removeObserver(recordObserver)
-        user?.let { runViewModel.saveRecord(it.uid) }
+        val dialog = SaveRecordDialog(this as ISaveDialogListener)
+        dialog.show(requireFragmentManager(), "SaveRecordDialog")
         (activity as ILocationTracking).stopTracking()
         timer.stop()
         bottomNavBarVisibility(true)
@@ -169,7 +172,10 @@ class RunFragment : Fragment(), OnMapReadyCallback, KoinComponent, IOnGpsListene
     private fun observeSaveRunRecord() {
         runViewModel.recordSaveResult.observe(viewLifecycleOwner, Observer { recordSaveState ->
             when (recordSaveState) {
-                RecordSaveState.SUCCESS -> Toast.makeText(context, "Run record saved", Toast.LENGTH_SHORT).show()
+                RecordSaveState.SUCCESS -> {
+                    resetRecord()
+                    Toast.makeText(context, "Record saved", Toast.LENGTH_SHORT).show()
+                }
                 RecordSaveState.CANNOT_ADD_RECORD -> TODO()
                 RecordSaveState.CANNOT_UPDATE_STATISTICS -> TODO()
                 RecordSaveState.NOT_EXISTING_USER -> TODO()
@@ -233,5 +239,20 @@ class RunFragment : Fragment(), OnMapReadyCallback, KoinComponent, IOnGpsListene
         } else {
             bottomNavBar.visibility = View.GONE
         }
+    }
+
+    private fun resetRecord() {
+        polyline?.remove()
+        distance.text = 0.0.toString()
+        timer.base = SystemClock.elapsedRealtime()
+        timer.stop()
+    }
+
+    override fun onDialogPositiveClick(dialog: DialogFragment) {
+        user?.let { runViewModel.saveRecord(it.uid) }
+    }
+
+    override fun onDialogNegativeClick(dialog: DialogFragment) {
+        resetRecord()
     }
 }
