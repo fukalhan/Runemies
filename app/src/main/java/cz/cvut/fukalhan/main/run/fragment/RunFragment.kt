@@ -51,6 +51,7 @@ class RunFragment : Fragment(), OnMapReadyCallback, KoinComponent, IOnGpsListene
     private var polyline: Polyline? = null
     private lateinit var polylineOptions: PolylineOptions
     private val recordObserver: Observer<RunRecord> = Observer { updateRecord(it) }
+    private var timeWhenStopped: Long = 0
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val view = inflater.inflate(R.layout.fragment_run, container, false)
@@ -123,13 +124,11 @@ class RunFragment : Fragment(), OnMapReadyCallback, KoinComponent, IOnGpsListene
         }
 
         pause_button.setOnClickListener {
-            pause_button.visibility = View.GONE
-            continue_button.visibility = View.VISIBLE
+            runPaused()
         }
 
         continue_button.setOnClickListener {
-            pause_button.visibility = View.VISIBLE
-            continue_button.visibility = View.GONE
+            runContinue()
         }
 
         end_button.setOnClickListener {
@@ -152,6 +151,24 @@ class RunFragment : Fragment(), OnMapReadyCallback, KoinComponent, IOnGpsListene
         pause_button.visibility = View.VISIBLE
     }
 
+    private fun runPaused() {
+        (activity as ILocationTracking).pauseTracking()
+        runViewModel.pauseRecord()
+        timeWhenStopped = timer.base - SystemClock.elapsedRealtime()
+        timer.stop()
+        pause_button.visibility = View.GONE
+        continue_button.visibility = View.VISIBLE
+    }
+
+    private fun runContinue() {
+        (activity as ILocationTracking).continueTracking()
+        runViewModel.continueRecord()
+        timer.base = SystemClock.elapsedRealtime() + timeWhenStopped
+        timer.start()
+        pause_button.visibility = View.VISIBLE
+        continue_button.visibility = View.GONE
+    }
+
     private fun runEnded() {
         recording = false
         runViewModel.stopRecord()
@@ -160,6 +177,7 @@ class RunFragment : Fragment(), OnMapReadyCallback, KoinComponent, IOnGpsListene
         dialog.show(requireFragmentManager(), "SaveRecordDialog")
         (activity as ILocationTracking).stopTracking()
         timer.stop()
+        timeWhenStopped = 0
         bottomNavBarVisibility(true)
 
         end_button.visibility = View.GONE
@@ -243,8 +261,9 @@ class RunFragment : Fragment(), OnMapReadyCallback, KoinComponent, IOnGpsListene
 
     private fun resetRecord() {
         polyline?.remove()
-        distance.text = 0.0.toString()
+        distance.text = getString(R.string.distance_reset)
         timer.base = SystemClock.elapsedRealtime()
+        tempo.text = getString(R.string.tempo_reset)
         timer.stop()
     }
 

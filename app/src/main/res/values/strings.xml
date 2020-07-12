@@ -75,4 +75,7 @@
     <string name="timer_reset">00:00:00</string>
     <string name="distance_reset">0,00</string>
     <string name="gps">GPS</string>
+    <string name="notification_time">Time:</string>
+    <string name="distance">Distance:</string>
+    <string name="notification_distance">%1$s km</string>
 </resources>

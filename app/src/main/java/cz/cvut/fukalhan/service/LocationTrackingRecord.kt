@@ -9,11 +9,9 @@ import kotlin.math.roundToInt
 
 class LocationTrackingRecord : KoinComponent {
     val record: MutableLiveData<Route> by lazy { MutableLiveData<Route>() }
-    private var distance: Double = 0.0
     private var pathWay: List<LatLng> = emptyList()
 
     fun reset() {
-        distance = 0.0
         pathWay = emptyList()
     }
 
@@ -23,6 +21,7 @@ class LocationTrackingRecord : KoinComponent {
 
     private fun updateRecord(location: Location): Route {
         val newLocation = LatLng(location.latitude, location.longitude)
+        var distance = 0.0
         if (pathWay.isNotEmpty()) {
             val previousLocation = pathWay.last()
             val result = FloatArray(1)
@@ -33,10 +32,10 @@ class LocationTrackingRecord : KoinComponent {
                 newLocation.longitude,
                 result
             )
-            distance += (result[0] * 0.1).roundToInt() * 0.01
+            distance = (result[0] * 0.1).roundToInt() * 0.01
         }
         pathWay = pathWay + newLocation
 
-        return Route(distance, pathWay)
+        return Route(distance, newLocation)
     }
 }

@@ -76,6 +76,23 @@ class LocationService : LifecycleService(), KoinComponent {
         return START_STICKY
     }
 
+    fun pauseLocationTracking() {
+        fusedLocationProviderClient.removeLocationUpdates(locationCallback)
+        locationTrackingNotification.pauseNotifications()
+    }
+
+    fun continueLocationTracking() {
+        locationTrackingRecord.reset()
+        serviceHandler.post {
+            try {
+                fusedLocationProviderClient.requestLocationUpdates(locationRequest, locationCallback, handlerThread.looper)
+            } catch (e: SecurityException) {
+                Log.e("LocationService", "Lost location permission$e")
+            }
+        }
+        locationTrackingNotification.continueNotifications()
+    }
+
     /** Stop requesting location updates */
     fun stopLocationTracking() {
         fusedLocationProviderClient.removeLocationUpdates(locationCallback)

@@ -198,6 +198,14 @@ class MainActivity : AppCompatActivity(), ILoginNavigation, ILocationTracking {
         service?.startLocationTracking()
     }
 
+    override fun pauseTracking() {
+        service?.pauseLocationTracking()
+    }
+
+    override fun continueTracking() {
+        service?.continueLocationTracking()
+    }
+
     /** Stop tracking service */
     override fun stopTracking() {
         service?.stopLocationTracking()
