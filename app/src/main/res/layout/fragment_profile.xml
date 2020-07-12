@@ -8,7 +8,7 @@
     android:gravity="top|center">
 
     <ImageView
-        android:id="@+id/profile_pic"
+        android:id="@+id/profile_image"
         android:layout_width="100dp"
         android:layout_height="100dp"
         android:src="@drawable/ic_account_circle_black_24dp"

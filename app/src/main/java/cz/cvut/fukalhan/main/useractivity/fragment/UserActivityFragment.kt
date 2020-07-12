@@ -21,11 +21,9 @@ import kotlinx.android.synthetic.main.fragment_activity.*
  * A simple [Fragment] subclass.
  */
 class UserActivityFragment : Fragment() {
-
     private lateinit var userActivityViewModel: UserActivityViewModel
     private val userAuth: FirebaseUser? = FirebaseAuth.getInstance().currentUser
 
-    // Init fragment view model and inflate fragment layout
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -35,11 +33,9 @@ class UserActivityFragment : Fragment() {
         return inflater.inflate(R.layout.fragment_activity, container, false)
     }
 
-    // Request current user's activities and observe the result
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        setActivitiesObserver()
-        userAuth?.let { userActivityViewModel.getUserActivities(it.uid) }
+        getRecords()
     }
 
     /**
@@ -49,7 +45,7 @@ class UserActivityFragment : Fragment() {
      * -> there are no activities for current user
      * -> there are some activities
      */
-    private fun setActivitiesObserver() {
+    private fun getRecords() {
         userActivityViewModel.activitiesReceiver.observe(viewLifecycleOwner, Observer { activities ->
             when {
                 activities.error -> {
@@ -63,6 +59,7 @@ class UserActivityFragment : Fragment() {
                 }
             }
         })
+        userAuth?.let { userActivityViewModel.getUserActivities(it.uid) }
     }
 
     // Init userActivitiesAdapter in fragment layout's recycler view

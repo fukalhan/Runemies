@@ -1,5 +1,8 @@
 package cz.cvut.fukalhan.repository.user
 
+import android.net.Uri
+import com.google.firebase.auth.FirebaseUser
+import com.google.firebase.auth.UserProfileChangeRequest
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ktx.toObject
 import cz.cvut.fukalhan.repository.entity.User
@@ -56,5 +59,9 @@ class UserRepository : IUserRepository {
             e.printStackTrace()
             null
         }
+    }
+
+    override suspend fun setProfileImage(user: FirebaseUser, imageUri: Uri) {
+        user.updateProfile(UserProfileChangeRequest.Builder().setPhotoUri(imageUri).build())
     }
 }
