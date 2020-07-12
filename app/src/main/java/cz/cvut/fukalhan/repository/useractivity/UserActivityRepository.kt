@@ -4,80 +4,45 @@ import com.google.android.gms.maps.model.LatLng
 import com.google.firebase.firestore.FirebaseFirestore
 import cz.cvut.fukalhan.repository.entity.RunRecord
 import cz.cvut.fukalhan.repository.entity.User
-import cz.cvut.fukalhan.repository.useractivity.states.RunRecordSaveState
+import cz.cvut.fukalhan.repository.useractivity.states.RecordSaveState
 import cz.cvut.fukalhan.shared.Constants
 import cz.cvut.fukalhan.shared.DataWrapper
-import kotlinx.android.synthetic.main.fragment_run.view.*
 import kotlinx.coroutines.tasks.await
 import java.lang.Exception
 
 class UserActivityRepository : IUserActivityRepository {
-
     private val db = FirebaseFirestore.getInstance()
-
-    override suspend fun getUserActivities(uid: String): DataWrapper<ArrayList<RunRecord>> {
-        val runRecords = ArrayList<RunRecord>()
-        return try {
-            val snapshot = db.collection(Constants.RUN_RECORDS).document(uid)
-                .collection(Constants.USER_RECORDS).get().await()
-            snapshot.forEach { doc ->
-                runRecords.add(RunRecord(
-                    id = doc.data["id"] as String,
-                    date = doc.data["date"] as Long,
-                    distance = doc.data["distance"] as Double,
-                    time = doc.data["time"] as Long,
-                    pace = doc.data["pace"] as Long,
-                    pathWay = convertToObjectList(doc.data["pathWay"] as ArrayList<Map<String, Double>>)
-                ))
-            }
-            DataWrapper(runRecords)
-        } catch (e: Exception) {
-            e.printStackTrace()
-            DataWrapper(runRecords, true, e.message, e)
-        }
-    }
-
-    /** Converts Firestore way of storing list of LatLng to actual List<LatLng> */
-    private fun convertToObjectList(objects: ArrayList<Map<String, Double>>): List<LatLng> {
-        val pathWay = ArrayList<LatLng>()
-        objects.forEach { map ->
-            val latitude = map["latitude"]
-            val longitude = map["longitude"]
-            pathWay.add(LatLng(latitude!!, longitude!!))
-        }
-        return pathWay.toList()
-    }
 
     /**
      * Save run record to database under given user ID
      * If run record is saved, add the record to user's statistics
      */
-    override suspend fun saveRunRecord(userID: String, runRecord: RunRecord): RunRecordSaveState {
+    override suspend fun saveRunRecord(userID: String, runRecord: RunRecord): RecordSaveState {
         return try {
             when (addRunRecord(userID, runRecord)) {
-                RunRecordSaveState.SUCCESS -> updateUser(userID, runRecord)
-                RunRecordSaveState.CANNOT_ADD_RECORD -> RunRecordSaveState.CANNOT_ADD_RECORD
+                RecordSaveState.CANNOT_ADD_RECORD -> RecordSaveState.CANNOT_ADD_RECORD
+                else -> updateUser(userID, runRecord)
             }
-            RunRecordSaveState.SUCCESS
+            RecordSaveState.SUCCESS
         } catch (e: Exception) {
             e.printStackTrace()
-            RunRecordSaveState.FAIL
+            RecordSaveState.FAIL
         }
     }
 
     /** Add run record to the database */
-    private suspend fun addRunRecord(userID: String, runRecord: RunRecord): RunRecordSaveState {
+    private suspend fun addRunRecord(userID: String, runRecord: RunRecord): RecordSaveState {
         return try {
             db.collection(Constants.RUN_RECORDS).document(userID).collection(Constants.USER_RECORDS)
                 .add(runRecord).await()
-            RunRecordSaveState.SUCCESS
+            RecordSaveState.SUCCESS
         } catch (e: Exception) {
             e.printStackTrace()
-            RunRecordSaveState.CANNOT_ADD_RECORD
+            RecordSaveState.CANNOT_ADD_RECORD
         }
     }
 
-    private suspend fun updateUser(userID: String, runRecord: RunRecord): RunRecordSaveState {
+    private suspend fun updateUser(userID: String, runRecord: RunRecord): RecordSaveState {
         return try {
             val snapshot = db.collection(Constants.USERS).document(userID).get().await()
             if (snapshot.exists()) {
@@ -86,13 +51,13 @@ class UserActivityRepository : IUserActivityRepository {
                     db.collection(Constants.USERS).document(userID)
                         .set(updateUserStatistics(user, runRecord)).await()
                 }
-                RunRecordSaveState.SUCCESS
+                RecordSaveState.SUCCESS
             } else {
-                RunRecordSaveState.NOT_EXISTING_USER
+                RecordSaveState.NOT_EXISTING_USER
             }
         } catch (e: Exception) {
             e.printStackTrace()
-            RunRecordSaveState.CANNOT_UPDATE_STATISTICS
+            RecordSaveState.CANNOT_UPDATE_STATISTICS
         }
     }
     /** Update user statistics according with new run record */
@@ -124,5 +89,76 @@ class UserActivityRepository : IUserActivityRepository {
             user.mileageToGetLife = 0.0
         }
         return user
+    }
+
+    override suspend fun getUserActivities(uid: String): DataWrapper<ArrayList<RunRecord>> {
+        val runRecords = ArrayList<RunRecord>()
+        return try {
+            val snapshot = db.collection(Constants.RUN_RECORDS).document(uid)
+                .collection(Constants.USER_RECORDS).get().await()
+            snapshot.forEach { doc ->
+                runRecords.add(RunRecord(
+                    id = doc.data["id"] as String,
+                    date = doc.data["date"] as Long,
+                    distance = doc.data["distance"] as Double,
+                    time = doc.data["time"] as Long,
+                    pace = doc.data["pace"] as Long,
+                    pathWay = convertToObjectList(doc.data["pathWay"] as ArrayList<Map<String, Double>>)
+                ))
+            }
+            val tmp = Array(runRecords.size) { RunRecord() }
+            mergeSort(runRecords, tmp, 0, runRecords.size - 1)
+            DataWrapper(runRecords)
+        } catch (e: Exception) {
+            e.printStackTrace()
+            DataWrapper(runRecords, true, e.message, e)
+        }
+    }
+
+    private fun mergeSort(array: ArrayList<RunRecord>, result: Array<RunRecord>, left: Int, right: Int) {
+        if (left == right) return
+        val middleIndex = (left + right) / 2
+        mergeSort(array, result, left, middleIndex)
+        mergeSort(array, result, middleIndex + 1, right)
+        merge(array, result, left, right)
+
+        for (i in left..right) {
+            array[i] = result[i]
+        }
+    }
+
+    private fun merge(array: ArrayList<RunRecord>, result: Array<RunRecord>, left: Int, right: Int) {
+        val middleIndex = (left + right) / 2
+        var leftIndex = left
+        var rightIndex = middleIndex + 1
+        var resultIndex = left
+
+        while (leftIndex <= middleIndex && rightIndex <= right) {
+            if (array[leftIndex].date >= array[rightIndex].date) {
+                result[resultIndex] = array[leftIndex++]
+            } else {
+                result[resultIndex] = array[rightIndex++]
+            }
+            resultIndex++
+        }
+
+        while (leftIndex <= middleIndex) {
+            result[resultIndex] = array[leftIndex++]
+            resultIndex++
+        }
+        while (rightIndex <= right) {
+            result[resultIndex] = array[rightIndex++]
+            resultIndex++
+        }
+    }
+    /** Converts Firestore way of storing list of LatLng to actual List<LatLng> */
+    private fun convertToObjectList(objects: ArrayList<Map<String, Double>>): List<LatLng> {
+        val pathWay = ArrayList<LatLng>()
+        objects.forEach { map ->
+            val latitude = map["latitude"]
+            val longitude = map["longitude"]
+            pathWay.add(LatLng(latitude!!, longitude!!))
+        }
+        return pathWay.toList()
     }
 }

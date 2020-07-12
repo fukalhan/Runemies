@@ -15,7 +15,7 @@ class App : Application() {
             modules(Module.challengeModule)
             modules(Module.userModule)
             modules(Module.userActivityModule)
-            modules(Module.locationTrackingModule)
+            modules(Module.locationTrackingRecordModule)
         }
     }
 }

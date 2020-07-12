@@ -1,33 +1,33 @@
 package cz.cvut.fukalhan.main.settings.fragment
 
 import android.content.Intent
-import android.net.Uri
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageView
 import androidx.fragment.app.Fragment
 import com.google.android.material.bottomnavigation.BottomNavigationView
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.FirebaseUser
 import cz.cvut.fukalhan.R
 import cz.cvut.fukalhan.main.settings.viewmodel.SettingsViewModel
 import cz.cvut.fukalhan.shared.Constants
 import kotlinx.android.synthetic.main.fragment_settings.*
+import java.io.FileNotFoundException
 
 /**
  * A simple [Fragment] subclass.
  */
 class SettingsFragment : Fragment() {
-    private lateinit var viewModel: SettingsViewModel
-    private lateinit var filePath: Uri
-    private lateinit var imageView: ImageView
+    private val user: FirebaseUser? = FirebaseAuth.getInstance().currentUser
+    private lateinit var settingsViewModel: SettingsViewModel
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        viewModel = SettingsViewModel()
+        settingsViewModel = SettingsViewModel()
         return inflater.inflate(R.layout.fragment_settings, container, false)
     }
 
@@ -50,27 +50,14 @@ class SettingsFragment : Fragment() {
             Intent.createChooser(intent, "Select Image from here..."), Constants.PICK_IMAGE_REQUEST)
     }
 
-    /*override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        // if request code is PICK_IMAGE_REQUEST,
-        // then set image in the image view
-        if (requestCode == Constants.PICK_IMAGE_REQUEST
-            && data != null
-            && data.data != null) {
-                filePath = data.data!!
+        if (requestCode == Constants.PICK_IMAGE_REQUEST && data != null) {
             try {
-                // Setting image on image view using Bitmap
-                lateinit var bitmap: Bitmap
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P){
-                    bitmap = ImageDecoder.createSource(getContentResolver(), filePath)
-                } else {
-                    bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), filePath)
-                }
-                imageView.setImageBitmap(BitmapFactory.decodeFile(filePath))
-            } catch (e: Exception) {
-                // Log the exception
+                user?.let { settingsViewModel.setProfileImage(it, data.data!!) }
+            } catch (e: FileNotFoundException) {
                 e.printStackTrace()
             }
         }
-    }*/
+    }
 }
