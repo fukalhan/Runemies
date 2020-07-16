@@ -1,6 +1,8 @@
 package cz.cvut.fukalhan.repository.user
 
 import android.net.Uri
+import android.util.Log
+import com.google.firebase.auth.FirebaseAuthInvalidUserException
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.UserProfileChangeRequest
 import com.google.firebase.firestore.FirebaseFirestore
@@ -62,6 +64,10 @@ class UserRepository : IUserRepository {
     }
 
     override suspend fun setProfileImage(user: FirebaseUser, imageUri: Uri) {
-        user.updateProfile(UserProfileChangeRequest.Builder().setPhotoUri(imageUri).build())
+        try {
+            user.updateProfile(UserProfileChangeRequest.Builder().setPhotoUri(imageUri).build())
+        } catch (e: FirebaseAuthInvalidUserException) {
+            Log.e(e.toString(), e.message)
+        }
     }
 }
