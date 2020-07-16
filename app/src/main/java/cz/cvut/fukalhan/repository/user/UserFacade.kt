@@ -10,8 +10,8 @@ import org.koin.core.inject
 class UserFacade : IUserFacade, KoinComponent {
     val repository by inject<UserRepository>()
 
-    override suspend fun getUsers(exceptUser: String?): DataWrapper<List<User>> {
-        return repository.getUsers(exceptUser)
+    override suspend fun getUsers(): DataWrapper<ArrayList<User>> {
+        return repository.getUsers()
     }
 
     override suspend fun getUser(id: String): User? {

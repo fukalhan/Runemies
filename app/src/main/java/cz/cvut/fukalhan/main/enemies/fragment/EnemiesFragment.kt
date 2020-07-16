@@ -9,8 +9,6 @@ import android.widget.Toast
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.auth.FirebaseUser
 
 import cz.cvut.fukalhan.R
 import cz.cvut.fukalhan.main.enemies.adapter.EnemiesAdapter
@@ -22,38 +20,31 @@ import kotlinx.android.synthetic.main.fragment_enemies.*
  * A simple [Fragment] subclass.
  */
 class EnemiesFragment : Fragment() {
-
-    private lateinit var viewModel: EnemiesViewModel
-    private val userAuth: FirebaseUser? = FirebaseAuth.getInstance().currentUser
+    private lateinit var enemiesViewModel: EnemiesViewModel
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        viewModel = EnemiesViewModel()
-        // Inflate the layout for this fragment
+        enemiesViewModel = EnemiesViewModel()
         return inflater.inflate(R.layout.fragment_enemies, container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        setEnemiesObserver()
-        userAuth?.let { viewModel.getEnemies(userAuth.uid) }
+        getEnemies()
     }
 
-    private fun setEnemiesObserver() {
-        viewModel.enemiesReceiver.observe(viewLifecycleOwner, Observer { enemies ->
+    private fun getEnemies() {
+        enemiesViewModel.enemies.observe(viewLifecycleOwner, Observer { enemies ->
             when {
                 enemies.error -> {
                     enemies_state.text = getString(R.string.enemies_unavailable)
                     Toast.makeText(context, "Something went wrong", Toast.LENGTH_SHORT).show()
                 }
                 enemies.data?.isEmpty()!! -> enemies_state.text = getString(R.string.no_enemy_records)
-                else -> {
-                    enemies_state.text = getString(R.string.enemies_count, enemies.data.size)
-                    setAdapter(enemies.data)
-                }
+                else -> setAdapter(enemies.data)
             }
         })
     }

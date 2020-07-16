@@ -12,12 +12,14 @@ import org.koin.core.inject
 
 class EnemiesViewModel : ViewModel(), KoinComponent {
     private val userFacade by inject<UserFacade>()
-    val enemiesReceiver: MutableLiveData<DataWrapper<List<User>>> by lazy { MutableLiveData<DataWrapper<List<User>>>() }
-
-    fun getEnemies(currentUserID: String) {
-        viewModelScope.launch {
-            val users = userFacade.getUsers(currentUserID)
-            enemiesReceiver.postValue(users)
-        }
+    val enemies: MutableLiveData<DataWrapper<ArrayList<User>>> by lazy {
+        MutableLiveData<DataWrapper<ArrayList<User>>>()
+            .also {
+                viewModelScope.launch {
+                    val users = userFacade.getUsers()
+                    users.data?.sortWith(EnemiesComparator())
+                    enemies.postValue(users)
+                }
+            }
     }
 }

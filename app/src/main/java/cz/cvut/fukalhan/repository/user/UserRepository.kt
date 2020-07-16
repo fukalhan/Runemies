@@ -21,31 +21,19 @@ class UserRepository : IUserRepository {
      * @return DataWrapper<List<User>> which specifies if some or none users were found or
      * if getting them thrown exception
      */
-    override suspend fun getUsers(exceptUser: String?): DataWrapper<List<User>> {
+    override suspend fun getUsers(): DataWrapper<ArrayList<User>> {
         val users: ArrayList<User> = ArrayList()
         return try {
             // Get all records in users collection
             val snapshot = db.collection(Constants.USERS).get().await()
-            // If exceptUser is not specified, get all users
-            if (exceptUser == null) {
-                snapshot.documents.forEach { doc ->
-                    val user = doc.toObject(User::class.java)
-                    user?.let { users.add(it) }
-                }
-            } else {
-                snapshot.documents.forEach { doc ->
-                    val user = doc.toObject(User::class.java)
-                    user?.let {
-                        if (user.id != exceptUser) {
-                            users.add(it)
-                        }
-                    }
-                }
+            snapshot.documents.forEach { doc ->
+                val user = doc.toObject(User::class.java)
+                user?.let { users.add(it) }
             }
-            DataWrapper(users.toList())
+            DataWrapper(users)
         } catch (e: Exception) {
             e.printStackTrace()
-            DataWrapper(users.toList(), true, e.message, e)
+            DataWrapper(users, true, e.message, e)
         }
     }
 
