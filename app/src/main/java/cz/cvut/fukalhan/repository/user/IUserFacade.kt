@@ -9,4 +9,5 @@ interface IUserFacade {
     suspend fun getUsers(exceptUser: String? = null): DataWrapper<List<User>>
     suspend fun getUser(id: String): User?
     suspend fun setProfileImage(user: FirebaseUser, imageUri: Uri)
+    suspend fun setUsername(user: FirebaseUser, newUsername: String)
 }

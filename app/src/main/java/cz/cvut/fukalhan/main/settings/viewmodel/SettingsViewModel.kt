@@ -17,4 +17,10 @@ class SettingsViewModel : ViewModel(), KoinComponent {
             userFacade.setProfileImage(user, imageUri)
         }
     }
+
+    fun setUsername(user: FirebaseUser, newUsername: String) {
+        viewModelScope.launch {
+            userFacade.setUsername(user, newUsername)
+        }
+    }
 }

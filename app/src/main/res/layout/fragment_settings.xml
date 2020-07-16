@@ -22,6 +22,7 @@
         android:text="@string/change_profile_picture" />
 
     <TextView
+        android:id="@+id/change_username"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="30dp"

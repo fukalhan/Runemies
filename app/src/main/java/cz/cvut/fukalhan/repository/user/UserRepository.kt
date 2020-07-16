@@ -70,4 +70,12 @@ class UserRepository : IUserRepository {
             Log.e(e.toString(), e.message)
         }
     }
+
+    override suspend fun setUsername(user: FirebaseUser, newUsername: String) {
+        try {
+            user.updateProfile(UserProfileChangeRequest.Builder().setDisplayName(newUsername).build())
+        } catch (e: FirebaseAuthInvalidUserException) {
+            Log.e(e.toString(), e.message)
+        }
+    }
 }

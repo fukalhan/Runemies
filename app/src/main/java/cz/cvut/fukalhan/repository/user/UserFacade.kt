@@ -21,4 +21,8 @@ class UserFacade : IUserFacade, KoinComponent {
     override suspend fun setProfileImage(user: FirebaseUser, imageUri: Uri) {
         repository.setProfileImage(user, imageUri)
     }
+
+    override suspend fun setUsername(user: FirebaseUser, newUsername: String) {
+        repository.setUsername(user, newUsername)
+    }
 }

@@ -7,6 +7,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.Fragment
 import com.github.dhaval2404.imagepicker.ImagePicker
 import com.google.android.material.bottomnavigation.BottomNavigationView
@@ -14,13 +15,12 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import cz.cvut.fukalhan.R
 import cz.cvut.fukalhan.main.settings.viewmodel.SettingsViewModel
-import cz.cvut.fukalhan.shared.Constants
 import kotlinx.android.synthetic.main.fragment_settings.*
 
 /**
  * A simple [Fragment] subclass.
  */
-class SettingsFragment : Fragment() {
+class SettingsFragment : Fragment(), ISetUsernameListener {
     private val user: FirebaseUser? = FirebaseAuth.getInstance().currentUser
     private lateinit var settingsViewModel: SettingsViewModel
 
@@ -42,6 +42,11 @@ class SettingsFragment : Fragment() {
                 .compress(1024)
                 .start()
         }
+
+        change_username.setOnClickListener {
+            val dialog = SetUsernameDialog(this as ISetUsernameListener)
+            dialog.show(requireFragmentManager(), "SetUsernameDialog")
+        }
     }
 
     private fun hideBottomNav() {
@@ -60,5 +65,9 @@ class SettingsFragment : Fragment() {
         } else {
             Toast.makeText(context, "Task Cancelled", Toast.LENGTH_SHORT).show()
         }
+    }
+
+    override fun onUsernameSaveClick(dialog: DialogFragment, newUsername: String) {
+        user?.let { settingsViewModel.setUsername(user, newUsername) }
     }
 }
