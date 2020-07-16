@@ -10,12 +10,12 @@ import org.koin.core.inject
 class UserFacade : IUserFacade, KoinComponent {
     val repository by inject<UserRepository>()
 
-    override suspend fun getUsers(): DataWrapper<ArrayList<User>> {
-        return repository.getUsers()
+    override suspend fun getUser(userId: String): DataWrapper<User> {
+        return repository.getUser(userId)
     }
 
-    override suspend fun getUser(id: String): User? {
-        return repository.getUser(id)
+    override suspend fun getUsers(): DataWrapper<ArrayList<User>> {
+        return repository.getUsers()
     }
 
     override suspend fun setProfileImage(user: FirebaseUser, imageUri: Uri) {

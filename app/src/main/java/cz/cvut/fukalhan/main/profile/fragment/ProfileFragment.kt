@@ -15,23 +15,17 @@ import cz.cvut.fukalhan.main.profile.viewmodel.ProfileViewModel
 import cz.cvut.fukalhan.repository.entity.User
 import cz.cvut.fukalhan.utils.TimeFormatter
 import kotlinx.android.synthetic.main.fragment_profile.*
-import kotlinx.android.synthetic.main.profile_activity_records.*
 import kotlinx.android.synthetic.main.profile_activity_summary.*
 
 /**
  * A simple [Fragment] subclass.
  */
 class ProfileFragment : Fragment(), ILoginNavigation {
-    private lateinit var viewModel: ProfileViewModel
+    private lateinit var profileViewModel: ProfileViewModel
     private val user: FirebaseUser? = FirebaseAuth.getInstance().currentUser
 
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
-        viewModel = ProfileViewModel()
-        // Inflate the layout for this fragment
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+        profileViewModel = ProfileViewModel()
         return inflater.inflate(R.layout.fragment_profile, container, false)
     }
 
@@ -42,11 +36,11 @@ class ProfileFragment : Fragment(), ILoginNavigation {
 
     /** Request data of current user and set observer for the answer */
     private fun getUserData() {
-        viewModel.user.observe(viewLifecycleOwner, Observer { userData ->
-            if (userData != null) {
-                setUserData(userData)
-            } else {
-                Toast.makeText(context, "User data not available", Toast.LENGTH_SHORT).show()
+        profileViewModel.user.observe(viewLifecycleOwner, Observer { user ->
+            when {
+                user.error -> Toast.makeText(context, "Cannot retrieve user data", Toast.LENGTH_SHORT).show()
+                user.data == null -> Toast.makeText(context, "User doesn't exists", Toast.LENGTH_SHORT).show()
+                else -> setUserData(user.data)
             }
         })
         // If there is current user signed in request for his data by his ID
@@ -54,7 +48,7 @@ class ProfileFragment : Fragment(), ILoginNavigation {
             profile_image.setImageURI(user.photoUrl)
             profile_username.text = user.displayName
             join_date.text = getString(R.string.joined, TimeFormatter.simpleDate.format(user.metadata?.creationTimestamp))
-            viewModel.getUser(it.uid)
+            profileViewModel.getUser(it.uid)
         }
     }
 
@@ -65,6 +59,5 @@ class ProfileFragment : Fragment(), ILoginNavigation {
         total_mileage.text = getString(R.string.total_mileage, String.format("%.2f", user.totalMileage))
         total_hours.text = getString(R.string.total_time, TimeFormatter.toHourMinSec(user.totalTime))
         longest_run.text = getString(R.string.longest_run, user.longestRun.toString())
-        fastest_1_km.text = getString(R.string.fastest_1_km, TimeFormatter.toMinSec(user.fastest1km))
     }
 }

@@ -14,36 +14,30 @@ import cz.cvut.fukalhan.utils.TimeFormatter
 import cz.cvut.fukalhan.main.enemies.viewmodel.EnemyProfileViewModel
 import cz.cvut.fukalhan.repository.entity.User
 import kotlinx.android.synthetic.main.fragment_enemy_profile.*
-import kotlinx.android.synthetic.main.profile_activity_records.*
 import kotlinx.android.synthetic.main.profile_activity_summary.*
 
 /**
  * A simple [Fragment] subclass.
  */
 class EnemyProfileFragment : Fragment() {
-    val args: EnemyProfileFragmentArgs by navArgs()
-    private lateinit var viewModel: EnemyProfileViewModel
+    private val args: EnemyProfileFragmentArgs by navArgs()
+    private lateinit var enemyProfileviewModel: EnemyProfileViewModel
 
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
-        viewModel = EnemyProfileViewModel()
-        // Inflate the layout for this fragment
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+        enemyProfileviewModel = EnemyProfileViewModel()
         return inflater.inflate(R.layout.fragment_enemy_profile, container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        viewModel.enemy.observe(viewLifecycleOwner, Observer { user ->
-            if (user != null) {
-                setUserData(user)
-            } else {
-                Toast.makeText(context, "Enemy data not available", Toast.LENGTH_SHORT).show()
+        enemyProfileviewModel.enemy.observe(viewLifecycleOwner, Observer { user ->
+            when {
+                user.error -> Toast.makeText(context, "Cannot retrieve user data", Toast.LENGTH_SHORT).show()
+                user.data == null -> Toast.makeText(context, "User doesn't exists", Toast.LENGTH_SHORT).show()
+                else -> setUserData(user.data)
             }
         })
-        viewModel.getEnemy(args.enemyID)
+        enemyProfileviewModel.getEnemy(args.enemyID)
     }
 
     /** Set data of given user on profile fragment screen */
@@ -54,6 +48,5 @@ class EnemyProfileFragment : Fragment() {
         total_mileage.text = getString(R.string.total_mileage, user.totalMileage.toString())
         total_hours.text = getString(R.string.total_time, user.totalTime.toString())
         longest_run.text = getString(R.string.longest_run, user.longestRun.toString())
-        fastest_1_km.text = getString(R.string.fastest_1_km, TimeFormatter.toMinSec(user.fastest1km))
     }
 }

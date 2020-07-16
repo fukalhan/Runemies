@@ -30,6 +30,7 @@
         android:textStyle="bold"
         android:textSize="15sp"
         tools:text="Username"/>
+
     <TextView
         android:id="@+id/join_date"
         android:layout_width="wrap_content"
@@ -90,9 +91,6 @@
 
     <include
         layout="@layout/profile_activity_summary"/>
-
-    <include
-        layout="@layout/profile_activity_records"/>
 
     <include
         layout="@layout/profile_activity_graph"/>
