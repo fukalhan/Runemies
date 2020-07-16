@@ -46,7 +46,7 @@ class UserActivityFragment : Fragment() {
      * -> there are some activities
      */
     private fun getRecords() {
-        userActivityViewModel.activitiesReceiver.observe(viewLifecycleOwner, Observer { activities ->
+        userActivityViewModel.activities.observe(viewLifecycleOwner, Observer { activities ->
             when {
                 activities.error -> {
                     activity_state.text = getString(R.string.activities_unavailable)
@@ -59,7 +59,6 @@ class UserActivityFragment : Fragment() {
                 }
             }
         })
-        userAuth?.let { userActivityViewModel.getUserActivities(it.uid) }
     }
 
     // Init userActivitiesAdapter in fragment layout's recycler view

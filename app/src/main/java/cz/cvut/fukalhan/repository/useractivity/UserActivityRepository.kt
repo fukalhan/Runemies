@@ -106,8 +106,6 @@ class UserActivityRepository : IUserActivityRepository {
                     pathWay = convertToObjectList(doc.data["pathWay"] as ArrayList<Map<String, Double>>)
                 ))
             }
-            val tmp = Array(runRecords.size) { RunRecord() }
-            mergeSort(runRecords, tmp, 0, runRecords.size - 1)
             DataWrapper(runRecords)
         } catch (e: Exception) {
             e.printStackTrace()
@@ -115,42 +113,6 @@ class UserActivityRepository : IUserActivityRepository {
         }
     }
 
-    private fun mergeSort(array: ArrayList<RunRecord>, result: Array<RunRecord>, left: Int, right: Int) {
-        if (left == right) return
-        val middleIndex = (left + right) / 2
-        mergeSort(array, result, left, middleIndex)
-        mergeSort(array, result, middleIndex + 1, right)
-        merge(array, result, left, right)
-
-        for (i in left..right) {
-            array[i] = result[i]
-        }
-    }
-
-    private fun merge(array: ArrayList<RunRecord>, result: Array<RunRecord>, left: Int, right: Int) {
-        val middleIndex = (left + right) / 2
-        var leftIndex = left
-        var rightIndex = middleIndex + 1
-        var resultIndex = left
-
-        while (leftIndex <= middleIndex && rightIndex <= right) {
-            if (array[leftIndex].date >= array[rightIndex].date) {
-                result[resultIndex] = array[leftIndex++]
-            } else {
-                result[resultIndex] = array[rightIndex++]
-            }
-            resultIndex++
-        }
-
-        while (leftIndex <= middleIndex) {
-            result[resultIndex] = array[leftIndex++]
-            resultIndex++
-        }
-        while (rightIndex <= right) {
-            result[resultIndex] = array[rightIndex++]
-            resultIndex++
-        }
-    }
     /** Converts Firestore way of storing list of LatLng to actual List<LatLng> */
     private fun convertToObjectList(objects: ArrayList<Map<String, Double>>): List<LatLng> {
         val pathWay = ArrayList<LatLng>()
