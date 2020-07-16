@@ -49,12 +49,6 @@ class SettingsFragment : Fragment() {
         bottomNavBar.visibility = View.GONE
     }
 
-    private fun selectImage() {
-        val intent = Intent().setType("image/*").setAction(Intent.ACTION_GET_CONTENT)
-        startActivityForResult(
-            Intent.createChooser(intent, "Select Image from here..."), Constants.PICK_IMAGE_REQUEST)
-    }
-
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         if (resultCode == Activity.RESULT_OK) {
@@ -66,13 +60,5 @@ class SettingsFragment : Fragment() {
         } else {
             Toast.makeText(context, "Task Cancelled", Toast.LENGTH_SHORT).show()
         }
-
-        /*if (requestCode == Constants.PICK_IMAGE_REQUEST && data != null) {
-            try {
-                user?.let { settingsViewModel.setProfileImage(it, data.data!!) }
-            } catch (e: FileNotFoundException) {
-                e.printStackTrace()
-            }
-        }*/
     }
 }
