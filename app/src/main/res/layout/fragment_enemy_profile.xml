@@ -56,8 +56,5 @@
         layout="@layout/profile_activity_summary"/>
 
     <include
-        layout="@layout/profile_activity_records"/>
-
-    <include
         layout="@layout/profile_activity_graph"/>
 </LinearLayout>
