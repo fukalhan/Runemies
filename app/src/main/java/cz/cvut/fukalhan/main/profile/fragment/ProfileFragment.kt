@@ -12,6 +12,7 @@ import com.google.firebase.auth.FirebaseUser
 import cz.cvut.fukalhan.R
 import cz.cvut.fukalhan.common.ILoginNavigation
 import cz.cvut.fukalhan.main.profile.viewmodel.ProfileViewModel
+import cz.cvut.fukalhan.repository.entity.ActivityStatistics
 import cz.cvut.fukalhan.repository.entity.User
 import cz.cvut.fukalhan.utils.TimeFormatter
 import kotlinx.android.synthetic.main.fragment_profile.*
@@ -36,19 +37,25 @@ class ProfileFragment : Fragment(), ILoginNavigation {
 
     /** Request data of current user and set observer for the answer */
     private fun getUserData() {
-        profileViewModel.user.observe(viewLifecycleOwner, Observer { user ->
+        profileViewModel.userData.observe(viewLifecycleOwner, Observer { user ->
             when {
                 user.error -> Toast.makeText(context, "Cannot retrieve user data", Toast.LENGTH_SHORT).show()
                 user.data == null -> Toast.makeText(context, "User doesn't exists", Toast.LENGTH_SHORT).show()
                 else -> setUserData(user.data)
             }
         })
+
+        profileViewModel.userStatistics.observe(viewLifecycleOwner, Observer {
+            setUserStatistics(it)
+        })
+
         // If there is current user signed in request for his data by his ID
         user?.let {
             profile_image.setImageURI(user.photoUrl)
             profile_username.text = user.displayName
             join_date.text = getString(R.string.joined, TimeFormatter.simpleDate.format(user.metadata?.creationTimestamp))
-            profileViewModel.getUser(it.uid)
+            profileViewModel.getUserData(it.uid)
+            profileViewModel.getUserRunStatistics(it.uid)
         }
     }
 
@@ -56,8 +63,11 @@ class ProfileFragment : Fragment(), ILoginNavigation {
     private fun setUserData(user: User) {
         lives.text = user.lives.toString()
         points.text = user.points.toString()
-        total_mileage.text = getString(R.string.total_mileage, String.format("%.2f", user.totalMileage))
-        total_hours.text = getString(R.string.total_time, TimeFormatter.toHourMinSec(user.totalTime))
-        longest_run.text = getString(R.string.longest_run, user.longestRun.toString())
+    }
+
+    private fun setUserStatistics(statistics: ActivityStatistics) {
+        total_mileage.text = getString(R.string.total_mileage, String.format("%.2f", statistics.totalMileage))
+        total_hours.text = getString(R.string.total_time, TimeFormatter.toHourMinSec(statistics.totalTime))
+        longest_run.text = getString(R.string.longest_run, statistics.longestRun.toString())
     }
 }

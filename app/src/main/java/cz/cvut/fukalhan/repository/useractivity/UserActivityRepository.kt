@@ -49,7 +49,7 @@ class UserActivityRepository : IUserActivityRepository {
                 val userDoc = snapshot.toObject(User::class.java)
                 userDoc?.let { user ->
                     db.collection(Constants.USERS).document(userID)
-                        .set(updateUserStatistics(user, runRecord)).await()
+                        .set(updateUserLivesCount(user, runRecord)).await()
                 }
                 RecordSaveState.SUCCESS
             } else {
@@ -59,15 +59,6 @@ class UserActivityRepository : IUserActivityRepository {
             e.printStackTrace()
             RecordSaveState.CANNOT_UPDATE_STATISTICS
         }
-    }
-    /** Update user statistics according with new run record */
-    private fun updateUserStatistics(user: User, runRecord: RunRecord): User {
-        user.totalMileage += runRecord.distance
-        user.totalTime += runRecord.time
-        if (user.longestRun < runRecord.distance) {
-            user.longestRun = runRecord.distance
-        }
-        return updateUserLivesCount(user, runRecord)
     }
 
     /**

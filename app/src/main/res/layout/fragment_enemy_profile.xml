@@ -49,14 +49,10 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             tools:text="10"/>
-
     </LinearLayout>
 
     <include
         layout="@layout/profile_activity_summary"/>
-
-    <include
-        layout="@layout/profile_activity_records"/>
 
     <include
         layout="@layout/profile_activity_graph"/>
