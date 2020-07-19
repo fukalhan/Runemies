@@ -38,7 +38,7 @@
         android:id="@+id/nav_enemy"
         android:name="cz.cvut.fukalhan.main.enemies.fragment.EnemyProfileFragment"
         android:label="Enemy"
-        tools:layout="@layout/fragment_enemy_profile">
+        tools:layout="@layout/fragment_profile">
         <argument
             android:name="enemyID"
             app:argType="string"

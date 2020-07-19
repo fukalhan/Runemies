@@ -11,8 +11,8 @@ object Constants {
     const val NOTIFICATION_ID = 1223
     const val CHANNEL_ID = "location_channel"
     const val MAPVIEW_BUNDLE_KEY = "MapViewBundleKey"
-    const val PICK_IMAGE_REQUEST = 22
     const val GPS_REQUEST = 42
+    const val PROFILE_IMAGE_PATH = "profileImages/"
 
     val permissions = listOf(
         Manifest.permission.ACCESS_FINE_LOCATION,

@@ -7,6 +7,7 @@ import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.UserProfileChangeRequest
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ktx.toObject
+import com.google.firebase.storage.StorageReference
 import cz.cvut.fukalhan.repository.entity.User
 import cz.cvut.fukalhan.shared.Constants
 import cz.cvut.fukalhan.shared.DataWrapper
@@ -45,11 +46,11 @@ class UserRepository : IUserRepository {
         }
     }
 
-    override suspend fun setProfileImage(user: FirebaseUser, imageUri: Uri) {
+    override suspend fun setProfileImage(uri: Uri, storageRef: StorageReference) {
         try {
-            user.updateProfile(UserProfileChangeRequest.Builder().setPhotoUri(imageUri).build())
-        } catch (e: FirebaseAuthInvalidUserException) {
-            Log.e(e.toString(), e.message)
+            storageRef.putFile(uri)
+        } catch (e: Exception) {
+            Log.e(e.toString(), e.message.toString())
         }
     }
 
@@ -57,7 +58,7 @@ class UserRepository : IUserRepository {
         try {
             user.updateProfile(UserProfileChangeRequest.Builder().setDisplayName(newUsername).build())
         } catch (e: FirebaseAuthInvalidUserException) {
-            Log.e(e.toString(), e.message)
+            Log.e(e.toString(), e.message.toString())
         }
     }
 }

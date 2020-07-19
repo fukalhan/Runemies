@@ -50,7 +50,7 @@ class EnemiesFragment : Fragment() {
     }
 
     private fun setAdapter(enemies: List<User>) {
-        val enemiesAdapter = EnemiesAdapter(this, enemies)
+        val enemiesAdapter = EnemiesAdapter(requireContext(), this, enemies)
         val viewManager = LinearLayoutManager(activity)
         enemiesRecyclerView.apply {
             setHasFixedSize(true)

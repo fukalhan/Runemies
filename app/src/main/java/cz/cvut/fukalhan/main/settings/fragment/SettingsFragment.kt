@@ -13,22 +13,24 @@ import com.github.dhaval2404.imagepicker.ImagePicker
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
+import com.google.firebase.ktx.Firebase
+import com.google.firebase.storage.StorageReference
+import com.google.firebase.storage.ktx.storage
 import cz.cvut.fukalhan.R
 import cz.cvut.fukalhan.main.settings.viewmodel.SettingsViewModel
+import cz.cvut.fukalhan.shared.Constants
 import kotlinx.android.synthetic.main.fragment_settings.*
 
 /**
  * A simple [Fragment] subclass.
  */
 class SettingsFragment : Fragment(), ISetUsernameListener {
-    private val user: FirebaseUser? = FirebaseAuth.getInstance().currentUser
     private lateinit var settingsViewModel: SettingsViewModel
+    private val user: FirebaseUser? = FirebaseAuth.getInstance().currentUser
+    private val storage = Firebase.storage
+    private val storageRef: StorageReference = storage.reference
 
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         settingsViewModel = SettingsViewModel()
         return inflater.inflate(R.layout.fragment_settings, container, false)
     }
@@ -58,7 +60,11 @@ class SettingsFragment : Fragment(), ISetUsernameListener {
         super.onActivityResult(requestCode, resultCode, data)
         if (resultCode == Activity.RESULT_OK) {
             if (requestCode == ImagePicker.REQUEST_CODE && data != null) {
-                user?.let { settingsViewModel.setProfileImage(it, data.data!!) }
+                user?.let {
+                    val uri = data.data!!
+                    val profileImageRef = storageRef.child("${Constants.PROFILE_IMAGE_PATH}${it.uid}")
+                    settingsViewModel.setProfileImage(uri, profileImageRef)
+                }
             }
         } else if (resultCode == ImagePicker.RESULT_ERROR) {
             Toast.makeText(context, ImagePicker.getError(data), Toast.LENGTH_SHORT).show()
