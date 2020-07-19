@@ -40,7 +40,6 @@ class EnemiesFragment : Fragment() {
         enemiesViewModel.enemies.observe(viewLifecycleOwner, Observer { enemies ->
             when {
                 enemies.error -> {
-                    enemies_state.text = getString(R.string.enemies_unavailable)
                     Toast.makeText(context, "Something went wrong", Toast.LENGTH_SHORT).show()
                 }
                 enemies.data?.isEmpty()!! -> enemies_state.text = getString(R.string.no_enemy_records)

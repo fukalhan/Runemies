@@ -7,9 +7,10 @@
     <color name="green">#60B728</color>
     <color name="orange">#E58022</color>
     <color name="light_blue">#A9D0F5</color>
-    <color name="colorPrimary">#82B1FF</color>
-    <color name="colorPrimaryDark">#01579B</color>
-    <color name="colorAccent">#03DAC5</color>
+    <color name="colorPrimary">#00838f</color>
+    <color name="colorPrimaryLight">#4fb3bf</color>
+    <color name="colorPrimaryDark">#005662</color>
+    <color name="colorAccent">#4fb3bf</color>
     <color name="dark_green">#00AF0F</color>
     <color name="light_grey">#F2F2F2</color>
 </resources>

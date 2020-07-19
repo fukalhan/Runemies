@@ -29,7 +29,7 @@ class EnemiesAdapter(private val context: Context, private val fragment: Enemies
         var previousPoints = enemies[0].points
         for (i in 1 until itemCount) {
             if (previousPoints != enemies[i].points) {
-                rank++
+                rank = i + 1
             }
             ranking[i] = rank
             previousPoints = enemies[i].points

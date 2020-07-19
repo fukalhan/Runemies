@@ -57,7 +57,7 @@
 
     <!-- Activity-->
     <string name="distance_km">%1$s\nkm</string>
-    <string name="time">%1$s\ntime</string>
+    <string name="time">%1$s\nh</string>
     <string name="tempo_min_km">%1$s\nmin/km</string>
     <string name="no_activity_records">No activity records</string>
     <string name="records_count">%1$d records</string>
@@ -79,4 +79,7 @@
     <string name="distance">Distance:</string>
     <string name="notification_distance">%1$s km</string>
     <string name="new_username">New username</string>
+    <string name="time_bold">TIME</string>
+    <string name="distance_bold">DISTANCE</string>
+    <string name="pace_bold">PACE</string>
 </resources>

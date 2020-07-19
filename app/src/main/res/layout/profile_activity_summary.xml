@@ -3,7 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_margin="10dp"
+    android:layout_margin="7dp"
     android:background="@drawable/record_background"
     android:elevation="5dp">
 
@@ -19,7 +19,7 @@
         android:layout_height="wrap_content"
         android:layout_alignParentEnd="true"
         android:layout_marginTop="20dp"
-        android:layout_marginEnd="50dp"
+        android:layout_marginEnd="40dp"
         tools:text="0.00" />
 
     <TextView
@@ -36,7 +36,7 @@
         android:layout_below="@+id/total_mileage"
         android:layout_alignParentEnd="true"
         android:layout_marginTop="20dp"
-        android:layout_marginEnd="50dp"
+        android:layout_marginEnd="40dp"
         tools:text="00:00" />
 
     <TextView
@@ -54,6 +54,6 @@
         android:layout_below="@+id/total_hours"
         android:layout_alignParentEnd="true"
         android:layout_marginTop="20dp"
-        android:layout_marginEnd="50dp"
+        android:layout_marginEnd="40dp"
         tools:text="0.00" />
 </RelativeLayout>
