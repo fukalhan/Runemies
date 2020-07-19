@@ -7,9 +7,8 @@
     android:layout_margin="7dp"
     android:background="@drawable/record_background"
     android:elevation="5dp">
-    <TextView
+    <com.github.mikephil.charting.charts.BarChart
+        android:id="@+id/activity_graph"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:gravity="center"
-        android:text="Activity graph"/>
+        android:layout_height="match_parent"/>
 </FrameLayout>

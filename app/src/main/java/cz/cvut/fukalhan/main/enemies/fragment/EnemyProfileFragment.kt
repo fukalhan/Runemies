@@ -19,7 +19,7 @@ class EnemyProfileFragment : ProfileFragment() {
     override fun getUserData() {
         setProfileImage(args.enemyID)
         profileViewModel.getUserData(args.enemyID)
-        profileViewModel.getUserRunStatistics(args.enemyID)
+        profileViewModel.getUserStatistics(args.enemyID)
     }
 
     /** Set data of given user on profile fragment screen */

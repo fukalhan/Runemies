@@ -9,6 +9,10 @@ import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import com.bumptech.glide.Glide
+import com.github.mikephil.charting.components.XAxis
+import com.github.mikephil.charting.data.BarData
+import com.github.mikephil.charting.data.BarDataSet
+import com.github.mikephil.charting.data.BarEntry
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.ktx.Firebase
@@ -21,6 +25,7 @@ import cz.cvut.fukalhan.repository.entity.ActivityStatistics
 import cz.cvut.fukalhan.repository.entity.User
 import cz.cvut.fukalhan.shared.Constants
 import cz.cvut.fukalhan.utils.TimeFormatter
+import kotlinx.android.synthetic.main.profile_activity_graph.*
 import kotlinx.android.synthetic.main.profile_activity_summary.*
 import kotlinx.android.synthetic.main.profile_user_info.*
 
@@ -37,6 +42,7 @@ open class ProfileFragment : Fragment(), ILoginNavigation {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         setUserData()
+        getActivitiesGraph()
     }
 
     /** Request data of current user and set observer for the answer */
@@ -62,7 +68,7 @@ open class ProfileFragment : Fragment(), ILoginNavigation {
             username.text = user.displayName
             join_date.text = getString(R.string.joined, TimeFormatter.simpleDate.format(user.metadata?.creationTimestamp))
             profileViewModel.getUserData(it.uid)
-            profileViewModel.getUserRunStatistics(it.uid)
+            profileViewModel.getUserStatistics(it.uid)
         }
     }
 
@@ -84,5 +90,31 @@ open class ProfileFragment : Fragment(), ILoginNavigation {
         total_mileage.text = getString(R.string.total_mileage, String.format("%.2f", statistics.totalMileage))
         total_hours.text = getString(R.string.total_time, TimeFormatter.toHourMinSec(statistics.totalTime))
         longest_run.text = getString(R.string.longest_run, statistics.longestRun.toString())
+    }
+
+    private fun getActivitiesGraph() {
+        profileViewModel.monthMileage.observe(viewLifecycleOwner, Observer { monthMileage ->
+            val entries = ArrayList<BarEntry>()
+            for (i in 0..11) {
+                entries.add(BarEntry(i.toFloat(), monthMileage[i]))
+            }
+            val dataSet = BarDataSet(entries, "Km")
+            dataSet.setDrawValues(false)
+            val data = BarData(dataSet)
+            activity_graph.data = data
+            activity_graph.axisLeft.axisMinimum = 0f
+            activity_graph.axisLeft.isGranularityEnabled = true
+            activity_graph.axisLeft.granularity = 10f
+            activity_graph.axisLeft.enableGridDashedLine(3f, 3f, 0f)
+            activity_graph.axisLeft.setLabelCount(10, true)
+            activity_graph.axisRight.isEnabled = false
+            activity_graph.xAxis.valueFormatter = ActivityChartFormatter()
+            activity_graph.xAxis.setDrawGridLines(false)
+            activity_graph.xAxis.position = XAxis.XAxisPosition.BOTTOM
+            activity_graph.description.isEnabled = false
+            activity_graph.setDrawGridBackground(false)
+            activity_graph.setNoDataText("Data unavailable")
+            activity_graph.invalidate()
+        })
     }
 }
