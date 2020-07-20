@@ -9,7 +9,7 @@ import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
 
 import cz.cvut.fukalhan.R
-import cz.cvut.fukalhan.main.challenges.adapter.ChallengeAdapter
+import cz.cvut.fukalhan.main.challenges.adapter.ActiveChallengeAdapter
 import cz.cvut.fukalhan.main.challenges.viewmodel.ActiveChallengesViewModel
 import cz.cvut.fukalhan.repository.entity.Challenge
 import kotlinx.android.synthetic.main.fragment_active_challenges.*
@@ -41,7 +41,7 @@ class ActiveChallengesFragment : Fragment() {
 
     private fun setAdapter(challenges: List<Challenge>) {
 
-        val challengeAdapter = context?.let { context -> ChallengeAdapter(challenges, context.resources) }
+        val challengeAdapter = context?.let { context -> ActiveChallengeAdapter(challenges, context.resources) }
         val viewManager = LinearLayoutManager(activity)
         activeChallengesRecyclerView.apply {
             setHasFixedSize(true)

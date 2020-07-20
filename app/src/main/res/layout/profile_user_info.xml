@@ -31,6 +31,7 @@
         android:layout_height="140dp"
         android:layout_toEndOf="@+id/profile_image_layout"
         android:gravity="center_vertical">
+
         <TextView
             android:id="@+id/username"
             android:layout_width="wrap_content"
@@ -79,6 +80,16 @@
             android:layout_toEndOf="@+id/lives"
             android:src="@drawable/ic_heart"
             tools:ignore="ContentDescription" />
+
+        <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
+            android:id="@+id/challenge_user"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/points_icon"
+            android:layout_marginTop="10dp"
+            android:visibility="gone"
+            android:text="@string/challenge"
+            android:textColor="@color/white" />
 
     </RelativeLayout>
 </RelativeLayout>

@@ -11,7 +11,7 @@ import cz.cvut.fukalhan.R
 /**
  * A simple [Fragment] subclass.
  */
-class RequestedChallengesFragment : Fragment() {
+class CompletedChallengesFragment : Fragment() {
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -19,6 +19,6 @@ class RequestedChallengesFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_requested_challenges, container, false)
+        return inflater.inflate(R.layout.fragment_completed_challenges, container, false)
     }
 }

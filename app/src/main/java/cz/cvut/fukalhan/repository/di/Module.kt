@@ -2,7 +2,6 @@ package cz.cvut.fukalhan.repository.di
 
 import cz.cvut.fukalhan.repository.challenges.ChallengesFacade
 import cz.cvut.fukalhan.repository.challenges.ChallengesRepository
-import cz.cvut.fukalhan.repository.challenges.ChallengesRepositoryMock
 import cz.cvut.fukalhan.repository.login.LoginFacade
 import cz.cvut.fukalhan.repository.login.LoginRepository
 import cz.cvut.fukalhan.repository.user.UserFacade
@@ -21,7 +20,6 @@ object Module {
     val challengeModule = module {
         single { ChallengesFacade() }
         single { ChallengesRepository() }
-        single { ChallengesRepositoryMock() }
     }
 
     val userModule = module {

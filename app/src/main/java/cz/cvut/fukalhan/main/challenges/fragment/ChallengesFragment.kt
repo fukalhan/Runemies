@@ -8,20 +8,12 @@ import android.view.ViewGroup
 import com.google.android.material.tabs.TabLayoutMediator
 
 import cz.cvut.fukalhan.R
-import cz.cvut.fukalhan.main.challenges.adapter.ChallengesAdapter
+import cz.cvut.fukalhan.main.challenges.adapter.ChallengeStateAdapter
 import kotlinx.android.synthetic.main.fragment_challenges.*
 
-/**
- * A simple [Fragment] subclass.
- */
 class ChallengesFragment : Fragment() {
 
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
-        // Inflate the layout for this fragment
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return inflater.inflate(R.layout.fragment_challenges, container, false)
     }
 
@@ -31,7 +23,7 @@ class ChallengesFragment : Fragment() {
     }
 
     private fun setView() {
-        challengesViewPager.adapter = ChallengesAdapter(this)
+        challengesViewPager.adapter = ChallengeStateAdapter(this)
         TabLayoutMediator(challengesTabLayout, challengesViewPager) { tab, position ->
             tab.text = when (position) {
                 0 -> "ACTIVE"

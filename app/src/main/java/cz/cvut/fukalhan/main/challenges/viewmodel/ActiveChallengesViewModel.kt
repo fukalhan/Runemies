@@ -10,7 +10,6 @@ import org.koin.core.KoinComponent
 import org.koin.core.inject
 
 class ActiveChallengesViewModel : ViewModel(), KoinComponent {
-
     val challenges: MutableLiveData<List<Challenge>> by lazy { MutableLiveData<List<Challenge>>() }
     private val challengeFacade by inject<ChallengesFacade>()
 

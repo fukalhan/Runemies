@@ -82,4 +82,8 @@
     <string name="time_bold">TIME</string>
     <string name="distance_bold">DISTANCE</string>
     <string name="pace_bold">PACE</string>
+    <string name="challenge">challenge</string>
+    <string name="challenge_date">Challenge %1$s</string>
+    <string name="start_challenge">start\nchallenge</string>
+    <string name="challenge_distance">Distance: %1$s km</string>
 </resources>

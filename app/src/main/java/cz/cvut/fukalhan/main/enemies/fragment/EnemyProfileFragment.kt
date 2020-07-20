@@ -15,6 +15,10 @@ class EnemyProfileFragment : ProfileFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         lives_icon.visibility = View.GONE
+        challenge_user.visibility = View.VISIBLE
+        challenge_user.setOnClickListener {
+            challengeUser()
+        }
     }
     override fun getUserData() {
         setProfileImage(args.enemyID)
@@ -27,5 +31,8 @@ class EnemyProfileFragment : ProfileFragment() {
         username.text = user.username
         join_date.text = getString(R.string.joined, TimeFormatter.simpleDate.format(user.joinDate))
         points.text = user.points.toString()
+    }
+
+    private fun challengeUser() {
     }
 }
