@@ -82,7 +82,6 @@ open class ProfileFragment : Fragment(), ILoginNavigation {
 
     /** Set data of given user on profile fragment screen */
     protected open fun setUserData(user: User) {
-        lives.text = user.lives.toString()
         points.text = user.points.toString()
     }
 

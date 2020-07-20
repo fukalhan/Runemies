@@ -10,6 +10,7 @@ import android.widget.Toast
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
+import androidx.navigation.fragment.navArgs
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.MapView
@@ -24,6 +25,8 @@ import com.google.firebase.auth.FirebaseAuth
 import cz.cvut.fukalhan.R
 import cz.cvut.fukalhan.common.ILocationTracking
 import cz.cvut.fukalhan.common.IOnGpsListener
+import cz.cvut.fukalhan.main.run.dialog.ISaveDialogListener
+import cz.cvut.fukalhan.main.run.dialog.SaveRecordDialog
 import cz.cvut.fukalhan.utils.TimeFormatter
 import cz.cvut.fukalhan.main.run.viewmodel.RunViewModel
 import cz.cvut.fukalhan.repository.entity.RunRecord
@@ -33,16 +36,15 @@ import cz.cvut.fukalhan.utils.DrawableToBitmapUtil
 import cz.cvut.fukalhan.utils.GpsUtil
 import kotlinx.android.synthetic.main.fragment_run.*
 import kotlinx.android.synthetic.main.run_buttons.*
-import org.koin.core.KoinComponent
 
 /**
  * Run recording screen,
  * show current run statistics, map view and buttons handling run recording
  */
-class RunFragment : Fragment(), OnMapReadyCallback, KoinComponent, IOnGpsListener, ISaveDialogListener {
+class RunFragment : Fragment(), OnMapReadyCallback, IOnGpsListener, ISaveDialogListener {
+    private val args: RunFragmentArgs by navArgs()
     private val user = FirebaseAuth.getInstance().currentUser
     private lateinit var runViewModel: RunViewModel
-    private var recording: Boolean = false
     private lateinit var mapView: MapView
     private lateinit var map: GoogleMap
     private var firstLocationSetting: Boolean = true
@@ -137,7 +139,6 @@ class RunFragment : Fragment(), OnMapReadyCallback, KoinComponent, IOnGpsListene
     }
 
     private fun runStarted() {
-        recording = true
         GpsUtil.turnGpsOn(this, requireContext())
         (activity as ILocationTracking).startTracking()
         runViewModel.startRecord()
@@ -170,7 +171,6 @@ class RunFragment : Fragment(), OnMapReadyCallback, KoinComponent, IOnGpsListene
     }
 
     private fun runEnded() {
-        recording = false
         runViewModel.stopRecord()
         runViewModel.record.removeObserver(recordObserver)
         val dialog = SaveRecordDialog(this as ISaveDialogListener)
@@ -194,9 +194,6 @@ class RunFragment : Fragment(), OnMapReadyCallback, KoinComponent, IOnGpsListene
                     resetRecord()
                     Toast.makeText(context, "Record saved", Toast.LENGTH_SHORT).show()
                 }
-                RecordSaveState.CANNOT_ADD_RECORD -> TODO()
-                RecordSaveState.CANNOT_UPDATE_STATISTICS -> TODO()
-                RecordSaveState.NOT_EXISTING_USER -> TODO()
                 RecordSaveState.FAIL -> Toast.makeText(context, "Run record wasn't saved", Toast.LENGTH_SHORT).show()
             }
         })
@@ -268,7 +265,7 @@ class RunFragment : Fragment(), OnMapReadyCallback, KoinComponent, IOnGpsListene
     }
 
     override fun onDialogPositiveClick(dialog: DialogFragment) {
-        user?.let { runViewModel.saveRecord(it.uid) }
+        user?.let { runViewModel.saveRecord(it.uid, args.challengeStarted, args.enemyID) }
     }
 
     override fun onDialogNegativeClick(dialog: DialogFragment) {

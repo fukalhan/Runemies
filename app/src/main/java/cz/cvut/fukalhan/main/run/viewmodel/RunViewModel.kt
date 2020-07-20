@@ -6,6 +6,9 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.android.gms.maps.model.LatLng
+import cz.cvut.fukalhan.repository.challenges.ChallengeState
+import cz.cvut.fukalhan.repository.challenges.ChallengesFacade
+import cz.cvut.fukalhan.repository.entity.Challenge
 import cz.cvut.fukalhan.repository.entity.Route
 import cz.cvut.fukalhan.repository.entity.RunRecord
 import cz.cvut.fukalhan.repository.useractivity.states.RecordSaveState
@@ -29,6 +32,7 @@ class RunViewModel(context: Context) : ViewModel(), KoinComponent {
     val record: MutableLiveData<RunRecord> by lazy { MutableLiveData<RunRecord>() }
     private val userActivityFacade by inject<UserActivityFacade>()
     val recordSaveResult: MutableLiveData<RecordSaveState> by lazy { MutableLiveData<RecordSaveState>() }
+    private val challengesFacade by inject<ChallengesFacade>()
 
     fun startRecord() {
         startTime = System.currentTimeMillis()
@@ -73,9 +77,13 @@ class RunViewModel(context: Context) : ViewModel(), KoinComponent {
         runRecord.time = System.currentTimeMillis() - timeDifference - startTime
     }
 
-    fun saveRecord(userId: String) {
+    fun saveRecord(userId: String, challengeStarted: Boolean, enemyId: String?) {
         viewModelScope.launch {
             val recordSaveState = userActivityFacade.saveRunRecord(userId, runRecord)
+            if (challengeStarted) {
+                val challenge = Challenge(challengerId = userId, opponentId = enemyId!!, startDate = startTime, distance = runRecord.distance, state = ChallengeState.ACTIVE)
+                challengesFacade.createChallenge(challenge)
+            }
             recordSaveResult.postValue(recordSaveState)
         }
     }

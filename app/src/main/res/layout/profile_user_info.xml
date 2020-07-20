@@ -51,34 +51,18 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_below="@+id/join_date"
+            android:layout_marginTop="4dp"
             android:layout_marginEnd="5dp"
             android:textSize="15sp"
-            tools:text="3"/>
+            tools:text="0"/>
         <ImageView
             android:id="@+id/points_icon"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_below="@+id/join_date"
+            android:layout_marginTop="4dp"
             android:layout_toEndOf="@+id/points"
-            android:layout_marginEnd="20dp"
             android:src="@drawable/ic_star"
-            tools:ignore="ContentDescription" />
-        <TextView
-            android:id="@+id/lives"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/join_date"
-            android:layout_toEndOf="@+id/points_icon"
-            android:layout_marginEnd="5dp"
-            android:textSize="15sp"
-            tools:text="3"/>
-        <ImageView
-            android:id="@+id/lives_icon"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/join_date"
-            android:layout_toEndOf="@+id/lives"
-            android:src="@drawable/ic_heart"
             tools:ignore="ContentDescription" />
 
         <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton

@@ -5,9 +5,9 @@
     android:layout_height="match_parent"
     tools:context=".main.challenges.fragment.CompletedChallengesFragment">
 
-    <TextView
-        android:layout_width="match_parent"
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/completedChallengesRecyclerView"
         android:layout_height="match_parent"
-        android:text="Requested challenges" />
+        android:layout_width="match_parent"/>
 
 </FrameLayout>

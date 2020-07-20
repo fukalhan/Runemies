@@ -1,4 +1,4 @@
-package cz.cvut.fukalhan.main.run.fragment
+package cz.cvut.fukalhan.main.run.dialog
 
 import androidx.fragment.app.DialogFragment
 

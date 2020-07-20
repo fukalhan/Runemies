@@ -17,23 +17,12 @@ import kotlinx.coroutines.tasks.await
 import java.lang.Exception
 
 class LoginRepository : ILoginRepository {
-
     private val db = FirebaseFirestore.getInstance()
     private val auth = FirebaseAuth.getInstance()
 
-    private suspend fun createUser(user: User): SignUpState {
-        return try {
-            db.collection(Constants.USERS).document(user.id).set(user).await()
-            SignUpState.SUCCESS
-        } catch (e: Exception) {
-            e.printStackTrace()
-            SignUpState.FAIL
-        }
-    }
-
     override suspend fun signUpUser(username: String, email: String, password: String): SignUpState {
         return try {
-            val credentials = FirebaseAuth.getInstance().createUserWithEmailAndPassword(email.trim(), password).await()
+            val credentials = auth.createUserWithEmailAndPassword(email.trim(), password).await()
             credentials.user?.updateProfile(UserProfileChangeRequest.Builder().setDisplayName(username).build())
             // Create user with given user auth id and add it to database
             val user = User(
@@ -50,6 +39,16 @@ class LoginRepository : ILoginRepository {
                 is FirebaseAuthInvalidCredentialsException -> SignUpState.INVALID_EMAIL
                 else -> SignUpState.FAIL
             }
+        }
+    }
+
+    private suspend fun createUser(user: User): SignUpState {
+        return try {
+            db.collection(Constants.USERS).document(user.id).set(user).await()
+            SignUpState.SUCCESS
+        } catch (e: Exception) {
+            e.printStackTrace()
+            SignUpState.FAIL
         }
     }
 

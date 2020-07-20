@@ -1,15 +1,15 @@
-package cz.cvut.fukalhan.main.run.fragment
+package cz.cvut.fukalhan.main.enemies.dialog
 
 import android.app.AlertDialog
 import android.app.Dialog
 import android.os.Bundle
 import androidx.fragment.app.DialogFragment
 
-class SaveRecordDialog(private val listener: ISaveDialogListener) : DialogFragment() {
+class ChallengeUserDialog(private val listener: IChallengeUserListener) : DialogFragment() {
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         return activity?.let {
             val builder = AlertDialog.Builder(it)
-            builder.setMessage("Save record?")
+            builder.setMessage("Challenge user?")
                 .setPositiveButton("Yes") { _, _ ->
                     listener.onDialogPositiveClick(this)
                 }

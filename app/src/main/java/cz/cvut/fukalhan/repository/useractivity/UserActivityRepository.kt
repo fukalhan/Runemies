@@ -3,7 +3,6 @@ package cz.cvut.fukalhan.repository.useractivity
 import com.google.android.gms.maps.model.LatLng
 import com.google.firebase.firestore.FirebaseFirestore
 import cz.cvut.fukalhan.repository.entity.RunRecord
-import cz.cvut.fukalhan.repository.entity.User
 import cz.cvut.fukalhan.repository.useractivity.states.RecordSaveState
 import cz.cvut.fukalhan.shared.Constants
 import cz.cvut.fukalhan.shared.DataWrapper
@@ -19,67 +18,13 @@ class UserActivityRepository : IUserActivityRepository {
      */
     override suspend fun saveRunRecord(userID: String, runRecord: RunRecord): RecordSaveState {
         return try {
-            when (addRunRecord(userID, runRecord)) {
-                RecordSaveState.CANNOT_ADD_RECORD -> RecordSaveState.CANNOT_ADD_RECORD
-                else -> updateUser(userID, runRecord)
-            }
-            RecordSaveState.SUCCESS
-        } catch (e: Exception) {
-            e.printStackTrace()
-            RecordSaveState.FAIL
-        }
-    }
-
-    /** Add run record to the database */
-    private suspend fun addRunRecord(userID: String, runRecord: RunRecord): RecordSaveState {
-        return try {
             db.collection(Constants.RUN_RECORDS).document(userID).collection(Constants.USER_RECORDS)
                 .add(runRecord).await()
             RecordSaveState.SUCCESS
         } catch (e: Exception) {
             e.printStackTrace()
-            RecordSaveState.CANNOT_ADD_RECORD
+            RecordSaveState.FAIL
         }
-    }
-
-    private suspend fun updateUser(userID: String, runRecord: RunRecord): RecordSaveState {
-        return try {
-            val snapshot = db.collection(Constants.USERS).document(userID).get().await()
-            if (snapshot.exists()) {
-                val userDoc = snapshot.toObject(User::class.java)
-                userDoc?.let { user ->
-                    db.collection(Constants.USERS).document(userID)
-                        .set(updateUserLivesCount(user, runRecord)).await()
-                }
-                RecordSaveState.SUCCESS
-            } else {
-                RecordSaveState.NOT_EXISTING_USER
-            }
-        } catch (e: Exception) {
-            e.printStackTrace()
-            RecordSaveState.CANNOT_UPDATE_STATISTICS
-        }
-    }
-
-    /**
-     * When user has less than 3 lives, for every 10 km he runs, he gets 1 life
-     * mileageToGetLife is user counter of km he needs to get lives
-     * if user doesn't have less than 3 lives, the distance from run record isn't accounted in mileageToGetLife
-     * the mileage starts to be counted when user has less than 3 lives
-     */
-    private fun updateUserLivesCount(user: User, runRecord: RunRecord): User {
-        if (user.lives < 3) {
-            user.mileageToGetLife += runRecord.distance
-        }
-        while (user.lives < 3 && user.mileageToGetLife >= 10) {
-            user.lives++
-            user.mileageToGetLife -= 10
-        }
-        // If user already has 3 lives, the counter is reset
-        if (user.lives == 3) {
-            user.mileageToGetLife = 0.0
-        }
-        return user
     }
 
     override suspend fun getUserActivities(uid: String): DataWrapper<ArrayList<RunRecord>> {

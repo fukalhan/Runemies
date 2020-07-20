@@ -43,13 +43,25 @@
             android:name="enemyID"
             app:argType="string"
             android:defaultValue="null"/>
+        <action
+            android:id="@+id/startChallenge"
+            app:destination="@+id/nav_run"/>
     </fragment>
 
     <fragment
         android:id="@+id/nav_run"
         android:name="cz.cvut.fukalhan.main.run.fragment.RunFragment"
         android:label="Run"
-        tools:layout="@layout/fragment_run" />
+        tools:layout="@layout/fragment_run">
+        <argument
+            android:name="challengeStarted"
+            app:argType="boolean"
+            android:defaultValue="false"/>
+        <argument
+            android:name="enemyID"
+            app:argType="string"
+            android:defaultValue="null"/>
+    </fragment>
 
     <fragment
         android:id="@+id/nav_settings"

@@ -9,7 +9,6 @@ import android.widget.Toast
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
-
 import cz.cvut.fukalhan.R
 import cz.cvut.fukalhan.main.enemies.adapter.EnemiesAdapter
 import cz.cvut.fukalhan.main.enemies.viewmodel.EnemiesViewModel
@@ -22,11 +21,7 @@ import kotlinx.android.synthetic.main.fragment_enemies.*
 class EnemiesFragment : Fragment() {
     private lateinit var enemiesViewModel: EnemiesViewModel
 
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         enemiesViewModel = EnemiesViewModel()
         return inflater.inflate(R.layout.fragment_enemies, container, false)
     }
