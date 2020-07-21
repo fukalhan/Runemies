@@ -2,6 +2,7 @@ package cz.cvut.fukalhan.repository.challenges
 
 import android.util.Log
 import com.google.firebase.firestore.FirebaseFirestore
+import cz.cvut.fukalhan.repository.challenges.state.ChallengeState
 import cz.cvut.fukalhan.repository.entity.Challenge
 import cz.cvut.fukalhan.shared.Constants
 import cz.cvut.fukalhan.shared.DataWrapper

@@ -6,7 +6,7 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.android.gms.maps.model.LatLng
-import cz.cvut.fukalhan.repository.challenges.ChallengeState
+import cz.cvut.fukalhan.repository.challenges.state.ChallengeState
 import cz.cvut.fukalhan.repository.challenges.ChallengesFacade
 import cz.cvut.fukalhan.repository.entity.Challenge
 import cz.cvut.fukalhan.repository.entity.Route

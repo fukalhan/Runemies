@@ -1,6 +1,6 @@
 package cz.cvut.fukalhan.repository.entity
 
-import cz.cvut.fukalhan.repository.challenges.ChallengeState
+import cz.cvut.fukalhan.repository.challenges.state.ChallengeState
 
 data class Challenge(
     var id: String = "",
