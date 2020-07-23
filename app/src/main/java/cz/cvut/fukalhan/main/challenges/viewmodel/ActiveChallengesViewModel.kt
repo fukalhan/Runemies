@@ -11,13 +11,14 @@ import org.koin.core.KoinComponent
 import org.koin.core.inject
 
 class ActiveChallengesViewModel : ViewModel(), KoinComponent {
-    val challenges: MutableLiveData<DataWrapper<List<Challenge>>> by lazy { MutableLiveData<DataWrapper<List<Challenge>>>() }
+    val challenges: MutableLiveData<DataWrapper<ArrayList<Challenge>>> by lazy { MutableLiveData<DataWrapper<ArrayList<Challenge>>>() }
     private val challengesFacade by inject<ChallengesFacade>()
 
     fun getChallenges(userId: String) {
         viewModelScope.launch {
-            val challengesList = challengesFacade.getActiveChallenges(userId)
-            challenges.postValue(challengesList)
+            val activeChallenges = challengesFacade.getActiveChallenges(userId)
+            activeChallenges.data?.sortWith(ChallengesDateComparator())
+            challenges.postValue(activeChallenges)
         }
     }
 }

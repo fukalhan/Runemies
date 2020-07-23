@@ -9,6 +9,7 @@ import cz.cvut.fukalhan.R
 import cz.cvut.fukalhan.main.enemies.dialog.ChallengeUserDialog
 import cz.cvut.fukalhan.main.enemies.dialog.IChallengeUserListener
 import cz.cvut.fukalhan.main.profile.fragment.ProfileFragment
+import cz.cvut.fukalhan.repository.challenges.state.ChallengeState
 import cz.cvut.fukalhan.utils.TimeFormatter
 import cz.cvut.fukalhan.repository.entity.User
 import kotlinx.android.synthetic.main.profile_user_info.*
@@ -42,11 +43,11 @@ class EnemyProfileFragment : ProfileFragment(), IChallengeUserListener {
     }
 
     override fun onDialogPositiveClick(dialog: DialogFragment) {
-        startChallenge(true, args.enemyID)
+        startChallenge()
     }
 
-    fun startChallenge(challengeStarted: Boolean, enemyId: String) {
-        val action = EnemyProfileFragmentDirections.startChallenge(challengeStarted, enemyId)
+    fun startChallenge() {
+        val action = EnemyProfileFragmentDirections.startChallenge(challengeState = ChallengeState.STARTED, enemyId = args.enemyID, enemyUsername = username.text.toString())
         findNavController().navigate(action)
     }
 

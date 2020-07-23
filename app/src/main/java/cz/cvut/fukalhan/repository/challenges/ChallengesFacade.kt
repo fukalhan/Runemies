@@ -12,11 +12,19 @@ class ChallengesFacade : IChallengesFacade, KoinComponent {
         repository.createChallenge(challenge)
     }
 
-    override suspend fun getActiveChallenges(userId: String): DataWrapper<List<Challenge>> {
+    override suspend fun updateChallenge(challengeId: String, userId: String, userDistance: Double) {
+        repository.updateChallenge(challengeId, userId, userDistance)
+    }
+
+    override suspend fun getRequestedChallenges(userId: String): DataWrapper<ArrayList<Challenge>> {
+        return repository.getRequestedChallenges(userId)
+    }
+
+    override suspend fun getActiveChallenges(userId: String): DataWrapper<ArrayList<Challenge>> {
         return repository.getActiveChallenges(userId)
     }
 
-    override suspend fun getCompletedChallenges(userId: String): DataWrapper<List<Challenge>> {
+    override suspend fun getCompletedChallenges(userId: String): DataWrapper<ArrayList<Challenge>> {
         return repository.getCompletedChallenges(userId)
     }
 }

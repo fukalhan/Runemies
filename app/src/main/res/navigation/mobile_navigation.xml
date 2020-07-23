@@ -22,7 +22,11 @@
         android:id="@+id/nav_challenges"
         android:name="cz.cvut.fukalhan.main.challenges.fragment.ChallengesFragment"
         android:label="Challenges"
-        tools:layout="@layout/fragment_challenges" />
+        tools:layout="@layout/fragment_challenges">
+        <action
+            android:id="@+id/acceptChallenge"
+            app:destination="@id/nav_run"/>
+    </fragment>
 
     <fragment
         android:id="@+id/nav_enemies"
@@ -54,11 +58,19 @@
         android:label="Run"
         tools:layout="@layout/fragment_run">
         <argument
-            android:name="challengeStarted"
-            app:argType="boolean"
-            android:defaultValue="false"/>
+            android:name="challengeState"
+            app:argType="cz.cvut.fukalhan.repository.challenges.state.ChallengeState"
+            android:defaultValue="NULL"/>
         <argument
-            android:name="enemyID"
+            android:name="enemyId"
+            app:argType="string"
+            android:defaultValue="null"/>
+        <argument
+            android:name="enemyUsername"
+            app:argType="string"
+            android:defaultValue="null"/>
+        <argument
+            android:name="challengeId"
             app:argType="string"
             android:defaultValue="null"/>
     </fragment>

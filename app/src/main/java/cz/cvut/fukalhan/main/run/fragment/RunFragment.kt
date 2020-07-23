@@ -29,6 +29,7 @@ import cz.cvut.fukalhan.main.run.dialog.ISaveDialogListener
 import cz.cvut.fukalhan.main.run.dialog.SaveRecordDialog
 import cz.cvut.fukalhan.utils.TimeFormatter
 import cz.cvut.fukalhan.main.run.viewmodel.RunViewModel
+import cz.cvut.fukalhan.repository.challenges.state.ChallengeState
 import cz.cvut.fukalhan.repository.entity.RunRecord
 import cz.cvut.fukalhan.repository.useractivity.states.RecordSaveState
 import cz.cvut.fukalhan.shared.Constants
@@ -190,12 +191,10 @@ class RunFragment : Fragment(), OnMapReadyCallback, IOnGpsListener, ISaveDialogL
     private fun observeSaveRunRecord() {
         runViewModel.recordSaveResult.observe(viewLifecycleOwner, Observer { recordSaveState ->
             when (recordSaveState) {
-                RecordSaveState.SUCCESS -> {
-                    resetRecord()
-                    Toast.makeText(context, "Record saved", Toast.LENGTH_SHORT).show()
-                }
+                RecordSaveState.SUCCESS -> Toast.makeText(context, "Record saved", Toast.LENGTH_SHORT).show()
                 RecordSaveState.FAIL -> Toast.makeText(context, "Run record wasn't saved", Toast.LENGTH_SHORT).show()
             }
+            resetRecord()
         })
     }
 
@@ -265,7 +264,13 @@ class RunFragment : Fragment(), OnMapReadyCallback, IOnGpsListener, ISaveDialogL
     }
 
     override fun onDialogPositiveClick(dialog: DialogFragment) {
-        user?.let { runViewModel.saveRecord(it.uid, args.challengeStarted, args.enemyID) }
+        user?.let {
+            runViewModel.saveRecord(it.uid)
+            when (args.challengeState) {
+                ChallengeState.STARTED -> runViewModel.createChallenge(it.uid, it.displayName!!, args.enemyId, args.enemyUsername)
+                ChallengeState.ACCEPTED -> runViewModel.updateChallenge(it.uid, args.challengeId)
+            }
+        }
     }
 
     override fun onDialogNegativeClick(dialog: DialogFragment) {

@@ -10,15 +10,15 @@ import kotlinx.coroutines.launch
 import org.koin.core.KoinComponent
 import org.koin.core.inject
 
-class CompletedChallengesViewModel : ViewModel(), KoinComponent {
+class RequestedChallengesViewModel : ViewModel(), KoinComponent {
     private val challengesFacade by inject<ChallengesFacade>()
     val challenges: MutableLiveData<DataWrapper<ArrayList<Challenge>>> by lazy { MutableLiveData<DataWrapper<ArrayList<Challenge>>>() }
 
     fun getChallenges(userId: String) {
         viewModelScope.launch {
-            val completedChallenges = challengesFacade.getCompletedChallenges(userId)
-            completedChallenges.data?.sortWith(ChallengesDateComparator())
-            challenges.postValue(completedChallenges)
+            val requestedChallenges = challengesFacade.getRequestedChallenges(userId)
+            requestedChallenges.data?.sortWith(ChallengesDateComparator())
+            challenges.postValue(requestedChallenges)
         }
     }
 }

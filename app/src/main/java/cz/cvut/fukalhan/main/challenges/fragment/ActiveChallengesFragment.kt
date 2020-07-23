@@ -12,7 +12,7 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 
 import cz.cvut.fukalhan.R
-import cz.cvut.fukalhan.main.challenges.adapter.ActiveChallengeAdapter
+import cz.cvut.fukalhan.main.challenges.adapter.ActiveChallengesAdapter
 import cz.cvut.fukalhan.main.challenges.viewmodel.ActiveChallengesViewModel
 import cz.cvut.fukalhan.repository.entity.Challenge
 import kotlinx.android.synthetic.main.fragment_active_challenges.*
@@ -39,7 +39,7 @@ class ActiveChallengesFragment : Fragment() {
     }
 
     private fun setAdapter(challenges: List<Challenge>) {
-        val challengeAdapter = context?.let { context -> ActiveChallengeAdapter(challenges, context.resources) }
+        val challengeAdapter = context?.let { context -> ActiveChallengesAdapter(challenges, context.resources) }
         val viewManager = LinearLayoutManager(activity)
         activeChallengesRecyclerView.apply {
             setHasFixedSize(true)

@@ -77,14 +77,31 @@ class RunViewModel(context: Context) : ViewModel(), KoinComponent {
         runRecord.time = System.currentTimeMillis() - timeDifference - startTime
     }
 
-    fun saveRecord(userId: String, challengeStarted: Boolean, enemyId: String?) {
+    fun saveRecord(userId: String) {
         viewModelScope.launch {
             val recordSaveState = userActivityFacade.saveRunRecord(userId, runRecord)
-            if (challengeStarted) {
-                val challenge = Challenge(challengerId = userId, opponentId = enemyId!!, startDate = startTime, distance = runRecord.distance, state = ChallengeState.ACTIVE)
-                challengesFacade.createChallenge(challenge)
-            }
             recordSaveResult.postValue(recordSaveState)
+        }
+    }
+
+    fun createChallenge(userId: String, username: String, opponentId: String, opponentUsername: String) {
+        viewModelScope.launch {
+            val challenge = Challenge(
+                challengerId = userId,
+                challengerUsername = username,
+                challengerDistance = runRecord.distance,
+                opponentId = opponentId,
+                opponentUsername = opponentUsername,
+                startDate = startTime,
+                state = ChallengeState.STARTED
+            )
+            challengesFacade.createChallenge(challenge)
+        }
+    }
+
+    fun updateChallenge(userId: String, challengeId: String) {
+        viewModelScope.launch {
+            challengesFacade.updateChallenge(challengeId, userId, runRecord.distance)
         }
     }
 
