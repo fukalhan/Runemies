@@ -28,41 +28,36 @@ class ChallengesRepository : IChallengesRepository {
             val snapshot = db.collection(Constants.CHALLENGES).document(challengeId).get().await()
             if (snapshot.exists()) {
                 val challenge = snapshot.toObject(Challenge::class.java)
-                if (challenge?.challengerId == userId) {
-                    challenge.challengerDistance = userDistance
-                    when {
-                        userDistance == challenge.opponentDistance -> {
-                            updatePoints(userId, 1)
-                            updatePoints(challenge.opponentId, 1)
+                challenge?.let {
+                    var opponentId = ""
+                    var opponentDistance = 0.0
+                    when (userId) {
+                        challenge.challengerId -> {
+                            opponentId = challenge.opponentId
+                            opponentDistance = challenge.opponentDistance
                         }
-                        userDistance > challenge.opponentDistance -> {
+                        else -> {
+                            opponentId = challenge.challengerId
+                            opponentDistance = challenge.challengerDistance
+                        }
+                    }
+                    when {
+                        userDistance == opponentDistance -> {
                             updatePoints(userId, 1)
-                            updatePoints(challenge.opponentId, -1)
+                            updatePoints(opponentId, 1)
+                        }
+                        userDistance > opponentDistance -> {
+                            updatePoints(userId, 1)
+                            updatePoints(opponentId, -1)
                         }
                         else -> {
                             updatePoints(userId, -1)
-                            updatePoints(challenge.opponentId, 1)
+                            updatePoints(opponentId, 1)
                         }
                     }
-                } else {
-                    challenge!!.opponentDistance = userDistance
-                    when {
-                        userDistance == challenge.challengerDistance -> {
-                            updatePoints(userId, 1)
-                            updatePoints(challenge.challengerId, 1)
-                        }
-                        userDistance > challenge.challengerDistance -> {
-                            updatePoints(userId, 1)
-                            updatePoints(challenge.challengerId, -1)
-                        }
-                        else -> {
-                            updatePoints(userId, -1)
-                            updatePoints(challenge.challengerId, 1)
-                        }
-                    }
+                    challenge.state = ChallengeState.COMPLETED
+                    db.collection(Constants.CHALLENGES).document(challengeId).set(challenge).await()
                 }
-                challenge.state = ChallengeState.COMPLETED
-                db.collection(Constants.CHALLENGES).document(challengeId).set(challenge).await()
             }
         } catch (e: Exception) {
             Log.e(e.toString(), e.message.toString())

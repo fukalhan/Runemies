@@ -5,7 +5,8 @@
     android:id="@+id/main_screen"
     android:layout_height="match_parent"
     android:layout_width="match_parent"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    android:animateLayoutChanges="true">
 
     <include
         layout="@layout/app_bar_main"

@@ -86,13 +86,21 @@
     <string name="challenge_date">Challenge %1$s</string>
     <string name="start_challenge">start\nchallenge</string>
     <string name="challenge_distance">%1$s km</string>
-    <string name="your_result">Your result:</string>
-    <string name="enemy_username">%1$s result:</string>
+    <string name="your_result">Your result: %1$s km</string>
+    <string name="opponent_username_result">%1$s result:</string>
     <string name="waiting_for">WAITING FOR</string>
     <string name="quit">QUIT</string>
-    <string name="challenged_by">Challenged by</string>
+    <string name="challenged_by">By %1$s</string>
     <string name="to_beat_his">To beat his</string>
     <string name="winner">WINNER</string>
     <string name="looser">LOOSER</string>
     <string name="tie">It\'s a tie!</string>
+    <string name="accept">accept</string>
+    <string name="decline">decline</string>
+    <string name="requested_challenge_question">Try to guess %1$s result and beat it?</string>
+    <string name="waiting_for_result">Waiting for %1$s result</string>
+    <string name="against_user">Against %1$s</string>
+    <string name="result">Your result:</string>
+    <string name="delete">Delete</string>
+    <string name="run_date">Run %1$s</string>
 </resources>

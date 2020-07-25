@@ -45,7 +45,7 @@ class RequestedChallengesFragment(private val challengesFragment: ChallengesFrag
     }
 
     private fun setAdapter(challenges: List<Challenge>) {
-        val challengeAdapter = context?.let { context -> RequestedChallengesAdapter(this, challenges, context.resources) }
+        val challengeAdapter = context?.let { context -> RequestedChallengesAdapter(requireContext(), this, challenges, context.resources) }
         val viewManager = LinearLayoutManager(activity)
         requestedChallengesRecyclerView.apply {
             setHasFixedSize(true)

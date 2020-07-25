@@ -1,16 +1,27 @@
 package cz.cvut.fukalhan.main.challenges.adapter
 
+import android.content.Context
 import android.content.res.Resources
+import android.net.Uri
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
+import com.google.firebase.ktx.Firebase
+import com.google.firebase.storage.StorageReference
+import com.google.firebase.storage.ktx.storage
 import cz.cvut.fukalhan.R
 import cz.cvut.fukalhan.main.challenges.fragment.RequestedChallengesFragment
 import cz.cvut.fukalhan.main.challenges.viewholder.RequestedChallengeViewHolder
 import cz.cvut.fukalhan.repository.entity.Challenge
+import cz.cvut.fukalhan.shared.Constants
 import cz.cvut.fukalhan.utils.TimeFormatter
+import kotlinx.android.synthetic.main.item_challenge_requested.view.*
 
-class RequestedChallengesAdapter(private val fragment: RequestedChallengesFragment, private val challenges: List<Challenge>, private val resources: Resources) : RecyclerView.Adapter<RequestedChallengeViewHolder>() {
+class RequestedChallengesAdapter(private val context: Context, private val fragment: RequestedChallengesFragment, private val challenges: List<Challenge>, private val resources: Resources) : RecyclerView.Adapter<RequestedChallengeViewHolder>() {
+    private val storageRef: StorageReference = Firebase.storage.reference
+
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RequestedChallengeViewHolder {
         val view = LayoutInflater.from(parent.context).inflate(R.layout.item_challenge_requested, parent, false)
         return RequestedChallengeViewHolder(view)
@@ -23,9 +34,24 @@ class RequestedChallengesAdapter(private val fragment: RequestedChallengesFragme
     override fun onBindViewHolder(holder: RequestedChallengeViewHolder, position: Int) {
         val challenge = challenges[position]
         holder.startDate.text = resources.getString(R.string.challenge_date, TimeFormatter.simpleDate.format(challenge.startDate))
-        holder.challengerUsername.text = challenge.challengerUsername
-        holder.challengeDistance.text = resources.getString(R.string.challenge_distance, challenge.challengerDistance.toString())
-        holder.startChallengeButton.setOnClickListener {
+        val imagePathRef = storageRef.child("${Constants.PROFILE_IMAGE_PATH}${challenge.challengerId}")
+        imagePathRef.downloadUrl
+            .addOnSuccessListener { uri: Uri ->
+                Glide.with(context).load(uri).into(holder.profileImage)
+            }
+        holder.challengerUsername.text = resources.getString(R.string.challenged_by, challenge.challengerUsername)
+        holder.itemView.setOnClickListener {
+            if (holder.challengeQuestion.visibility == View.GONE) {
+                holder.challengeQuestion.visibility = View.VISIBLE
+                holder.challengeQuestion.text = resources.getString(R.string.requested_challenge_question, challenge.challengerUsername)
+                holder.buttonPanel.visibility = View.VISIBLE
+            } else {
+                holder.challengeQuestion.visibility = View.GONE
+                holder.buttonPanel.visibility = View.GONE
+            }
+        }
+
+        holder.acceptChallenge.setOnClickListener {
             fragment.acceptChallengeDialog(challenge.id)
         }
     }

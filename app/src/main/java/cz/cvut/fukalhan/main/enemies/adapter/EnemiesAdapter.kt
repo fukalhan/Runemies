@@ -50,7 +50,7 @@ class EnemiesAdapter(private val context: Context, private val fragment: Enemies
         val enemy = enemies[position]
         user?.let {
             if (user.uid == enemy.id) {
-                holder.enemyLayout.background = fragment.resources.getDrawable(R.drawable.user_background)
+                holder.enemyLayout.background = fragment.resources.getDrawable(R.drawable.gradient_background)
             } else {
                 holder.itemView.setOnClickListener {
                     fragment.showEnemyProfile(enemy.id)
