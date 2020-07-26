@@ -6,19 +6,24 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.fragment.app.DialogFragment
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import cz.cvut.fukalhan.R
 import cz.cvut.fukalhan.main.enemies.adapter.EnemiesAdapter
+import cz.cvut.fukalhan.main.enemies.dialog.ChallengeUserDialog
+import cz.cvut.fukalhan.main.enemies.dialog.IChallengeUserListener
 import cz.cvut.fukalhan.main.enemies.viewmodel.EnemiesViewModel
+import cz.cvut.fukalhan.repository.challenges.state.ChallengeState
 import cz.cvut.fukalhan.repository.entity.User
 import kotlinx.android.synthetic.main.fragment_enemies.*
+import kotlinx.android.synthetic.main.profile_user_info.*
 
 /**
  * A simple [Fragment] subclass.
  */
-class EnemiesFragment : Fragment() {
+class EnemiesFragment : Fragment(), IChallengeUserListener {
     private lateinit var enemiesViewModel: EnemiesViewModel
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -56,5 +61,18 @@ class EnemiesFragment : Fragment() {
     fun showEnemyProfile(enemyID: String) {
         val action = EnemiesFragmentDirections.showEnemyProfile(enemyID)
         findNavController().navigate(action)
+    }
+
+    fun challengeUser(opponentId: String, opponentUsername: String) {
+        val dialog = ChallengeUserDialog(this as IChallengeUserListener, opponentId, opponentUsername)
+        dialog.show(requireFragmentManager(), "ChallengeUserDialog")
+    }
+
+    override fun onDialogPositiveClick(dialog: DialogFragment, opponentId: String, opponentUsername: String) {
+        val action = EnemiesFragmentDirections.startChallenge(challengeState = ChallengeState.STARTED, enemyId = opponentId, enemyUsername = opponentUsername)
+        findNavController().navigate(action)
+    }
+
+    override fun onDialogNegativeClick(dialog: DialogFragment) {
     }
 }

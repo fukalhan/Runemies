@@ -36,6 +36,10 @@
         <action
             android:id="@+id/showEnemyProfile"
             app:destination="@id/nav_enemy"/>
+
+        <action
+            android:id="@+id/startChallenge"
+            app:destination="@+id/nav_run"/>
     </fragment>
 
     <fragment
@@ -47,9 +51,6 @@
             android:name="enemyID"
             app:argType="string"
             android:defaultValue="null"/>
-        <action
-            android:id="@+id/startChallenge"
-            app:destination="@+id/nav_run"/>
     </fragment>
 
     <fragment

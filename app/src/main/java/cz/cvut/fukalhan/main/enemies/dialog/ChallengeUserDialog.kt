@@ -5,13 +5,13 @@ import android.app.Dialog
 import android.os.Bundle
 import androidx.fragment.app.DialogFragment
 
-class ChallengeUserDialog(private val listener: IChallengeUserListener) : DialogFragment() {
+class ChallengeUserDialog(private val listener: IChallengeUserListener, private val opponentId: String, private val opponentUsername: String) : DialogFragment() {
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         return activity?.let {
             val builder = AlertDialog.Builder(it)
             builder.setMessage("Challenge user?")
                 .setPositiveButton("Yes") { _, _ ->
-                    listener.onDialogPositiveClick(this)
+                    listener.onDialogPositiveClick(this, opponentId, opponentUsername)
                 }
                 .setNegativeButton("No") { _, _ ->
                     listener.onDialogNegativeClick(this)

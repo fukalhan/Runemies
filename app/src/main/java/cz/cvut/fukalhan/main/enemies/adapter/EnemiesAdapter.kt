@@ -3,6 +3,7 @@ package cz.cvut.fukalhan.main.enemies.adapter
 import android.content.Context
 import android.net.Uri
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
@@ -50,10 +51,20 @@ class EnemiesAdapter(private val context: Context, private val fragment: Enemies
         val enemy = enemies[position]
         user?.let {
             if (user.uid == enemy.id) {
-                holder.enemyLayout.background = fragment.resources.getDrawable(R.drawable.gradient_background)
+                holder.itemView.background = fragment.resources.getDrawable(R.drawable.gradient_background)
             } else {
                 holder.itemView.setOnClickListener {
-                    fragment.showEnemyProfile(enemy.id)
+                    if (holder.buttonPanel.visibility == View.GONE) {
+                        holder.buttonPanel.visibility = View.VISIBLE
+                        holder.showProfileButton.setOnClickListener {
+                            fragment.showEnemyProfile(enemy.id)
+                        }
+                        holder.challengeButton.setOnClickListener {
+                            fragment.challengeUser(enemy.id, enemy.username)
+                        }
+                    } else {
+                        holder.buttonPanel.visibility = View.GONE
+                    }
                 }
             }
         }
