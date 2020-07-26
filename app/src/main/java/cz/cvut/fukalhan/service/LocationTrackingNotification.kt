@@ -64,7 +64,7 @@ class LocationTrackingNotification(private val context: Context) : KoinComponent
             .setOnlyAlertOnce(true)
             .setOngoing(true)
             .setSmallIcon(R.drawable.ic_run)
-            .setLargeIcon(BitmapFactory.decodeResource(context.getResources(), R.mipmap.ic_launcher))
+            .setLargeIcon(BitmapFactory.decodeResource(context.getResources(), R.mipmap.runemies_icon))
             .setPriority(Notification.PRIORITY_HIGH)
             .setContentIntent(reopenActivity)
     }

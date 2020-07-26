@@ -14,9 +14,9 @@
     <application
         android:name=".App"
         android:allowBackup="true"
-        android:icon="@mipmap/ic_launcher"
+        android:icon="@mipmap/runemies_icon"
         android:label="@string/appName"
-        android:roundIcon="@mipmap/ic_launcher_round"
+        android:roundIcon="@mipmap/runemies_icon_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme.noActionBar"
         tools:replace="android:label">
