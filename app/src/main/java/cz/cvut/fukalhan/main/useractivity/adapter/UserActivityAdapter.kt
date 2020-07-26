@@ -7,12 +7,13 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 
 import cz.cvut.fukalhan.R
+import cz.cvut.fukalhan.main.useractivity.fragment.UserActivityFragment
 import cz.cvut.fukalhan.utils.TimeFormatter
 import cz.cvut.fukalhan.main.useractivity.viewholder.UserActivityViewHolder
 import cz.cvut.fukalhan.repository.entity.RunRecord
 import org.koin.core.KoinComponent
 
-class UserActivityAdapter(private val userActivities: List<RunRecord>, private val resources: Resources) : RecyclerView.Adapter<UserActivityViewHolder>(), KoinComponent {
+class UserActivityAdapter(private val userActivities: ArrayList<RunRecord>, private val resources: Resources, private val fragment: UserActivityFragment) : RecyclerView.Adapter<UserActivityViewHolder>(), KoinComponent {
 
     override fun getItemCount(): Int = userActivities.size
 
@@ -35,6 +36,12 @@ class UserActivityAdapter(private val userActivities: List<RunRecord>, private v
             }
         }
         holder.deleteButton.setOnClickListener {
+            fragment.makeDeleteRecordDialog(record.id, position)
         }
+    }
+
+    fun deleteRecordOnPosition(position: Int) {
+        userActivities.removeAt(position)
+        this.notifyItemRemoved(position)
     }
 }

@@ -1,6 +1,7 @@
 package cz.cvut.fukalhan.repository.useractivity
 
 import cz.cvut.fukalhan.repository.entity.RunRecord
+import cz.cvut.fukalhan.repository.useractivity.states.RecordDeleteState
 import cz.cvut.fukalhan.repository.useractivity.states.RecordSaveState
 import cz.cvut.fukalhan.shared.DataWrapper
 import org.koin.core.KoinComponent
@@ -15,5 +16,9 @@ class UserActivityFacade : IUserActivityFacade, KoinComponent {
 
     override suspend fun getUserActivities(uid: String): DataWrapper<ArrayList<RunRecord>> {
         return repository.getUserActivities(uid)
+    }
+
+    override suspend fun deleteRecord(userId: String, recordId: String): RecordDeleteState {
+        return repository.deleteRecord(userId, recordId)
     }
 }

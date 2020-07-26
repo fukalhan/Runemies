@@ -1,8 +1,10 @@
 package cz.cvut.fukalhan.repository.useractivity
 
+import android.util.Log
 import com.google.android.gms.maps.model.LatLng
 import com.google.firebase.firestore.FirebaseFirestore
 import cz.cvut.fukalhan.repository.entity.RunRecord
+import cz.cvut.fukalhan.repository.useractivity.states.RecordDeleteState
 import cz.cvut.fukalhan.repository.useractivity.states.RecordSaveState
 import cz.cvut.fukalhan.shared.Constants
 import cz.cvut.fukalhan.shared.DataWrapper
@@ -18,8 +20,11 @@ class UserActivityRepository : IUserActivityRepository {
      */
     override suspend fun saveRunRecord(userID: String, runRecord: RunRecord): RecordSaveState {
         return try {
+            val id = db.collection(Constants.RUN_RECORDS).document(userID).collection(Constants.USER_RECORDS)
+                .document().id
+            runRecord.id = id
             db.collection(Constants.RUN_RECORDS).document(userID).collection(Constants.USER_RECORDS)
-                .add(runRecord).await()
+                .document(id).set(runRecord).await()
             RecordSaveState.SUCCESS
         } catch (e: Exception) {
             e.printStackTrace()
@@ -46,6 +51,16 @@ class UserActivityRepository : IUserActivityRepository {
         } catch (e: Exception) {
             e.printStackTrace()
             DataWrapper(runRecords, true, e.message, e)
+        }
+    }
+
+    override suspend fun deleteRecord(userId: String, recordId: String): RecordDeleteState {
+        return try {
+            db.collection(Constants.RUN_RECORDS).document(userId).collection(Constants.USER_RECORDS).document(recordId).delete().await()
+            RecordDeleteState.SUCCESS
+        } catch (e: Exception) {
+            Log.e(e.toString(), e.message.toString())
+            RecordDeleteState.FAIL
         }
     }
 
