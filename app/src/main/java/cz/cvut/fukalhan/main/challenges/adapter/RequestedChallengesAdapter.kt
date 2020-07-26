@@ -19,7 +19,7 @@ import cz.cvut.fukalhan.shared.Constants
 import cz.cvut.fukalhan.utils.TimeFormatter
 import kotlinx.android.synthetic.main.item_challenge_requested.view.*
 
-class RequestedChallengesAdapter(private val context: Context, private val fragment: RequestedChallengesFragment, private val challenges: List<Challenge>, private val resources: Resources) : RecyclerView.Adapter<RequestedChallengeViewHolder>() {
+class RequestedChallengesAdapter(private val context: Context, private val fragment: RequestedChallengesFragment, private val challenges: ArrayList<Challenge>, private val resources: Resources) : RecyclerView.Adapter<RequestedChallengeViewHolder>() {
     private val storageRef: StorageReference = Firebase.storage.reference
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RequestedChallengeViewHolder {
@@ -40,19 +40,21 @@ class RequestedChallengesAdapter(private val context: Context, private val fragm
                 Glide.with(context).load(uri).into(holder.profileImage)
             }
         holder.challengerUsername.text = resources.getString(R.string.challenged_by, challenge.challengerUsername)
+        holder.guess.text = resources.getString(R.string.guess, challenge.opponentUsername)
+        holder.challengeActionButton.setOnClickListener {
+            fragment.challengeActionDialog(challenge.id, position)
+        }
         holder.itemView.setOnClickListener {
-            if (holder.challengeQuestion.visibility == View.GONE) {
-                holder.challengeQuestion.visibility = View.VISIBLE
-                holder.challengeQuestion.text = resources.getString(R.string.requested_challenge_question, challenge.challengerUsername)
+            if (holder.buttonPanel.visibility == View.GONE) {
                 holder.buttonPanel.visibility = View.VISIBLE
             } else {
-                holder.challengeQuestion.visibility = View.GONE
                 holder.buttonPanel.visibility = View.GONE
             }
         }
+    }
 
-        holder.acceptChallenge.setOnClickListener {
-            fragment.acceptChallengeDialog(challenge.id)
-        }
+    fun deleteChallengeAtPosition(position: Int) {
+        challenges.removeAt(position)
+        this.notifyItemRemoved(position)
     }
 }

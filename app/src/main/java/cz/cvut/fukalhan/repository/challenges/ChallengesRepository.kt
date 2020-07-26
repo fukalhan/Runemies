@@ -2,6 +2,7 @@ package cz.cvut.fukalhan.repository.challenges
 
 import android.util.Log
 import com.google.firebase.firestore.FirebaseFirestore
+import cz.cvut.fukalhan.repository.challenges.state.ChallengeDeleteState
 import cz.cvut.fukalhan.repository.challenges.state.ChallengeState
 import cz.cvut.fukalhan.repository.entity.Challenge
 import cz.cvut.fukalhan.repository.entity.User
@@ -61,6 +62,16 @@ class ChallengesRepository : IChallengesRepository {
             }
         } catch (e: Exception) {
             Log.e(e.toString(), e.message.toString())
+        }
+    }
+
+    override suspend fun deleteChallenge(challengeId: String): ChallengeDeleteState {
+        return try {
+            db.collection(Constants.CHALLENGES).document(challengeId).delete().await()
+            ChallengeDeleteState.SUCCESS
+        } catch (e: Exception) {
+            Log.e(e.toString(), e.message.toString())
+            ChallengeDeleteState.FAIL
         }
     }
 

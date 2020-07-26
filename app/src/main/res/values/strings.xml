@@ -98,9 +98,11 @@
     <string name="accept">accept</string>
     <string name="decline">decline</string>
     <string name="requested_challenge_question">Try to guess %1$s result and beat it?</string>
-    <string name="waiting_for_result">Waiting for %1$s result</string>
+    <string name="waiting_for_result">%1$s result:\nWaiting for</string>
     <string name="against_user">Against %1$s</string>
     <string name="result">Your result:</string>
     <string name="delete">Delete</string>
     <string name="run_date">Run %1$s</string>
+    <string name="your_result_n_1_s_km">Your result:\n%1$s km</string>
+    <string name="guess">Guess how much did\n%1$s ran and beat it!</string>
 </resources>

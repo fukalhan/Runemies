@@ -54,43 +54,31 @@
         android:text="@string/challenged_by"
         android:textSize="20sp"
         tools:text="By username"/>
-
-    <TextView
-        android:id="@+id/challenge_question"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/challenger_username"
-        android:layout_marginTop="10dp"
-        android:gravity="center"
-        android:text="@string/requested_challenge_question"
-        tools:text="Try to guess username result and beat it?"
-        android:visibility="gone"/>
-
     <LinearLayout
         android:id="@+id/button_panel"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/challenge_question"
+        android:layout_below="@+id/challenger_username"
+        android:gravity="center_vertical"
         android:orientation="horizontal"
-        android:gravity="center_horizontal"
         android:visibility="gone">
+        <TextView
+            android:id="@+id/guess"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_marginStart="20dp"
+            android:layout_height="wrap_content"
+            android:text="@string/guess"/>
 
-        <Button
-            android:id="@+id/accept_challenge"
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/challenge_action_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_margin="10dp"
+            android:layout_marginEnd="20dp"
+            android:layout_marginBottom="10dp"
+            android:layout_marginTop="10dp"
+            app:srcCompat="@drawable/ic_arrow"
             app:backgroundTint="@color/green"
-            android:background="@drawable/fab_background"
-            android:text="@string/accept"/>
-
-        <Button
-            android:id="@+id/decline_challenge"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_margin="10dp"
-            app:backgroundTint="@color/red"
-            android:background="@drawable/fab_background"
-            android:text="@string/decline"/>
+            app:tint="@color/white"/>
     </LinearLayout>
 </RelativeLayout>

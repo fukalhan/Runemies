@@ -1,5 +1,6 @@
 package cz.cvut.fukalhan.repository.challenges
 
+import cz.cvut.fukalhan.repository.challenges.state.ChallengeDeleteState
 import cz.cvut.fukalhan.repository.entity.Challenge
 import cz.cvut.fukalhan.shared.DataWrapper
 import org.koin.core.KoinComponent
@@ -14,6 +15,10 @@ class ChallengesFacade : IChallengesFacade, KoinComponent {
 
     override suspend fun updateChallenge(challengeId: String, userId: String, userDistance: Double) {
         repository.updateChallenge(challengeId, userId, userDistance)
+    }
+
+    override suspend fun deleteChallenge(challengeId: String): ChallengeDeleteState {
+        return repository.deleteChallenge(challengeId)
     }
 
     override suspend fun getRequestedChallenges(userId: String): DataWrapper<ArrayList<Challenge>> {

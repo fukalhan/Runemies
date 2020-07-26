@@ -16,6 +16,7 @@ import cz.cvut.fukalhan.utils.TimeFormatter
 import cz.cvut.fukalhan.main.challenges.viewholder.ActiveChallengeViewHolder
 import cz.cvut.fukalhan.repository.entity.Challenge
 import cz.cvut.fukalhan.shared.Constants
+import kotlinx.android.synthetic.main.item_challenge_active.*
 
 class ActiveChallengesAdapter(private val context: Context, private val challenges: List<Challenge>, private val resources: Resources) : RecyclerView.Adapter<ActiveChallengeViewHolder>() {
     private val storageRef: StorageReference = Firebase.storage.reference
@@ -39,15 +40,13 @@ class ActiveChallengesAdapter(private val context: Context, private val challeng
             }
         holder.opponentUsername.text = resources.getString(R.string.against_user, challenge.opponentUsername)
         holder.itemView.setOnClickListener {
-            if (holder.resultButtonPanel.visibility == View.GONE) {
-                holder.resultButtonPanel.visibility = View.VISIBLE
+            if (holder.resultPanel.visibility == View.GONE) {
+                holder.resultPanel.visibility = View.VISIBLE
             } else {
-                holder.resultButtonPanel.visibility = View.GONE
+                holder.resultPanel.visibility = View.GONE
             }
         }
-        holder.yourResult.text = resources.getString(R.string.your_result, challenge.challengerDistance.toString())
+        holder.yourResult.text = resources.getString(R.string.your_result_n_1_s_km, challenge.challengerDistance.toString())
         holder.opponentResult.text = resources.getString(R.string.waiting_for_result, challenge.opponentUsername)
-        holder.quitChallengeButton.setOnClickListener {
-        }
     }
 }
