@@ -6,8 +6,8 @@ import cz.cvut.fukalhan.repository.login.LoginFacade
 import cz.cvut.fukalhan.repository.login.LoginRepository
 import cz.cvut.fukalhan.repository.user.UserFacade
 import cz.cvut.fukalhan.repository.user.UserRepository
-import cz.cvut.fukalhan.repository.useractivity.UserActivityFacade
-import cz.cvut.fukalhan.repository.useractivity.UserActivityRepository
+import cz.cvut.fukalhan.repository.runrecords.RunRecordsFacade
+import cz.cvut.fukalhan.repository.runrecords.RunRecordsRepository
 import cz.cvut.fukalhan.service.LocationTrackingRecord
 import org.koin.dsl.module
 
@@ -28,8 +28,8 @@ object Module {
     }
 
     val userActivityModule = module {
-        single { UserActivityFacade() }
-        single { UserActivityRepository() }
+        single { RunRecordsFacade() }
+        single { RunRecordsRepository() }
     }
 
     val locationTrackingRecordModule = module {

@@ -1,4 +1,4 @@
-package cz.cvut.fukalhan.main.useractivity.dialog
+package cz.cvut.fukalhan.main.runrecords.dialog
 
 import android.app.AlertDialog
 import android.app.Dialog

@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context=".main.useractivity.fragment.UserActivityFragment">
+    tools:context=".main.runrecords.fragment.RunRecordsFragment">
 
     <TextView
         android:id="@+id/activity_state"

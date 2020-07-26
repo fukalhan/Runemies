@@ -7,7 +7,7 @@
     android:layout_margin="7dp"
     android:orientation="vertical"
     android:animateLayoutChanges="true"
-    android:background="@drawable/gradient_background"
+    android:background="@drawable/background"
     android:elevation="5dp">
 
     <TextView

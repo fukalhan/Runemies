@@ -7,7 +7,7 @@ import cz.cvut.fukalhan.repository.entity.ActivityStatistics
 import cz.cvut.fukalhan.repository.entity.RunRecord
 import cz.cvut.fukalhan.repository.entity.User
 import cz.cvut.fukalhan.repository.user.UserFacade
-import cz.cvut.fukalhan.repository.useractivity.UserActivityFacade
+import cz.cvut.fukalhan.repository.runrecords.RunRecordsFacade
 import cz.cvut.fukalhan.shared.DataWrapper
 import kotlinx.coroutines.launch
 import org.koin.core.KoinComponent
@@ -18,7 +18,7 @@ class ProfileViewModel : ViewModel(), KoinComponent {
     val userData: MutableLiveData<DataWrapper<User>> by lazy { MutableLiveData<DataWrapper<User>>() }
     private val userFacade by inject<UserFacade>()
     val userStatistics: MutableLiveData<ActivityStatistics> by lazy { MutableLiveData<ActivityStatistics>() }
-    private val userActivityFacade by inject<UserActivityFacade>()
+    private val userActivityFacade by inject<RunRecordsFacade>()
     val monthMileage: MutableLiveData<Array<Float>> by lazy { MutableLiveData<Array<Float>>() }
 
     fun getUserData(userId: String) {

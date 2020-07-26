@@ -11,8 +11,8 @@ import cz.cvut.fukalhan.repository.challenges.ChallengesFacade
 import cz.cvut.fukalhan.repository.entity.Challenge
 import cz.cvut.fukalhan.repository.entity.Route
 import cz.cvut.fukalhan.repository.entity.RunRecord
-import cz.cvut.fukalhan.repository.useractivity.states.RecordSaveState
-import cz.cvut.fukalhan.repository.useractivity.UserActivityFacade
+import cz.cvut.fukalhan.repository.runrecords.states.RecordSaveState
+import cz.cvut.fukalhan.repository.runrecords.RunRecordsFacade
 import cz.cvut.fukalhan.service.LocationTrackingRecord
 import kotlinx.coroutines.launch
 import org.koin.core.KoinComponent
@@ -30,7 +30,7 @@ class RunViewModel(context: Context) : ViewModel(), KoinComponent {
         locationUpdate.location.observeForever(locationUpdateObserver)
     } }
     val record: MutableLiveData<RunRecord> by lazy { MutableLiveData<RunRecord>() }
-    private val userActivityFacade by inject<UserActivityFacade>()
+    private val runRecordsFacade by inject<RunRecordsFacade>()
     val recordSaveResult: MutableLiveData<RecordSaveState> by lazy { MutableLiveData<RecordSaveState>() }
     private val challengesFacade by inject<ChallengesFacade>()
 
@@ -79,7 +79,7 @@ class RunViewModel(context: Context) : ViewModel(), KoinComponent {
 
     fun saveRecord(userId: String) {
         viewModelScope.launch {
-            val recordSaveState = userActivityFacade.saveRunRecord(userId, runRecord)
+            val recordSaveState = runRecordsFacade.saveRunRecord(userId, runRecord)
             recordSaveResult.postValue(recordSaveState)
         }
     }

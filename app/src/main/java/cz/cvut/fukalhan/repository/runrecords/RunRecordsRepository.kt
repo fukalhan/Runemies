@@ -1,17 +1,17 @@
-package cz.cvut.fukalhan.repository.useractivity
+package cz.cvut.fukalhan.repository.runrecords
 
 import android.util.Log
 import com.google.android.gms.maps.model.LatLng
 import com.google.firebase.firestore.FirebaseFirestore
 import cz.cvut.fukalhan.repository.entity.RunRecord
-import cz.cvut.fukalhan.repository.useractivity.states.RecordDeleteState
-import cz.cvut.fukalhan.repository.useractivity.states.RecordSaveState
+import cz.cvut.fukalhan.repository.runrecords.states.RecordDeleteState
+import cz.cvut.fukalhan.repository.runrecords.states.RecordSaveState
 import cz.cvut.fukalhan.shared.Constants
 import cz.cvut.fukalhan.shared.DataWrapper
 import kotlinx.coroutines.tasks.await
 import java.lang.Exception
 
-class UserActivityRepository : IUserActivityRepository {
+class RunRecordsRepository : IRunRecordsRepository {
     private val db = FirebaseFirestore.getInstance()
 
     /**

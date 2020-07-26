@@ -31,7 +31,7 @@ import cz.cvut.fukalhan.utils.TimeFormatter
 import cz.cvut.fukalhan.main.run.viewmodel.RunViewModel
 import cz.cvut.fukalhan.repository.challenges.state.ChallengeState
 import cz.cvut.fukalhan.repository.entity.RunRecord
-import cz.cvut.fukalhan.repository.useractivity.states.RecordSaveState
+import cz.cvut.fukalhan.repository.runrecords.states.RecordSaveState
 import cz.cvut.fukalhan.shared.Constants
 import cz.cvut.fukalhan.utils.DrawableToBitmapUtil
 import cz.cvut.fukalhan.utils.GpsUtil
