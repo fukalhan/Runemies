@@ -14,20 +14,10 @@ import cz.cvut.fukalhan.login.viewmodel.SignUpViewModel
 import cz.cvut.fukalhan.repository.login.states.SignUpState
 import kotlinx.android.synthetic.main.fragment_sign_up.*
 
-/**
- * Sign up screen,
- * communicate to SignUpViewModel to register user with given username, email address and password,
- * observe the outcome SignUpState on SignUpViewModel,
- * if successful navigate to main screen
- */
 class SignUpFragment : Fragment() {
     private lateinit var signUpViewModel: SignUpViewModel
 
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         signUpViewModel = SignUpViewModel()
         return inflater.inflate(R.layout.fragment_sign_up, container, false)
     }

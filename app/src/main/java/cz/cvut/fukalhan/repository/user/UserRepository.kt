@@ -2,13 +2,11 @@ package cz.cvut.fukalhan.repository.user
 
 import android.net.Uri
 import android.util.Log
-import com.google.firebase.auth.FirebaseAuthInvalidUserException
-import com.google.firebase.auth.FirebaseUser
-import com.google.firebase.auth.UserProfileChangeRequest
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ktx.toObject
 import com.google.firebase.storage.StorageReference
 import cz.cvut.fukalhan.repository.entity.User
+import cz.cvut.fukalhan.repository.user.states.ImageSet
 import cz.cvut.fukalhan.shared.Constants
 import cz.cvut.fukalhan.shared.DataWrapper
 import kotlinx.coroutines.tasks.await
@@ -46,19 +44,13 @@ class UserRepository : IUserRepository {
         }
     }
 
-    override suspend fun setProfileImage(uri: Uri, storageRef: StorageReference) {
-        try {
+    override suspend fun setProfileImage(uri: Uri, storageRef: StorageReference): ImageSet {
+        return try {
             storageRef.putFile(uri)
+            ImageSet.SUCCESS
         } catch (e: Exception) {
             Log.e(e.toString(), e.message.toString())
-        }
-    }
-
-    override suspend fun setUsername(user: FirebaseUser, newUsername: String) {
-        try {
-            user.updateProfile(UserProfileChangeRequest.Builder().setDisplayName(newUsername).build())
-        } catch (e: FirebaseAuthInvalidUserException) {
-            Log.e(e.toString(), e.message.toString())
+            ImageSet.FAIL
         }
     }
 }

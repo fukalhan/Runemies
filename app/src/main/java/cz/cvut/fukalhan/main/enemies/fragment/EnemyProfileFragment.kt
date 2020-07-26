@@ -12,6 +12,7 @@ import cz.cvut.fukalhan.main.profile.fragment.ProfileFragment
 import cz.cvut.fukalhan.repository.challenges.state.ChallengeState
 import cz.cvut.fukalhan.utils.TimeFormatter
 import cz.cvut.fukalhan.repository.entity.User
+import kotlinx.android.synthetic.main.fragment_profile.*
 import kotlinx.android.synthetic.main.profile_user_info.*
 
 class EnemyProfileFragment : ProfileFragment(), IChallengeUserListener {
@@ -19,10 +20,8 @@ class EnemyProfileFragment : ProfileFragment(), IChallengeUserListener {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        challenge_user.visibility = View.VISIBLE
-        challenge_user.setOnClickListener {
-            challengeUser()
-        }
+        sign_out_layout.visibility = View.GONE
+        image_setting.visibility = View.GONE
     }
     override fun getUserData() {
         setProfileImage(args.enemyID)

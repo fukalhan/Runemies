@@ -1,5 +1,7 @@
 package cz.cvut.fukalhan.main.profile.fragment
 
+import android.app.Activity
+import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -9,6 +11,7 @@ import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import com.bumptech.glide.Glide
+import com.github.dhaval2404.imagepicker.ImagePicker
 import com.github.mikephil.charting.components.XAxis
 import com.github.mikephil.charting.data.BarData
 import com.github.mikephil.charting.data.BarDataSet
@@ -23,13 +26,16 @@ import cz.cvut.fukalhan.common.ILoginNavigation
 import cz.cvut.fukalhan.main.profile.viewmodel.ProfileViewModel
 import cz.cvut.fukalhan.repository.entity.ActivityStatistics
 import cz.cvut.fukalhan.repository.entity.User
+import cz.cvut.fukalhan.repository.login.states.SignOutState
+import cz.cvut.fukalhan.repository.user.states.ImageSet
 import cz.cvut.fukalhan.shared.Constants
 import cz.cvut.fukalhan.utils.TimeFormatter
+import kotlinx.android.synthetic.main.fragment_profile.*
 import kotlinx.android.synthetic.main.profile_activity_graph.*
 import kotlinx.android.synthetic.main.profile_activity_summary.*
 import kotlinx.android.synthetic.main.profile_user_info.*
 
-open class ProfileFragment : Fragment(), ILoginNavigation {
+open class ProfileFragment : Fragment() {
     protected lateinit var profileViewModel: ProfileViewModel
     private val user: FirebaseUser? = FirebaseAuth.getInstance().currentUser
     private val storageRef: StorageReference = Firebase.storage.reference
@@ -41,8 +47,42 @@ open class ProfileFragment : Fragment(), ILoginNavigation {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        sign_out.setOnClickListener {
+            profileViewModel.signOutUser()
+        }
+        image_setting.setOnClickListener {
+            ImagePicker.with(this)
+                .cropSquare()
+                .compress(1024)
+                .start()
+        }
+        observeImageChange()
+        observeSignOutState()
         setUserData()
         getActivitiesGraph()
+    }
+
+    private fun observeImageChange() {
+        profileViewModel.imageSetState.observe(viewLifecycleOwner, Observer { state ->
+            when (state) {
+                ImageSet.FAIL -> Toast.makeText(context, "Sorry, unable to change profile pic, try later.", Toast.LENGTH_SHORT).show()
+                else -> {
+                    Toast.makeText(context, "Profile image changed", Toast.LENGTH_SHORT).show()
+                    user?.let {
+                        setProfileImage(it.uid)
+                    }
+                }
+            }
+        })
+    }
+
+    private fun observeSignOutState() {
+        profileViewModel.signOutState.observe(viewLifecycleOwner, Observer { signOutState ->
+            when (signOutState) {
+                SignOutState.SUCCESS -> (activity as ILoginNavigation).logOut()
+                SignOutState.FAIL -> Toast.makeText(requireContext(), "Sign out failed", Toast.LENGTH_SHORT).show()
+            }
+        })
     }
 
     /** Request data of current user and set observer for the answer */
@@ -115,5 +155,22 @@ open class ProfileFragment : Fragment(), ILoginNavigation {
             activity_graph.setNoDataText("Data unavailable")
             activity_graph.invalidate()
         })
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (resultCode == Activity.RESULT_OK) {
+            if (requestCode == ImagePicker.REQUEST_CODE && data != null) {
+                user?.let {
+                    val uri = data.data!!
+                    val profileImageRef = storageRef.child("${Constants.PROFILE_IMAGE_PATH}${it.uid}")
+                    profileViewModel.setProfileImage(uri, profileImageRef)
+                }
+            }
+        } else if (resultCode == ImagePicker.RESULT_ERROR) {
+            Toast.makeText(context, ImagePicker.getError(data), Toast.LENGTH_SHORT).show()
+        } else {
+            Toast.makeText(context, "Task Cancelled", Toast.LENGTH_SHORT).show()
+        }
     }
 }

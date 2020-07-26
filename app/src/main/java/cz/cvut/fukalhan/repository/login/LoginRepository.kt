@@ -9,10 +9,12 @@ import com.google.firebase.auth.FirebaseAuthInvalidUserException
 import com.google.firebase.firestore.FirebaseFirestore
 
 import cz.cvut.fukalhan.repository.entity.User
+import cz.cvut.fukalhan.repository.login.states.PasswordChangeEmailSentState
 import cz.cvut.fukalhan.repository.login.states.SignInState
 import cz.cvut.fukalhan.repository.login.states.SignOutState
 import cz.cvut.fukalhan.repository.login.states.SignUpState
 import cz.cvut.fukalhan.shared.Constants
+import kotlinx.android.synthetic.main.fragment_sign_in.*
 import kotlinx.coroutines.tasks.await
 import java.lang.Exception
 
@@ -62,6 +64,18 @@ class LoginRepository : ILoginRepository {
                 is FirebaseAuthInvalidUserException -> SignInState.NOT_EXISTING_ACCOUNT
                 is FirebaseAuthInvalidCredentialsException -> SignInState.WRONG_PASSWORD
                 else -> SignInState.FAIL
+            }
+        }
+    }
+
+    override suspend fun sendChangePasswordEmail(email: String): PasswordChangeEmailSentState {
+        return try {
+            FirebaseAuth.getInstance().sendPasswordResetEmail(email).await()
+            PasswordChangeEmailSentState.SUCCESS
+        } catch (e: Exception) {
+            when (e) {
+                is FirebaseAuthInvalidUserException -> PasswordChangeEmailSentState.NOT_EXISTING_USER
+                else -> PasswordChangeEmailSentState.FAIL
             }
         }
     }

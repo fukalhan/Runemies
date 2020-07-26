@@ -10,18 +10,12 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.IBinder
 import android.util.Log
-import android.view.Menu
-import android.view.MenuItem
-import android.view.View
-import android.widget.Toast
-import androidx.lifecycle.Observer
 import androidx.navigation.NavController
 import androidx.navigation.findNavController
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.navigateUp
 import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
-import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.karumi.dexter.Dexter
@@ -33,7 +27,6 @@ import cz.cvut.fukalhan.R
 import cz.cvut.fukalhan.common.ILocationTracking
 import cz.cvut.fukalhan.common.ILoginNavigation
 import cz.cvut.fukalhan.login.activity.LoginActivity
-import cz.cvut.fukalhan.repository.login.states.SignOutState
 import cz.cvut.fukalhan.service.LocationService
 import cz.cvut.fukalhan.service.LocationServiceBinder
 import cz.cvut.fukalhan.shared.Constants
@@ -48,7 +41,6 @@ import kotlinx.android.synthetic.main.app_bar_main.*
  */
 class MainActivity : AppCompatActivity(), ILoginNavigation, ILocationTracking {
     val user: FirebaseUser? = FirebaseAuth.getInstance().currentUser
-    private lateinit var mainActivityViewModel: MainActivityViewModel
     private lateinit var appBarConfiguration: AppBarConfiguration
     private lateinit var navController: NavController
     private var networkReceiver: NetworkReceiver = NetworkReceiver()
@@ -56,16 +48,13 @@ class MainActivity : AppCompatActivity(), ILoginNavigation, ILocationTracking {
     private var bound = false
     private lateinit var serviceConnection: ServiceConnection
 
-    /** If there is no user signed in => logout, else => create view */
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         if (user == null) logOut()
         setContentView(R.layout.activity_main)
-        mainActivityViewModel = MainActivityViewModel()
         connectLocationService()
         setSupportActionBar(toolbar_main)
         setBottomMenuView()
-        observeSignOutState()
         checkPermissions()
     }
 
@@ -102,49 +91,9 @@ class MainActivity : AppCompatActivity(), ILoginNavigation, ILocationTracking {
         nav_view.setupWithNavController(navController)
     }
 
-    /** Creates options menu in action bar */
-    override fun onCreateOptionsMenu(menu: Menu): Boolean {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        menuInflater.inflate(R.menu.settings_menu, menu)
-        return true
-    }
-
-    /** Defines navigation for individual options menu items */
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        return when (item.itemId) {
-            R.id.sign_out -> {
-                mainActivityViewModel.signOutUser()
-                return true
-            }
-            R.id.settings -> {
-                navController.navigate(R.id.nav_settings)
-                return true
-            }
-            else -> super.onOptionsItemSelected(item)
-        }
-    }
-
-    /** Observe if sign out was called, log out if was */
-    private fun observeSignOutState() {
-        mainActivityViewModel.signOutState.observe(this, Observer { signOutState ->
-            when (signOutState) {
-                SignOutState.SUCCESS -> logOut()
-                SignOutState.FAIL -> Toast.makeText(this, "Sign out failed", Toast.LENGTH_SHORT).show()
-            }
-        })
-    }
-
     /** Handles back navigation */
     override fun onSupportNavigateUp(): Boolean {
-        showBottomNavigationBar()
         return navController.navigateUp(appBarConfiguration) || super.onSupportNavigateUp()
-    }
-
-    /** Makes bottom navigation visible */
-    private fun showBottomNavigationBar() {
-        val view = this.findViewById<View>(android.R.id.content).rootView
-        val bottomNavBar = view.findViewById(R.id.nav_view) as BottomNavigationView
-        bottomNavBar.visibility = View.VISIBLE
     }
 
     /**

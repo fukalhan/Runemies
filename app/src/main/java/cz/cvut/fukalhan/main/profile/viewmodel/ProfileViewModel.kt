@@ -1,13 +1,18 @@
 package cz.cvut.fukalhan.main.profile.viewmodel
 
+import android.net.Uri
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.google.firebase.storage.StorageReference
 import cz.cvut.fukalhan.repository.entity.ActivityStatistics
 import cz.cvut.fukalhan.repository.entity.RunRecord
 import cz.cvut.fukalhan.repository.entity.User
+import cz.cvut.fukalhan.repository.login.LoginFacade
+import cz.cvut.fukalhan.repository.login.states.SignOutState
 import cz.cvut.fukalhan.repository.user.UserFacade
 import cz.cvut.fukalhan.repository.runrecords.RunRecordsFacade
+import cz.cvut.fukalhan.repository.user.states.ImageSet
 import cz.cvut.fukalhan.shared.DataWrapper
 import kotlinx.coroutines.launch
 import org.koin.core.KoinComponent
@@ -20,10 +25,26 @@ class ProfileViewModel : ViewModel(), KoinComponent {
     val userStatistics: MutableLiveData<ActivityStatistics> by lazy { MutableLiveData<ActivityStatistics>() }
     private val userActivityFacade by inject<RunRecordsFacade>()
     val monthMileage: MutableLiveData<Array<Float>> by lazy { MutableLiveData<Array<Float>>() }
+    val signOutState: MutableLiveData<SignOutState> by lazy { MutableLiveData<SignOutState>() }
+    private val loginFacade by inject<LoginFacade>()
+    val imageSetState: MutableLiveData<ImageSet> by lazy { MutableLiveData<ImageSet>() }
+
+    fun signOutUser() {
+        viewModelScope.launch {
+            val signOut = loginFacade.signOutUser()
+            signOutState.postValue(signOut)
+        }
+    }
 
     fun getUserData(userId: String) {
         viewModelScope.launch {
             userData.postValue(userFacade.getUser(userId))
+        }
+    }
+
+    fun setProfileImage(uri: Uri, storageRef: StorageReference) {
+        viewModelScope.launch {
+            imageSetState.postValue(userFacade.setProfileImage(uri, storageRef))
         }
     }
 
