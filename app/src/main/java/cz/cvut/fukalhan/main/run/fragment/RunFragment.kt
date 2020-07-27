@@ -44,6 +44,7 @@ import kotlinx.android.synthetic.main.run_buttons.*
  */
 class RunFragment : Fragment(), OnMapReadyCallback, IOnGpsListener, ISaveDialogListener {
     private val args: RunFragmentArgs by navArgs()
+    private lateinit var challenge: ChallengeState
     private val user = FirebaseAuth.getInstance().currentUser
     private lateinit var runViewModel: RunViewModel
     private lateinit var mapView: MapView
@@ -59,6 +60,7 @@ class RunFragment : Fragment(), OnMapReadyCallback, IOnGpsListener, ISaveDialogL
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val view = inflater.inflate(R.layout.fragment_run, container, false)
         runViewModel = RunViewModel(requireContext())
+        challenge = args.challengeState
         setMapView(savedInstanceState, view)
         customizeMarker()
         return view
@@ -266,10 +268,11 @@ class RunFragment : Fragment(), OnMapReadyCallback, IOnGpsListener, ISaveDialogL
     override fun onDialogPositiveClick(dialog: DialogFragment) {
         user?.let {
             runViewModel.saveRecord(it.uid)
-            when (args.challengeState) {
+            when (challenge) {
                 ChallengeState.STARTED -> runViewModel.createChallenge(it.uid, it.displayName!!, args.enemyId, args.enemyUsername)
                 ChallengeState.ACCEPTED -> runViewModel.updateChallenge(it.uid, args.challengeId)
             }
+            challenge = ChallengeState.NULL
         }
     }
 
