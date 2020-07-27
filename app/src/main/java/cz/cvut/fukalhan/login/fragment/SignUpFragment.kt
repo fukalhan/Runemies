@@ -24,12 +24,10 @@ class SignUpFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        // On Sign up button pressed send user info to signUp view model
         sign_up_button.setOnClickListener {
             sign_up_progress_bar.visibility = View.VISIBLE
             signUpViewModel.signUp(sign_up_username.text.toString(), sign_up_email.text.toString(), sign_up_password.text.toString())
         }
-        // Observe data sent from view model
         observeSignUpState()
     }
 
