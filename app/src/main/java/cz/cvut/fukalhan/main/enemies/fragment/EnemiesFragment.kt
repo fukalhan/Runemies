@@ -42,8 +42,7 @@ class EnemiesFragment : Fragment(), IChallengeUserListener {
                 enemies.error -> {
                     Toast.makeText(context, "Something went wrong", Toast.LENGTH_SHORT).show()
                 }
-                enemies.data?.isEmpty()!! -> enemies_state.text = getString(R.string.no_enemy_records)
-                else -> setAdapter(enemies.data)
+                enemies.data!!.isNotEmpty() -> setAdapter(enemies.data)
             }
         })
     }
