@@ -4,6 +4,7 @@ import android.content.res.Resources
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.lifecycle.MutableLiveData
 import androidx.recyclerview.widget.RecyclerView
 
 import cz.cvut.fukalhan.R
@@ -13,9 +14,13 @@ import cz.cvut.fukalhan.main.runrecords.viewholder.RunRecordViewHolder
 import cz.cvut.fukalhan.repository.entity.RunRecord
 import org.koin.core.KoinComponent
 
-class RunRecordsAdapter(private val userActivities: ArrayList<RunRecord>, private val resources: Resources, private val fragmentRun: RunRecordsFragment) : RecyclerView.Adapter<RunRecordViewHolder>(), KoinComponent {
+class RunRecordsAdapter(private val runRecords: ArrayList<RunRecord>, private val resources: Resources, private val fragmentRun: RunRecordsFragment) : RecyclerView.Adapter<RunRecordViewHolder>(), KoinComponent {
+    val recordsCount: MutableLiveData<Int> by lazy { MutableLiveData<Int>() }
+    init {
+        recordsCount.postValue(runRecords.size)
+    }
 
-    override fun getItemCount(): Int = userActivities.size
+    override fun getItemCount(): Int = runRecords.size
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RunRecordViewHolder {
         val view = LayoutInflater.from(parent.context).inflate(R.layout.item_run_record, parent, false)
@@ -23,7 +28,7 @@ class RunRecordsAdapter(private val userActivities: ArrayList<RunRecord>, privat
     }
 
     override fun onBindViewHolder(holderRun: RunRecordViewHolder, position: Int) {
-        val record = userActivities[position]
+        val record = runRecords[position]
         holderRun.date.text = resources.getString(R.string.run_date, TimeFormatter.simpleDate.format(record.date))
         holderRun.distance.text = resources.getString(R.string.distance_km, record.distance.toString())
         holderRun.time.text = resources.getString(R.string.time, TimeFormatter.toHourMinSec(record.time))
@@ -41,7 +46,10 @@ class RunRecordsAdapter(private val userActivities: ArrayList<RunRecord>, privat
     }
 
     fun deleteRecordOnPosition(position: Int) {
-        userActivities.removeAt(position)
+        runRecords.removeAt(position)
         this.notifyItemRemoved(position)
+        this.notifyItemRangeChanged(position, runRecords.size)
+        this.notifyDataSetChanged()
+        recordsCount.postValue(runRecords.size)
     }
 }

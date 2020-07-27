@@ -19,49 +19,37 @@ import cz.cvut.fukalhan.main.runrecords.dialog.IDeleteRecordListener
 import cz.cvut.fukalhan.main.runrecords.viewModel.RunRecordsViewModel
 import cz.cvut.fukalhan.repository.entity.RunRecord
 import cz.cvut.fukalhan.repository.runrecords.states.RecordDeleteState
-import kotlinx.android.synthetic.main.fragment_activity.*
+import kotlinx.android.synthetic.main.fragment_run_records.*
 
 /**
  * A simple [Fragment] subclass.
  */
 class RunRecordsFragment : Fragment(), IDeleteRecordListener {
     private lateinit var runRecordsViewModel: RunRecordsViewModel
-    private val userAuth: FirebaseUser? = FirebaseAuth.getInstance().currentUser
     private var recordAdapterRun: RunRecordsAdapter? = null
+    private var position: Int = -1
 
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         runRecordsViewModel = RunRecordsViewModel()
-        return inflater.inflate(R.layout.fragment_activity, container, false)
+        return inflater.inflate(R.layout.fragment_run_records, container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        getRecords()
-    }
-
-    private fun getRecords() {
-        runRecordsViewModel.runRecords.observe(viewLifecycleOwner, Observer { activities ->
-            when {
-                activities.error -> {
-                    activity_state.text = getString(R.string.activities_unavailable)
-                    Toast.makeText(context, "Something went wrong", Toast.LENGTH_SHORT).show()
-                }
-                activities.data?.isEmpty()!! -> activity_state.text = getString(R.string.no_activity_records)
-                else -> {
-                    activity_state.text = getString(R.string.records_count, activities.data.size)
-                    setAdapter(activities.data)
-                }
-            }
-        })
-
+        observeRecords()
+        observeDeleteRecordState()
         runRecordsViewModel.getRecords()
     }
 
-    // Init userActivitiesAdapter in fragment layout's recycler view
+    private fun observeRecords() {
+        runRecordsViewModel.runRecords.observe(viewLifecycleOwner, Observer { records ->
+            when {
+                records.error -> Toast.makeText(context, "Something went wrong", Toast.LENGTH_SHORT).show()
+                else -> setAdapter(records.data!!)
+            }
+        })
+    }
+
     private fun setAdapter(userActivities: ArrayList<RunRecord>) {
         recordAdapterRun = context?.let { context -> RunRecordsAdapter(userActivities, context.resources, this) }
         val viewManager = LinearLayoutManager(activity)
@@ -70,6 +58,32 @@ class RunRecordsFragment : Fragment(), IDeleteRecordListener {
             layoutManager = viewManager
             adapter = recordAdapterRun
         }
+        observeRecordsCount()
+    }
+
+    private fun observeRecordsCount() {
+        recordAdapterRun?.recordsCount?.observe(viewLifecycleOwner, Observer { count ->
+            when (count) {
+                0 -> activity_state.text = getString(R.string.no_activity_records)
+                1 -> activity_state.text = getString(R.string.one_record, count)
+                else -> activity_state.text = getString(R.string.records_count, count)
+            }
+        })
+    }
+
+    private fun observeDeleteRecordState() {
+        runRecordsViewModel.recordDeleteState.observe(viewLifecycleOwner, Observer { state ->
+            when (state) {
+                RecordDeleteState.SUCCESS -> {
+                    if (position >= 0) {
+                        user_activity_recycler_view.removeViewAt(position)
+                        recordAdapterRun?.deleteRecordOnPosition(position)
+                        position = -1
+                    }
+                }
+                RecordDeleteState.FAIL -> Toast.makeText(context, "Unable to delete record", Toast.LENGTH_SHORT).show()
+            }
+        })
     }
 
     fun makeDeleteRecordDialog(recordId: String, position: Int) {
@@ -77,16 +91,8 @@ class RunRecordsFragment : Fragment(), IDeleteRecordListener {
         dialog.show(requireFragmentManager(), "DeleteRecordDialog")
     }
 
-    override fun onDialogPositiveClick(dialog: DialogFragment, recordId: String, position: Int) {
-        runRecordsViewModel.recordDeleteState.observe(viewLifecycleOwner, Observer { state ->
-            when (state) {
-                RecordDeleteState.FAIL -> Toast.makeText(context, "Something went wrong, unable to delete record", Toast.LENGTH_SHORT).show()
-                RecordDeleteState.SUCCESS -> {
-                    recordAdapterRun?.deleteRecordOnPosition(position)
-                    Toast.makeText(context, "Record deleted", Toast.LENGTH_SHORT).show()
-                }
-            }
-        })
+    override fun onDialogPositiveClick(dialog: DialogFragment, recordId: String, deletePosition: Int) {
+        position = deletePosition
         runRecordsViewModel.deleteRecord(recordId)
     }
 
