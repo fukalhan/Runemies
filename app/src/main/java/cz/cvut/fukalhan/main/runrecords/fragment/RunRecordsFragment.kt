@@ -9,8 +9,6 @@ import android.widget.Toast
 import androidx.fragment.app.DialogFragment
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.auth.FirebaseUser
 
 import cz.cvut.fukalhan.R
 import cz.cvut.fukalhan.main.runrecords.adapter.RunRecordsAdapter

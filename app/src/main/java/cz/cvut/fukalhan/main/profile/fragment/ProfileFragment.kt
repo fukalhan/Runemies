@@ -145,7 +145,7 @@ open class ProfileFragment : Fragment() {
             activity_graph.axisLeft.isGranularityEnabled = true
             activity_graph.axisLeft.granularity = 10f
             activity_graph.axisLeft.enableGridDashedLine(3f, 3f, 0f)
-            activity_graph.axisLeft.setLabelCount(10, true)
+            activity_graph.axisLeft.setLabelCount(5, true)
             activity_graph.axisRight.isEnabled = false
             activity_graph.xAxis.valueFormatter = ActivityChartFormatter()
             activity_graph.xAxis.setDrawGridLines(false)
