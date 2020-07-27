@@ -28,14 +28,25 @@ class ActiveChallengesFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        observeChallenges()
+        user?.let { challengesViewModel.getChallenges(it.uid) }
+    }
+
+    private fun observeChallenges() {
         challengesViewModel.challenges.observe(viewLifecycleOwner, Observer { challenges ->
             when {
                 challenges.error -> Toast.makeText(context, "Cannot retrieve challenges data", Toast.LENGTH_SHORT).show()
-                challenges.data.isNullOrEmpty() -> Toast.makeText(context, "No active challenges", Toast.LENGTH_SHORT).show()
-                else -> setAdapter(challenges.data)
+                challenges.data.isNullOrEmpty() -> challenges_count.text = getString(R.string.no_active_challenges)
+                else -> {
+                    if (challenges.data.size == 1) {
+                        challenges_count.text = getString(R.string.challenges_count, challenges.data.size)
+                    } else {
+                        challenges_count.text = getString(R.string.one_challenge, challenges.data.size)
+                    }
+                    setAdapter(challenges.data)
+                }
             }
         })
-        user?.let { challengesViewModel.getChallenges(it.uid) }
     }
 
     private fun setAdapter(challenges: List<Challenge>) {

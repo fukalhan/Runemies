@@ -24,6 +24,7 @@ class RequestedChallengesFragment(private val challengesFragment: ChallengesFrag
     private lateinit var challengesViewModel: RequestedChallengesViewModel
     private val user: FirebaseUser? = FirebaseAuth.getInstance().currentUser
     private var challengesAdapter: RequestedChallengesAdapter? = null
+    private var position: Int = -1
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         challengesViewModel = RequestedChallengesViewModel()
@@ -32,15 +33,33 @@ class RequestedChallengesFragment(private val challengesFragment: ChallengesFrag
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        observeChallenges()
+        observeChallengeDeleteState()
+        user?.let { challengesViewModel.getChallenges(it.uid) }
+    }
+
+    private fun observeChallenges() {
         challengesViewModel.challenges.observe(viewLifecycleOwner, Observer { challenges ->
             when {
-                challenges.error -> Toast.makeText(context, "Cannot retrieve challenges data", Toast.LENGTH_SHORT).show()
-                challenges.data.isNullOrEmpty() -> Toast.makeText(context, "No requested challenges", Toast.LENGTH_SHORT).show()
-                else -> setAdapter(challenges.data)
+                challenges.error -> Toast.makeText(context, "Cannot retrieve challenge requests", Toast.LENGTH_SHORT).show()
+                else -> setAdapter(challenges.data!!)
             }
         })
+    }
 
-        user?.let { challengesViewModel.getChallenges(it.uid) }
+    private fun observeChallengeDeleteState() {
+        challengesViewModel.challengeDeleteState.observe(viewLifecycleOwner, Observer { state ->
+            when (state) {
+                ChallengeDeleteState.SUCCESS -> {
+                    if (position >= 0) {
+                        requestedChallengesRecyclerView.removeViewAt(position)
+                        challengesAdapter?.deleteChallengeAtPosition(position)
+                        position = -1
+                    }
+                }
+                ChallengeDeleteState.FAIL -> Toast.makeText(context, "Something went wrong, try again", Toast.LENGTH_SHORT).show()
+            }
+        })
     }
 
     private fun setAdapter(challenges: ArrayList<Challenge>) {
@@ -51,6 +70,17 @@ class RequestedChallengesFragment(private val challengesFragment: ChallengesFrag
             layoutManager = viewManager
             adapter = challengesAdapter
         }
+        observeChallengesCount()
+    }
+
+    private fun observeChallengesCount() {
+        challengesAdapter?.requestsCount?.observe(viewLifecycleOwner, Observer { count ->
+            when (count) {
+                0 -> challenges_count.text = getString(R.string.no_requested_challenges)
+                1 -> challenges_count.text = getString(R.string.one_request, count)
+                else -> challenges_count.text = getString(R.string.requests_count, count)
+            }
+        })
     }
 
     fun challengeActionDialog(challengeId: String, position: Int) {
@@ -62,13 +92,8 @@ class RequestedChallengesFragment(private val challengesFragment: ChallengesFrag
         challengesFragment.acceptChallenge(challengeId)
     }
 
-    override fun onDialogNegativeClick(dialog: DialogFragment, challengeId: String, position: Int) {
-        challengesViewModel.challengeDeleteState.observe(viewLifecycleOwner, Observer { state ->
-            when (state) {
-                ChallengeDeleteState.FAIL -> Toast.makeText(context, "Cannot decline challenge, try later", Toast.LENGTH_SHORT).show()
-                else -> challengesAdapter?.deleteChallengeAtPosition(position)
-            }
-        })
+    override fun onDialogNegativeClick(dialog: DialogFragment, challengeId: String, deletePosition: Int) {
+        position = deletePosition
         challengesViewModel.deleteChallenge(challengeId)
     }
 }

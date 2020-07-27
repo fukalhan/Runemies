@@ -6,6 +6,7 @@ import android.net.Uri
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.lifecycle.MutableLiveData
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.google.firebase.ktx.Firebase
@@ -21,6 +22,10 @@ import kotlinx.android.synthetic.main.item_challenge_requested.view.*
 
 class RequestedChallengesAdapter(private val context: Context, private val fragment: RequestedChallengesFragment, private val challenges: ArrayList<Challenge>, private val resources: Resources) : RecyclerView.Adapter<RequestedChallengeViewHolder>() {
     private val storageRef: StorageReference = Firebase.storage.reference
+    val requestsCount: MutableLiveData<Int> by lazy { MutableLiveData<Int>() }
+    init {
+        requestsCount.postValue(challenges.size)
+    }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RequestedChallengeViewHolder {
         val view = LayoutInflater.from(parent.context).inflate(R.layout.item_challenge_requested, parent, false)
@@ -56,5 +61,9 @@ class RequestedChallengesAdapter(private val context: Context, private val fragm
     fun deleteChallengeAtPosition(position: Int) {
         challenges.removeAt(position)
         this.notifyItemRemoved(position)
+        this.notifyItemRemoved(position)
+        this.notifyItemRangeChanged(position, challenges.size)
+        this.notifyDataSetChanged()
+        requestsCount.postValue(challenges.size)
     }
 }
