@@ -30,10 +30,11 @@
             android:layout_margin="7dp">
             <TextView
                 android:id="@+id/sign_out"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="@string/sign_out"
                 android:layout_margin="7dp"
+                android:gravity="center"
                 android:textSize="20sp"
                 android:textColor="@color/red"
                 android:layout_gravity="center"/>
