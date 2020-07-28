@@ -2,7 +2,7 @@ package cz.cvut.fukalhan.main.run.fragment
 
 import android.os.Bundle
 import android.os.SystemClock
-import android.util.Log
+import android.view.KeyEvent
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -63,6 +63,12 @@ class RunFragment : Fragment(), OnMapReadyCallback, IOnGpsListener, ISaveDialogL
         challenge = args.challengeState
         setMapView(savedInstanceState, view)
         customizeMarker()
+        view.setOnKeyListener { v, keyCode, event ->
+            if (event.getAction() == KeyEvent.ACTION_DOWN && keyCode == KeyEvent.KEYCODE_BACK) {
+                false
+            }
+            false
+        }
         return view
     }
 
@@ -211,19 +217,16 @@ class RunFragment : Fragment(), OnMapReadyCallback, IOnGpsListener, ISaveDialogL
     }
 
     override fun onPause() {
-        Log.e("Run fragment", "is paused")
         mapView.onPause()
         super.onPause()
     }
 
     override fun onStop() {
-        Log.e("Run fragment", "is stopped")
         mapView.onStop()
         super.onStop()
     }
 
     override fun onDestroy() {
-        Log.e("Run fragment", "is destroyed")
         map.clear()
         mapView.onDestroy()
         super.onDestroy()

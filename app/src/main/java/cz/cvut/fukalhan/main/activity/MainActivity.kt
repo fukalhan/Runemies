@@ -47,6 +47,7 @@ class MainActivity : AppCompatActivity(), ILoginNavigation, ILocationTracking {
     private var service: LocationService? = null
     private var bound = false
     private lateinit var serviceConnection: ServiceConnection
+    var locationTrackingOn: Boolean = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -93,7 +94,13 @@ class MainActivity : AppCompatActivity(), ILoginNavigation, ILocationTracking {
 
     /** Handles back navigation */
     override fun onSupportNavigateUp(): Boolean {
-        return navController.navigateUp(appBarConfiguration) || super.onSupportNavigateUp()
+        return navController.navigateUp(appBarConfiguration)
+    }
+
+    override fun onBackPressed() {
+        if (!locationTrackingOn) {
+            super.onBackPressed()
+        }
     }
 
     /**
@@ -144,6 +151,7 @@ class MainActivity : AppCompatActivity(), ILoginNavigation, ILocationTracking {
 
     /** Start tracking service */
     override fun startTracking() {
+        locationTrackingOn = true
         service?.startLocationTracking()
     }
 
@@ -157,6 +165,7 @@ class MainActivity : AppCompatActivity(), ILoginNavigation, ILocationTracking {
 
     /** Stop tracking service */
     override fun stopTracking() {
+        locationTrackingOn = false
         service?.stopLocationTracking()
     }
 
