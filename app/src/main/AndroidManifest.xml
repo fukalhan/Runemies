@@ -19,7 +19,8 @@
         android:roundIcon="@mipmap/runemies_icon_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme.noActionBar"
-        tools:replace="android:label">
+        tools:replace="android:label"
+        android:requestLegacyExternalStorage="true">
         <meta-data
             android:name="com.google.android.geo.API_KEY"
             android:value="AIzaSyDxT0rD_LN4PAW6L6DQR9EU7ta-CQN3iNg" />
