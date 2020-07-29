@@ -26,9 +26,24 @@ class SignUpFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         sign_up_button.setOnClickListener {
             sign_up_progress_bar.visibility = View.VISIBLE
-            signUpViewModel.signUp(sign_up_username.text.toString(), sign_up_email.text.toString(), sign_up_password.text.toString())
+            if (sign_up_password.text.toString() != confirmPasswordSignUp.text.toString()) {
+                Toast.makeText(context, "Confirm password isn't the same as password", Toast.LENGTH_SHORT).show()
+            } else if (inputEmpty()) {
+                Toast.makeText(context, "All fields must be filled", Toast.LENGTH_SHORT).show()
+            } else {
+                signUpViewModel.signUp(sign_up_username.text.toString().trim(), sign_up_email.text.toString().trim(), sign_up_password.text.toString().trim())
+            }
         }
         observeSignUpState()
+    }
+
+    private fun inputEmpty(): Boolean {
+        return when {
+            sign_up_username.text.toString().trim() == "" -> true
+            sign_up_email.text.toString().trim() == "" -> true
+            sign_up_password.text.toString().trim() == "" -> true
+            else -> false
+        }
     }
 
     private fun observeSignUpState() {

@@ -26,13 +26,25 @@ class SignInFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         sign_in_button.setOnClickListener {
-            signInViewModel.signIn(sign_in_email.text.toString().trim(), sign_in_password.text.toString())
+            if (inputEmpty()) {
+                Toast.makeText(context, "All fields must be filled", Toast.LENGTH_SHORT).show()
+            } else {
+                signInViewModel.signIn(sign_in_email.text.toString().trim(), sign_in_password.text.toString())
+            }
         }
         observeSignInState()
         forgotten_password.setOnClickListener {
             signInViewModel.forgotPassword(sign_in_email.text.toString().trim())
         }
         observeNewPasswordEmailSentState()
+    }
+
+    private fun inputEmpty(): Boolean {
+        return when {
+            sign_in_email.text.toString().trim() == "" -> true
+            sign_in_password.text.toString().trim() == "" -> true
+            else -> false
+        }
     }
 
     private fun observeSignInState() {
