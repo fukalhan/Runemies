@@ -17,6 +17,7 @@ import cz.cvut.fukalhan.service.LocationTrackingRecord
 import kotlinx.coroutines.launch
 import org.koin.core.KoinComponent
 import org.koin.core.inject
+import kotlin.math.roundToInt
 
 class RunViewModel(context: Context) : ViewModel(), KoinComponent {
     private var startTime: Long = 0
@@ -44,7 +45,7 @@ class RunViewModel(context: Context) : ViewModel(), KoinComponent {
     /** When recording update location and run record */
     private fun updateRecord(route: Route) {
         location.postValue(route.newLocation)
-        runRecord.distance += route.distance
+        runRecord.distance += route.distance * 0.001
         runRecord.pace =
             if (runRecord.distance != 0.0) {
                 ((System.currentTimeMillis() - startTime) / runRecord.distance).toLong()

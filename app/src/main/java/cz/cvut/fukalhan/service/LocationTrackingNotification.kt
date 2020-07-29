@@ -23,7 +23,7 @@ class LocationTrackingNotification(private val context: Context) : KoinComponent
     private val notificationManager = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
     private val locationTrackingRecord by inject<LocationTrackingRecord>()
     private val observer: Observer<Route> = Observer { route ->
-        distance += route.distance
+        distance += route.distance * 0.001
         notificationLayout.setTextViewText(R.id.notification_distance, context.getString(R.string.notification_distance, String.format("%.2f", distance)))
         notificationBuilder.setCustomContentView(notificationLayout)
         notificationManager.notify(Constants.NOTIFICATION_ID, notificationBuilder.build())

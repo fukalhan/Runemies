@@ -21,7 +21,7 @@ class LocationTrackingRecord : KoinComponent {
 
     private fun updateRecord(location: Location): Route {
         val newLocation = LatLng(location.latitude, location.longitude)
-        var distance = 0.0
+        var distance = 0
         if (pathWay.isNotEmpty()) {
             val previousLocation = pathWay.last()
             val result = FloatArray(1)
@@ -32,7 +32,7 @@ class LocationTrackingRecord : KoinComponent {
                 newLocation.longitude,
                 result
             )
-            distance = (result[0] * 0.1).roundToInt() * 0.01
+            distance = result[0].roundToInt()
         }
         pathWay = pathWay + newLocation
 
