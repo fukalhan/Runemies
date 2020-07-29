@@ -45,7 +45,7 @@ class RequestedChallengesAdapter(private val context: Context, private val fragm
                 Glide.with(context).load(uri).into(holder.profileImage)
             }
         holder.challengerUsername.text = resources.getString(R.string.challenged_by, challenge.challengerUsername)
-        holder.guess.text = resources.getString(R.string.guess, challenge.opponentUsername)
+        holder.guess.text = resources.getString(R.string.guess, challenge.challengerUsername)
         holder.challengeActionButton.setOnClickListener {
             fragment.challengeActionDialog(challenge.id, position)
         }
