@@ -17,7 +17,6 @@ import cz.cvut.fukalhan.service.LocationTrackingRecord
 import kotlinx.coroutines.launch
 import org.koin.core.KoinComponent
 import org.koin.core.inject
-import kotlin.math.roundToInt
 
 class RunViewModel(context: Context) : ViewModel(), KoinComponent {
     private var startTime: Long = 0
