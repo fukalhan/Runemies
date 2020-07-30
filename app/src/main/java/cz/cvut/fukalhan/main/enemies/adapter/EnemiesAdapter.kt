@@ -80,4 +80,12 @@ class EnemiesAdapter(private val context: Context, private val fragment: Enemies
         holder.username.text = enemy.username
         holder.points.text = enemy.points.toString()
     }
+
+    override fun getItemId(position: Int): Long {
+        return position.toLong()
+    }
+
+    override fun getItemViewType(position: Int): Int {
+        return position
+    }
 }

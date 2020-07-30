@@ -93,4 +93,12 @@ class CompletedChallengesAdapter(private val context: Context, private val chall
             }
         }
     }
+
+    override fun getItemId(position: Int): Long {
+        return position.toLong()
+    }
+
+    override fun getItemViewType(position: Int): Int {
+        return position
+    }
 }
