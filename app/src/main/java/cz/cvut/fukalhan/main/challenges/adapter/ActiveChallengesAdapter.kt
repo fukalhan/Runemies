@@ -49,4 +49,12 @@ class ActiveChallengesAdapter(private val context: Context, private val challeng
         holder.yourResult.text = resources.getString(R.string.your_result_n_1_s_km, challenge.challengerDistance.toString())
         holder.opponentResult.text = resources.getString(R.string.waiting_for_result, challenge.opponentUsername)
     }
+
+    override fun getItemId(position: Int): Long {
+        return position.toLong()
+    }
+
+    override fun getItemViewType(position: Int): Int {
+        return position
+    }
 }

@@ -45,6 +45,14 @@ class RunRecordsAdapter(private val runRecords: ArrayList<RunRecord>, private va
         }
     }
 
+    override fun getItemId(position: Int): Long {
+        return position.toLong()
+    }
+
+    override fun getItemViewType(position: Int): Int {
+        return position
+    }
+
     fun deleteRecordOnPosition(position: Int) {
         runRecords.removeAt(position)
         this.notifyItemRemoved(position)

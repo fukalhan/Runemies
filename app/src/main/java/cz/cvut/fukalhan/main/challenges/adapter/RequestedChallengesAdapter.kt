@@ -66,4 +66,12 @@ class RequestedChallengesAdapter(private val context: Context, private val fragm
         this.notifyDataSetChanged()
         requestsCount.postValue(challenges.size)
     }
+
+    override fun getItemId(position: Int): Long {
+        return position.toLong()
+    }
+
+    override fun getItemViewType(position: Int): Int {
+        return position
+    }
 }
