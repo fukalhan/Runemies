@@ -8,6 +8,7 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.DialogFragment
 import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 
 import cz.cvut.fukalhan.R
@@ -28,7 +29,7 @@ class RunRecordsFragment : Fragment(), IDeleteRecordListener {
     private var position: Int = -1
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        runRecordsViewModel = RunRecordsViewModel()
+        runRecordsViewModel = ViewModelProvider(requireActivity()).get(RunRecordsViewModel::class.java)
         return inflater.inflate(R.layout.fragment_run_records, container, false)
     }
 

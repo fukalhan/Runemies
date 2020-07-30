@@ -18,7 +18,8 @@ import kotlinx.coroutines.launch
 import org.koin.core.KoinComponent
 import org.koin.core.inject
 
-class RunViewModel(context: Context) : ViewModel(), KoinComponent {
+class RunViewModel : ViewModel(), KoinComponent {
+    private val context: Context by inject()
     private var startTime: Long = 0
     private var timeDifference: Long = 0
     private var runRecord = RunRecord()

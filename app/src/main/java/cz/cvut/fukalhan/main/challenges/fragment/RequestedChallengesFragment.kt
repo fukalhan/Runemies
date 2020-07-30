@@ -8,6 +8,7 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.DialogFragment
 import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
@@ -27,7 +28,7 @@ class RequestedChallengesFragment(private val challengesFragment: ChallengesFrag
     private var position: Int = -1
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        challengesViewModel = RequestedChallengesViewModel()
+        challengesViewModel = ViewModelProvider(requireActivity()).get(RequestedChallengesViewModel::class.java)
         return inflater.inflate(R.layout.fragment_requested_challenges, container, false)
     }
 

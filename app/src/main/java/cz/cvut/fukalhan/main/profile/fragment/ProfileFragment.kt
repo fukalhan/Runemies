@@ -10,6 +10,7 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProvider
 import com.bumptech.glide.Glide
 import com.github.dhaval2404.imagepicker.ImagePicker
 import com.github.mikephil.charting.components.XAxis
@@ -36,12 +37,12 @@ import kotlinx.android.synthetic.main.profile_activity_summary.*
 import kotlinx.android.synthetic.main.profile_user_info.*
 
 open class ProfileFragment : Fragment() {
-    protected lateinit var profileViewModel: ProfileViewModel
+    private lateinit var profileViewModel: ProfileViewModel
     private val user: FirebaseUser? = FirebaseAuth.getInstance().currentUser
     private val storageRef: StorageReference = Firebase.storage.reference
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        profileViewModel = ProfileViewModel()
+        profileViewModel = ViewModelProvider(requireActivity()).get(ProfileViewModel::class.java)
         return inflater.inflate(R.layout.fragment_profile, container, false)
     }
 

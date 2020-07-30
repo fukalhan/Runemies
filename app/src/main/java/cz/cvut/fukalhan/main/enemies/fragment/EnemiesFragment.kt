@@ -8,6 +8,7 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.DialogFragment
 import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import cz.cvut.fukalhan.R
@@ -27,7 +28,7 @@ class EnemiesFragment : Fragment(), IChallengeUserListener {
     private lateinit var enemiesViewModel: EnemiesViewModel
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        enemiesViewModel = EnemiesViewModel()
+        enemiesViewModel = ViewModelProvider(requireActivity()).get(EnemiesViewModel::class.java)
         return inflater.inflate(R.layout.fragment_enemies, container, false)
     }
 

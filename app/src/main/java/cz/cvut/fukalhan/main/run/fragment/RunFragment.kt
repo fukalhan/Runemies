@@ -10,6 +10,7 @@ import android.widget.Toast
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.navArgs
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
@@ -59,7 +60,7 @@ class RunFragment : Fragment(), OnMapReadyCallback, IOnGpsListener, ISaveDialogL
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val view = inflater.inflate(R.layout.fragment_run, container, false)
-        runViewModel = RunViewModel(requireContext())
+        runViewModel = ViewModelProvider(requireActivity()).get(RunViewModel::class.java)
         challenge = args.challengeState
         setMapView(savedInstanceState, view)
         customizeMarker()
