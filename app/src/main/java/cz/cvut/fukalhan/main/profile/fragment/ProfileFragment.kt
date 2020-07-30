@@ -128,7 +128,7 @@ open class ProfileFragment : Fragment() {
     private fun setUserStatistics(statistics: ActivityStatistics) {
         total_mileage.text = getString(R.string.total_mileage, String.format("%.2f", statistics.totalMileage))
         total_hours.text = getString(R.string.total_time, TimeFormatter.toHourMinSec(statistics.totalTime))
-        longest_run.text = getString(R.string.longest_run, statistics.longestRun.toString())
+        longest_run.text = getString(R.string.longest_run, String.format("%.2f", statistics.longestRun))
     }
 
     private fun getActivitiesGraph() {

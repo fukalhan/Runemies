@@ -52,7 +52,10 @@ class EnemiesAdapter(private val context: Context, private val fragment: Enemies
         user?.let {
             if (user.uid == enemy.id) {
                 holder.itemView.background = fragment.resources.getDrawable(R.drawable.gradient_background)
+                holder.itemView.setOnClickListener(null)
+                holder.buttonPanel.visibility = View.GONE
             } else {
+                holder.itemView.background = fragment.resources.getDrawable(R.drawable.background)
                 holder.itemView.setOnClickListener {
                     if (holder.buttonPanel.visibility == View.GONE) {
                         holder.buttonPanel.visibility = View.VISIBLE
