@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context=".main.profile.fragment.ProfileFragment"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:gravity="top|center">
+
+        <include
+            layout="@layout/profile_user_info"/>
+
+        <include
+            layout="@layout/profile_activity_summary"/>
+
+        <include
+            layout="@layout/profile_activity_graph"/>
+
+        <FrameLayout
+            android:id="@+id/sign_out_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/background"
+            android:elevation="5dp"
+            android:layout_margin="7dp">
+            <TextView
+                android:id="@+id/sign_out"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/sign_out"
+                android:layout_margin="7dp"
+                android:gravity="center"
+                android:textSize="20sp"
+                android:textColor="@color/red"
+                android:layout_gravity="center"/>
+        </FrameLayout>
+    </LinearLayout>
+</ScrollView>

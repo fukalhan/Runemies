@@ -1,3 +1,98 @@
 <resources>
-    <string name="app_name">Runemies</string>
+    <!--Common-->
+    <string name="appName">Runemies</string>
+    <string name="maxLength">Max length</string>
+
+    <!--Login-->
+    <string name="sign_in">Sign in</string>
+    <string name="sign_up">Sign up</string>
+    <string name="username">Username</string>
+    <string name="email">Email</string>
+    <string name="password">Password</string>
+    <string name="confirm_password">Confirm password</string>
+    <string name="forgotten_password">Forgot password?</string>
+    <string name="loading">Loading</string>
+
+    <!-- Bottom navigation and options menu labels -->
+    <string name="enemies">Enemies</string>
+    <string name="challenges">Challenges</string>
+    <string name="profile">Profile</string>
+    <string name="run">Run</string>
+    <string name="activity">Activity</string>
+    <string name="calendar">Calendar</string>
+    <string name="sign_out">Sign out</string>
+
+    <!-- Enemies -->
+    <string name="challenge">challenge</string>
+
+
+    <!-- Challenges -->
+    <string name="no_requested_challenges">No challenge requests</string>
+    <string name="no_active_challenges">No active challenges</string>
+    <string name="no_completed_challenges">No completed challenges</string>
+    <string name="one_request">%1$d request</string>
+    <string name="requests_count">%1$d requests</string>
+    <string name="one_challenge">%1$d challenge</string>
+    <string name="challenges_count">%1$d challenges</string>
+    <string name="challenge_date">Challenge %1$s</string>
+    <string name="challenge_distance">%1$s km</string>
+    <string name="your_result">Your result: %1$s km</string>
+    <string name="opponent_username_result">%1$s result:</string>
+    <string name="challenged_by">By %1$s</string>
+    <string name="winner">WINNER</string>
+    <string name="looser">LOOSER</string>
+    <string name="tie">It\'s a tie!</string>
+    <string name="accept">accept</string>
+    <string name="decline">decline</string>
+    <string name="requested_challenge_question">Try to guess %1$s result and beat it?</string>
+    <string name="waiting_for_result">%1$s result:\nWaiting for</string>
+    <string name="against_user">Against %1$s</string>
+    <string name="result">Your result:</string>
+    <string name="your_result_n_1_s_km">Your result:\n%1$s km</string>
+    <string name="guess">Guess how much did\n%1$s ran and beat it!</string>
+
+    <!-- Profile -->
+    <string name="joined">Joined %1$s</string>
+    <string name="points">Points:</string>
+    <string name="lives">Lives:</string>
+
+    <string name="total_mileage_label">Total mileage:</string>
+    <string name="total_mileage">%1$s km</string>
+    <string name="total_time_label">Total time:</string>
+    <string name="total_time">%1$s h</string>
+    <string name="longest_run_label">Longest run:</string>
+    <string name="longest_run">%1$s km</string>
+    <string name="fastest_1_km_label">Fastest 1 km:</string>
+    <string name="fastest_1_km">%1$s min/km</string>
+
+    <!-- Run -->
+    <string name="distance_label">Distance (km)</string>
+    <string name="duration">Duration (min)</string>
+    <string name="tempo_label">Tempo (min/km)</string>
+    <string name="start">start</string>
+    <string name="end">end</string>
+    <string name="pause">pause</string>
+    <string name="continue_label">continue</string>
+    <string name="tempo_reset">00:00</string>
+    <string name="timer_reset">00:00:00</string>
+    <string name="distance_reset">0,00</string>
+
+    <!-- Notification-->
+    <string name="notification_time">Time:</string>
+    <string name="distance">Distance:</string>
+    <string name="notification_distance">%1$s km</string>
+
+    <!-- Run Records-->
+    <string name="distance_km">%1$s\nkm</string>
+    <string name="time">%1$s\nh</string>
+    <string name="tempo_min_km">%1$s\nmin/km</string>
+    <string name="no_activity_records">No activity records</string>
+    <string name="one_record">%1$d record</string>
+    <string name="records_count">%1$d records</string>
+    <string name="time_bold">TIME</string>
+    <string name="distance_bold">DISTANCE</string>
+    <string name="pace_bold">PACE</string>
+    <string name="delete">Delete</string>
+    <string name="run_date">Run %1$s</string>
+
 </resources>

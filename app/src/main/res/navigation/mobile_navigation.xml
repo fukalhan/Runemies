@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/mobile_navigation"
+    app:startDestination="@+id/nav_profile">
+
+    <fragment
+        android:id="@+id/nav_profile"
+        android:name="cz.cvut.fukalhan.main.profile.fragment.ProfileFragment"
+        android:label="Profile"
+        tools:layout="@layout/fragment_profile">
+    </fragment>
+
+    <fragment
+        android:id="@+id/nav_activity"
+        android:name="cz.cvut.fukalhan.main.runrecords.fragment.RunRecordsFragment"
+        android:label="Activity"
+        tools:layout="@layout/fragment_run_records" />
+
+    <fragment
+        android:id="@+id/nav_challenges"
+        android:name="cz.cvut.fukalhan.main.challenges.fragment.ChallengesFragment"
+        android:label="Challenges"
+        tools:layout="@layout/fragment_challenges">
+        <action
+            android:id="@+id/acceptChallenge"
+            app:destination="@id/nav_run"/>
+    </fragment>
+
+    <fragment
+        android:id="@+id/nav_enemies"
+        android:name="cz.cvut.fukalhan.main.enemies.fragment.EnemiesFragment"
+        android:label="Enemies"
+        tools:layout="@layout/fragment_enemies">
+        <action
+            android:id="@+id/showEnemyProfile"
+            app:destination="@id/nav_enemy"/>
+
+        <action
+            android:id="@+id/startChallenge"
+            app:destination="@+id/nav_run"/>
+    </fragment>
+
+    <fragment
+        android:id="@+id/nav_enemy"
+        android:name="cz.cvut.fukalhan.main.enemies.fragment.EnemyProfileFragment"
+        android:label="Enemy"
+        tools:layout="@layout/fragment_profile">
+        <argument
+            android:name="enemyID"
+            app:argType="string"
+            android:defaultValue="null"/>
+    </fragment>
+
+    <fragment
+        android:id="@+id/nav_run"
+        android:name="cz.cvut.fukalhan.main.run.fragment.RunFragment"
+        android:label="Run"
+        tools:layout="@layout/fragment_run">
+        <argument
+            android:name="challengeState"
+            app:argType="cz.cvut.fukalhan.repository.challenges.state.ChallengeState"
+            android:defaultValue="NULL"/>
+        <argument
+            android:name="enemyId"
+            app:argType="string"
+            android:defaultValue="null"/>
+        <argument
+            android:name="enemyUsername"
+            app:argType="string"
+            android:defaultValue="null"/>
+        <argument
+            android:name="challengeId"
+            app:argType="string"
+            android:defaultValue="null"/>
+    </fragment>
+</navigation>
