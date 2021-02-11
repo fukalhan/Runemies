@@ -16,10 +16,8 @@ import java.lang.IllegalStateException
  * implement navigation between sign in and sign up screens,
  * and navigation to main screen if user is successfully logged in
  */
-class LoginActivity : AppCompatActivity(),
-    ILoginNavigation {
+class LoginActivity : AppCompatActivity(), ILoginNavigation {
 
-    /** Inflates the view */
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_login)

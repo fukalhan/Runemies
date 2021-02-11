@@ -51,7 +51,9 @@ class MainActivity : AppCompatActivity(), ILoginNavigation, ILocationTracking {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        if (user == null) logOut()
+        if (user == null) {
+            logOut()
+        }
         setContentView(R.layout.activity_main)
         connectLocationService()
         setSupportActionBar(toolbar_main)
@@ -97,6 +99,7 @@ class MainActivity : AppCompatActivity(), ILoginNavigation, ILocationTracking {
         return navController.navigateUp(appBarConfiguration)
     }
 
+    /** If location tracking is currently turned on, back press is disabled **/
     override fun onBackPressed() {
         if (!locationTrackingOn) {
             super.onBackPressed()
