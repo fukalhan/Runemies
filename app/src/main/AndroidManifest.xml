@@ -23,8 +23,8 @@
         tools:replace="android:label"
         android:requestLegacyExternalStorage="true">
         <meta-data
-            android:name="com.google.android.geo.API_KEY"
-            android:value="${mapsApiKey}" />
+            android:name="com.google.android.maps.v2.API_KEY"
+            android:value="@string/GOOGLE_MAPS_API_KEY" />
         <activity
             android:name=".login.activity.LoginActivity"
             android:screenOrientation="portrait"
