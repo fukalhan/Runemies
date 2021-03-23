@@ -50,7 +50,7 @@ class RunRecordsFragment : Fragment(), IDeleteRecordListener {
     }
 
     private fun setAdapter(userActivities: ArrayList<RunRecord>) {
-        recordAdapterRun = context?.let { context -> RunRecordsAdapter(userActivities, context.resources, this) }
+        recordAdapterRun = RunRecordsAdapter(userActivities, this)
         val viewManager = LinearLayoutManager(activity)
         user_activity_recycler_view.apply {
             setHasFixedSize(true)

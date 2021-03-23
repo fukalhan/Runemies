@@ -20,7 +20,7 @@ import cz.cvut.fukalhan.shared.Constants
 import cz.cvut.fukalhan.utils.TimeFormatter
 import kotlinx.android.synthetic.main.item_challenge_requested.view.*
 
-class RequestedChallengesAdapter(private val context: Context, private val fragment: RequestedChallengesFragment, private val challenges: ArrayList<Challenge>, private val resources: Resources) : RecyclerView.Adapter<RequestedChallengeViewHolder>() {
+class RequestedChallengesAdapter(private val fragment: RequestedChallengesFragment, private val challenges: ArrayList<Challenge>) : RecyclerView.Adapter<RequestedChallengeViewHolder>() {
     private val storageRef: StorageReference = Firebase.storage.reference
     val requestsCount: MutableLiveData<Int> by lazy { MutableLiveData<Int>() }
     init {
@@ -37,15 +37,16 @@ class RequestedChallengesAdapter(private val context: Context, private val fragm
     }
 
     override fun onBindViewHolder(holder: RequestedChallengeViewHolder, position: Int) {
+        val context = holder.itemView.context
         val challenge = challenges[position]
-        holder.startDate.text = resources.getString(R.string.challenge_date, TimeFormatter.simpleDate.format(challenge.startDate))
+        holder.startDate.text = context.resources.getString(R.string.challenge_date, TimeFormatter.simpleDate.format(challenge.startDate))
         val imagePathRef = storageRef.child("${Constants.PROFILE_IMAGE_PATH}${challenge.challengerId}")
         imagePathRef.downloadUrl
             .addOnSuccessListener { uri: Uri ->
                 Glide.with(context).load(uri).into(holder.profileImage)
             }
-        holder.challengerUsername.text = resources.getString(R.string.challenged_by, challenge.challengerUsername)
-        holder.guess.text = resources.getString(R.string.guess, challenge.challengerUsername)
+        holder.challengerUsername.text = context.resources.getString(R.string.challenged_by, challenge.challengerUsername)
+        holder.guess.text = context.resources.getString(R.string.guess, challenge.challengerUsername)
         holder.challengeActionButton.setOnClickListener {
             fragment.challengeActionDialog(challenge.id, position)
         }
@@ -60,7 +61,6 @@ class RequestedChallengesAdapter(private val context: Context, private val fragm
 
     fun deleteChallengeAtPosition(position: Int) {
         challenges.removeAt(position)
-        this.notifyItemRemoved(position)
         this.notifyItemRemoved(position)
         this.notifyItemRangeChanged(position, challenges.size)
         this.notifyDataSetChanged()

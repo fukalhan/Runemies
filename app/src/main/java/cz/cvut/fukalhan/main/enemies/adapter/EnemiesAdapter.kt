@@ -1,10 +1,10 @@
 package cz.cvut.fukalhan.main.enemies.adapter
 
-import android.content.Context
 import android.net.Uri
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.content.res.ResourcesCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.google.firebase.auth.FirebaseAuth
@@ -17,8 +17,9 @@ import cz.cvut.fukalhan.main.enemies.fragment.EnemiesFragment
 import cz.cvut.fukalhan.main.enemies.viewholder.EnemyViewHolder
 import cz.cvut.fukalhan.repository.entity.User
 import cz.cvut.fukalhan.shared.Constants
+import cz.cvut.fukalhan.utils.ViewVisibility
 
-class EnemiesAdapter(private val context: Context, private val fragment: EnemiesFragment, private val enemies: List<User>) : RecyclerView.Adapter<EnemyViewHolder>() {
+class EnemiesAdapter(private val fragment: EnemiesFragment, private val enemies: List<User>) : RecyclerView.Adapter<EnemyViewHolder>() {
     private val user: FirebaseUser? = FirebaseAuth.getInstance().currentUser
     private val storageRef: StorageReference = Firebase.storage.reference
     private val ranking get() = setRanking()
@@ -51,30 +52,26 @@ class EnemiesAdapter(private val context: Context, private val fragment: Enemies
         val enemy = enemies[position]
         user?.let {
             if (user.uid == enemy.id) {
-                holder.itemView.background = fragment.resources.getDrawable(R.drawable.gradient_background)
+                holder.itemView.background = ResourcesCompat.getDrawable(holder.itemView.resources, R.drawable.gradient_background, null)
                 holder.itemView.setOnClickListener(null)
                 holder.buttonPanel.visibility = View.GONE
             } else {
-                holder.itemView.background = fragment.resources.getDrawable(R.drawable.background)
+                holder.itemView.background = ResourcesCompat.getDrawable(holder.itemView.resources, R.drawable.background, null)
                 holder.itemView.setOnClickListener {
-                    if (holder.buttonPanel.visibility == View.GONE) {
-                        holder.buttonPanel.visibility = View.VISIBLE
-                        holder.showProfileButton.setOnClickListener {
-                            fragment.showEnemyProfile(enemy.id)
-                        }
-                        holder.challengeButton.setOnClickListener {
-                            fragment.challengeUser(enemy.id, enemy.username)
-                        }
-                    } else {
-                        holder.buttonPanel.visibility = View.GONE
-                    }
+                    ViewVisibility.toggleVisibility(holder.buttonPanel)
+                }
+                holder.showProfileButton.setOnClickListener {
+                    fragment.showEnemyProfile(enemy.id)
+                }
+                holder.challengeButton.setOnClickListener {
+                    fragment.challengeUser(enemy.id, enemy.username)
                 }
             }
         }
         val imagePathRef = storageRef.child("${Constants.PROFILE_IMAGE_PATH}${enemy.id}")
         imagePathRef.downloadUrl
             .addOnSuccessListener { uri: Uri ->
-                Glide.with(context).load(uri).into(holder.profileImage)
+                Glide.with(holder.itemView.context).load(uri).into(holder.profileImage)
             }
         holder.rank.text = "${ranking[position]}."
         holder.username.text = enemy.username
