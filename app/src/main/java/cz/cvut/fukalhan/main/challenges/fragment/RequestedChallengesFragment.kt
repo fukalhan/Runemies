@@ -6,13 +6,11 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
-import androidx.fragment.app.DialogFragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.auth.FirebaseUser
 import cz.cvut.fukalhan.R
+import cz.cvut.fukalhan.main.challenges.adapter.IChallengeListener
 import cz.cvut.fukalhan.main.challenges.adapter.RequestedChallengesAdapter
 import cz.cvut.fukalhan.main.challenges.dialog.ChallengeActionDialog
 import cz.cvut.fukalhan.main.challenges.dialog.IChallengeActionListener
@@ -23,7 +21,7 @@ import kotlinx.android.synthetic.main.fragment_requested_challenges.*
 
 class RequestedChallengesFragment(private val challengesFragment: ChallengesFragment) : Fragment(), IChallengeActionListener, IChallengeListener {
     private lateinit var challengesViewModel: RequestedChallengesViewModel
-    private var challengesAdapter: RequestedChallengesAdapter? = null
+    private lateinit var challengesAdapter: RequestedChallengesAdapter
     private var deletePosition: Int = -1
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -54,7 +52,7 @@ class RequestedChallengesFragment(private val challengesFragment: ChallengesFrag
                 ChallengeDeleteState.SUCCESS -> {
                     if (deletePosition >= 0) {
                         requestedChallengesRecyclerView.removeViewAt(deletePosition)
-                        challengesAdapter?.deleteChallengeAtPosition(deletePosition)
+                        challengesAdapter.deleteChallengeAtPosition(deletePosition)
                         deletePosition = -1
                     }
                 }

@@ -1,26 +1,19 @@
 package cz.cvut.fukalhan.main.challenges.adapter
 
-import android.content.Context
-import android.content.res.Resources
 import android.net.Uri
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
-import androidx.lifecycle.MutableLiveData
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.StorageReference
 import com.google.firebase.storage.ktx.storage
 import cz.cvut.fukalhan.R
-import cz.cvut.fukalhan.main.challenges.fragment.IChallengeListener
-import cz.cvut.fukalhan.main.challenges.fragment.RequestedChallengesFragment
 import cz.cvut.fukalhan.main.challenges.viewholder.RequestedChallengeViewHolder
 import cz.cvut.fukalhan.repository.entity.Challenge
 import cz.cvut.fukalhan.shared.Constants
 import cz.cvut.fukalhan.utils.TimeFormatter
 import cz.cvut.fukalhan.utils.ViewVisibility
-import kotlinx.android.synthetic.main.item_challenge_requested.view.*
 
 class RequestedChallengesAdapter(private val challenges: ArrayList<Challenge>, private val challengeListener: IChallengeListener) : RecyclerView.Adapter<RequestedChallengeViewHolder>() {
     private val storageRef: StorageReference = Firebase.storage.reference
