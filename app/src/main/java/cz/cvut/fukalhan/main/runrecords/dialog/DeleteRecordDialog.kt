@@ -11,12 +11,11 @@ class DeleteRecordDialog(private val listener: IDeleteRecordListener, private va
             val builder = AlertDialog.Builder(it)
             builder.setMessage("Do you wanna delete this record?")
                 .setPositiveButton("Yes") { _, _ ->
-                    listener.onDialogPositiveClick(this, recordId, position)
+                    listener.onDialogPositiveClick(recordId, position)
                 }
                 .setNegativeButton("No") { _, _ ->
-                    listener.onDialogNegativeClick(this)
+                    listener.onDialogNegativeClick()
                 }
-            // Create the AlertDialog object and return it
             builder.create()
         } ?: throw IllegalStateException("Activity cannot be null")
     }

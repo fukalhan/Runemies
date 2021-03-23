@@ -16,17 +16,18 @@ import cz.cvut.fukalhan.main.runrecords.adapter.RunRecordsAdapter
 import cz.cvut.fukalhan.main.runrecords.dialog.DeleteRecordDialog
 import cz.cvut.fukalhan.main.runrecords.dialog.IDeleteRecordListener
 import cz.cvut.fukalhan.main.runrecords.viewModel.RunRecordsViewModel
+import cz.cvut.fukalhan.main.runrecords.viewholder.IDeleteButtonListener
 import cz.cvut.fukalhan.repository.entity.RunRecord
 import cz.cvut.fukalhan.repository.runrecords.states.RecordDeleteState
 import kotlinx.android.synthetic.main.fragment_run_records.*
 
 /**
- * A simple [Fragment] subclass.
+ * Display user's run records
  */
-class RunRecordsFragment : Fragment(), IDeleteRecordListener {
+class RunRecordsFragment : Fragment(), IDeleteRecordListener, IDeleteButtonListener {
     private lateinit var runRecordsViewModel: RunRecordsViewModel
-    private var recordAdapterRun: RunRecordsAdapter? = null
-    private var position: Int = -1
+    private lateinit var recordsAdapter: RunRecordsAdapter
+    private var deletePosition: Int = -1
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         runRecordsViewModel = ViewModelProvider(requireActivity()).get(RunRecordsViewModel::class.java)
@@ -44,40 +45,35 @@ class RunRecordsFragment : Fragment(), IDeleteRecordListener {
         runRecordsViewModel.runRecords.observe(viewLifecycleOwner, Observer { records ->
             when {
                 records.error -> Toast.makeText(context, "Something went wrong", Toast.LENGTH_SHORT).show()
-                else -> setAdapter(records.data!!)
+                records.data.isNullOrEmpty() -> Toast.makeText(context, "No run records available", Toast.LENGTH_SHORT).show()
+                else -> setAdapter(records.data)
             }
         })
     }
 
     private fun setAdapter(userActivities: ArrayList<RunRecord>) {
-        recordAdapterRun = RunRecordsAdapter(userActivities, this)
+        recordsAdapter = RunRecordsAdapter(userActivities, this)
         val viewManager = LinearLayoutManager(activity)
         user_activity_recycler_view.apply {
             setHasFixedSize(true)
             layoutManager = viewManager
-            adapter = recordAdapterRun
+            adapter = recordsAdapter
         }
-        observeRecordsCount()
     }
 
-    private fun observeRecordsCount() {
-        recordAdapterRun?.recordsCount?.observe(viewLifecycleOwner, Observer { count ->
-            when (count) {
-                0 -> activity_state.text = getString(R.string.no_activity_records)
-                1 -> activity_state.text = getString(R.string.one_record, count)
-                else -> activity_state.text = getString(R.string.records_count, count)
-            }
-        })
+    override fun onClick(recordId: String, position: Int) {
+        val dialog = DeleteRecordDialog(this as IDeleteRecordListener, recordId, position)
+        dialog.show(childFragmentManager, "DeleteRecordDialog")
     }
 
     private fun observeDeleteRecordState() {
         runRecordsViewModel.recordDeleteState.observe(viewLifecycleOwner, Observer { state ->
             when (state) {
                 RecordDeleteState.SUCCESS -> {
-                    if (position >= 0) {
-                        user_activity_recycler_view.removeViewAt(position)
-                        recordAdapterRun?.deleteRecordOnPosition(position)
-                        position = -1
+                    if (deletePosition >= 0) {
+                        user_activity_recycler_view.removeViewAt(deletePosition)
+                        recordsAdapter.deleteRecordOnPosition(deletePosition)
+                        deletePosition = -1
                     }
                 }
                 RecordDeleteState.FAIL -> Toast.makeText(context, "Unable to delete record", Toast.LENGTH_SHORT).show()
@@ -85,16 +81,11 @@ class RunRecordsFragment : Fragment(), IDeleteRecordListener {
         })
     }
 
-    fun makeDeleteRecordDialog(recordId: String, position: Int) {
-        val dialog = DeleteRecordDialog(this as IDeleteRecordListener, recordId, position)
-        dialog.show(requireFragmentManager(), "DeleteRecordDialog")
-    }
-
-    override fun onDialogPositiveClick(dialog: DialogFragment, recordId: String, deletePosition: Int) {
-        position = deletePosition
+    override fun onDialogPositiveClick(recordId: String, position: Int) {
+        deletePosition = position
         runRecordsViewModel.deleteRecord(recordId)
     }
 
-    override fun onDialogNegativeClick(dialog: DialogFragment) {
+    override fun onDialogNegativeClick() {
     }
 }
