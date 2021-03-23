@@ -5,14 +5,6 @@
     android:layout_height="match_parent"
     tools:context=".main.challenges.fragment.RequestedChallengesFragment"
     android:orientation="vertical">
-    <TextView
-        android:id="@+id/challenges_count"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:gravity="center"
-        android:textStyle="bold"
-        android:textSize="20sp"
-        tools:text="Challenges requests"/>
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/requestedChallengesRecyclerView"

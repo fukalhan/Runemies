@@ -1,10 +1,7 @@
 package cz.cvut.fukalhan.main.challenges.adapter
 
-import android.content.Context
-import android.content.res.Resources
 import android.net.Uri
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
@@ -17,7 +14,6 @@ import cz.cvut.fukalhan.main.challenges.viewholder.ActiveChallengeViewHolder
 import cz.cvut.fukalhan.repository.entity.Challenge
 import cz.cvut.fukalhan.shared.Constants
 import cz.cvut.fukalhan.utils.ViewVisibility
-import kotlinx.android.synthetic.main.item_challenge_active.*
 
 class ActiveChallengesAdapter(private val challenges: List<Challenge>) : RecyclerView.Adapter<ActiveChallengeViewHolder>() {
     private val storageRef: StorageReference = Firebase.storage.reference

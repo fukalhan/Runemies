@@ -20,7 +20,6 @@ import kotlinx.android.synthetic.main.fragment_active_challenges.*
 
 class ActiveChallengesFragment : Fragment() {
     private lateinit var challengesViewModel: ActiveChallengesViewModel
-    private val user: FirebaseUser? = FirebaseAuth.getInstance().currentUser
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         challengesViewModel = ViewModelProvider(requireActivity()).get(ActiveChallengesViewModel::class.java)
@@ -30,7 +29,7 @@ class ActiveChallengesFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         observeChallenges()
-        user?.let { challengesViewModel.getChallenges(it.uid) }
+        challengesViewModel.getChallenges()
     }
 
     private fun observeChallenges() {

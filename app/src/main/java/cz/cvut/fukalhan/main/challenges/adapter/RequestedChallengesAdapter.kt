@@ -13,19 +13,17 @@ import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.StorageReference
 import com.google.firebase.storage.ktx.storage
 import cz.cvut.fukalhan.R
+import cz.cvut.fukalhan.main.challenges.fragment.IChallengeListener
 import cz.cvut.fukalhan.main.challenges.fragment.RequestedChallengesFragment
 import cz.cvut.fukalhan.main.challenges.viewholder.RequestedChallengeViewHolder
 import cz.cvut.fukalhan.repository.entity.Challenge
 import cz.cvut.fukalhan.shared.Constants
 import cz.cvut.fukalhan.utils.TimeFormatter
+import cz.cvut.fukalhan.utils.ViewVisibility
 import kotlinx.android.synthetic.main.item_challenge_requested.view.*
 
-class RequestedChallengesAdapter(private val fragment: RequestedChallengesFragment, private val challenges: ArrayList<Challenge>) : RecyclerView.Adapter<RequestedChallengeViewHolder>() {
+class RequestedChallengesAdapter(private val challenges: ArrayList<Challenge>, private val challengeListener: IChallengeListener) : RecyclerView.Adapter<RequestedChallengeViewHolder>() {
     private val storageRef: StorageReference = Firebase.storage.reference
-    val requestsCount: MutableLiveData<Int> by lazy { MutableLiveData<Int>() }
-    init {
-        requestsCount.postValue(challenges.size)
-    }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RequestedChallengeViewHolder {
         val view = LayoutInflater.from(parent.context).inflate(R.layout.item_challenge_requested, parent, false)
@@ -48,23 +46,11 @@ class RequestedChallengesAdapter(private val fragment: RequestedChallengesFragme
         holder.challengerUsername.text = context.resources.getString(R.string.challenged_by, challenge.challengerUsername)
         holder.guess.text = context.resources.getString(R.string.guess, challenge.challengerUsername)
         holder.challengeActionButton.setOnClickListener {
-            fragment.challengeActionDialog(challenge.id, position)
+            challengeListener.onClick(challenge.id, position)
         }
         holder.itemView.setOnClickListener {
-            if (holder.buttonPanel.visibility == View.GONE) {
-                holder.buttonPanel.visibility = View.VISIBLE
-            } else {
-                holder.buttonPanel.visibility = View.GONE
-            }
+            ViewVisibility.toggleVisibility(holder.buttonPanel)
         }
-    }
-
-    fun deleteChallengeAtPosition(position: Int) {
-        challenges.removeAt(position)
-        this.notifyItemRemoved(position)
-        this.notifyItemRangeChanged(position, challenges.size)
-        this.notifyDataSetChanged()
-        requestsCount.postValue(challenges.size)
     }
 
     override fun getItemId(position: Int): Long {
@@ -73,5 +59,12 @@ class RequestedChallengesAdapter(private val fragment: RequestedChallengesFragme
 
     override fun getItemViewType(position: Int): Int {
         return position
+    }
+
+    fun deleteChallengeAtPosition(position: Int) {
+        challenges.removeAt(position)
+        this.notifyItemRemoved(position)
+        this.notifyItemRangeChanged(position, challenges.size)
+        this.notifyDataSetChanged()
     }
 }

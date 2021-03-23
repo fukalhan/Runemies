@@ -40,10 +40,9 @@ class EnemiesFragment : Fragment(), IChallengeUserListener {
     private fun getEnemies() {
         enemiesViewModel.enemies.observe(viewLifecycleOwner, Observer { enemies ->
             when {
-                enemies.error -> {
-                    Toast.makeText(context, "Something went wrong", Toast.LENGTH_SHORT).show()
-                }
-                enemies.data!!.isNotEmpty() -> setAdapter(enemies.data)
+                enemies.error -> Toast.makeText(context, "Something went wrong", Toast.LENGTH_SHORT).show()
+                enemies.data.isNullOrEmpty() -> Toast.makeText(context, "No enemies records", Toast.LENGTH_SHORT).show()
+                else -> setAdapter(enemies.data)
             }
         })
     }

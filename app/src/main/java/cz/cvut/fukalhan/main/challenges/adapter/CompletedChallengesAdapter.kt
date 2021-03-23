@@ -1,7 +1,5 @@
 package cz.cvut.fukalhan.main.challenges.adapter
 
-import android.content.Context
-import android.content.res.Resources
 import android.net.Uri
 import android.view.LayoutInflater
 import android.view.View
@@ -18,6 +16,7 @@ import cz.cvut.fukalhan.main.challenges.viewholder.CompletedChallengeViewHolder
 import cz.cvut.fukalhan.repository.entity.Challenge
 import cz.cvut.fukalhan.shared.Constants
 import cz.cvut.fukalhan.utils.TimeFormatter
+import cz.cvut.fukalhan.utils.ViewVisibility
 
 class CompletedChallengesAdapter(private val challenges: List<Challenge>) : RecyclerView.Adapter<CompletedChallengeViewHolder>() {
     private val user: FirebaseUser? = FirebaseAuth.getInstance().currentUser
@@ -63,11 +62,7 @@ class CompletedChallengesAdapter(private val challenges: List<Challenge>) : Recy
             }
         holder.opponentUsername.text = context.resources.getString(R.string.against_user, opponentUsername)
         holder.itemView.setOnClickListener {
-            if (holder.resultLayout.visibility == View.GONE) {
-                holder.resultLayout.visibility = View.VISIBLE
-            } else {
-                holder.resultLayout.visibility = View.GONE
-            }
+            ViewVisibility.toggleVisibility(holder.resultLayout)
         }
         holder.userDistance.text = context.resources.getString(R.string.challenge_distance, userDistance.toString())
         holder.opponentResultUsername.text = context.resources.getString(R.string.opponent_username_result, opponentUsername)
