@@ -22,7 +22,7 @@ import kotlinx.android.synthetic.main.fragment_enemies.*
 import kotlinx.android.synthetic.main.profile_user_info.*
 
 /**
- * A simple [Fragment] subclass.
+ * Fragment holding view of list of all users
  */
 class EnemiesFragment : Fragment(), IChallengeUserListener {
     private lateinit var enemiesViewModel: EnemiesViewModel

@@ -49,14 +49,15 @@ class EnemiesAdapter(private val fragment: EnemiesFragment, private val enemies:
     }
 
     override fun onBindViewHolder(holder: EnemyViewHolder, position: Int) {
+        val context = holder.itemView.context
         val enemy = enemies[position]
         user?.let {
             if (user.uid == enemy.id) {
-                holder.itemView.background = ResourcesCompat.getDrawable(holder.itemView.resources, R.drawable.gradient_background, null)
+                holder.itemView.background = ResourcesCompat.getDrawable(context.resources, R.drawable.gradient_background, null)
                 holder.itemView.setOnClickListener(null)
                 holder.buttonPanel.visibility = View.GONE
             } else {
-                holder.itemView.background = ResourcesCompat.getDrawable(holder.itemView.resources, R.drawable.background, null)
+                holder.itemView.background = ResourcesCompat.getDrawable(context.resources, R.drawable.background, null)
                 holder.itemView.setOnClickListener {
                     ViewVisibility.toggleVisibility(holder.buttonPanel)
                 }
@@ -71,9 +72,9 @@ class EnemiesAdapter(private val fragment: EnemiesFragment, private val enemies:
         val imagePathRef = storageRef.child("${Constants.PROFILE_IMAGE_PATH}${enemy.id}")
         imagePathRef.downloadUrl
             .addOnSuccessListener { uri: Uri ->
-                Glide.with(holder.itemView.context).load(uri).into(holder.profileImage)
+                Glide.with(context).load(uri).into(holder.profileImage)
             }
-        holder.rank.text = "${ranking[position]}."
+        holder.rank.text = context.getString(R.string.ranking_position, ranking[position])
         holder.username.text = enemy.username
         holder.points.text = enemy.points.toString()
     }

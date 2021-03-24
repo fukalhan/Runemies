@@ -39,6 +39,7 @@
 
     <!-- Enemies -->
     <string name="challenge">challenge</string>
+    <string name="ranking_position">%1d.</string>
 
 
     <!-- Challenges -->
