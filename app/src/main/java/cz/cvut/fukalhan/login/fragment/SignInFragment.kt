@@ -12,10 +12,14 @@ import androidx.lifecycle.ViewModelProvider
 import cz.cvut.fukalhan.R
 import cz.cvut.fukalhan.login.activity.LoginActivity
 import cz.cvut.fukalhan.login.viewmodel.SignInViewModel
-import cz.cvut.fukalhan.repository.login.states.PasswordChangeEmailSentState
+import cz.cvut.fukalhan.repository.login.states.NewPasswordSentState
 import cz.cvut.fukalhan.repository.login.states.SignInState
 import kotlinx.android.synthetic.main.fragment_sign_in.*
+import kotlinx.android.synthetic.main.fragment_sign_in.progress_bar
 
+/**
+ * User sign in screen
+ */
 class SignInFragment : Fragment() {
     private lateinit var signInViewModel: SignInViewModel
 
@@ -27,8 +31,9 @@ class SignInFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         signInButton.setOnClickListener {
+            progress_bar.visibility = View.VISIBLE
             if (inputEmpty()) {
-                Toast.makeText(context, "All fields must be filled", Toast.LENGTH_SHORT).show()
+                Toast.makeText(context, getString(R.string.field_empty), Toast.LENGTH_SHORT).show()
             } else {
                 signInViewModel.signIn(email.text.toString().trim(), password.text.toString())
             }
@@ -37,7 +42,7 @@ class SignInFragment : Fragment() {
         passwordForgotten.setOnClickListener {
             signInViewModel.forgotPassword(email.text.toString().trim())
         }
-        observeNewPasswordEmailSentState()
+        observeNewPasswordSentState()
     }
 
     private fun inputEmpty(): Boolean {
@@ -52,22 +57,23 @@ class SignInFragment : Fragment() {
         signInViewModel.signInState.observe(viewLifecycleOwner, Observer { state ->
             when (state) {
                 SignInState.SUCCESS -> {
-                    Toast.makeText(context, "Sign in", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(context, getString(R.string.sign_in), Toast.LENGTH_SHORT).show()
                     (activity as LoginActivity).navigateToMainScreen()
                 }
-                SignInState.NOT_EXISTING_ACCOUNT -> Toast.makeText(context, "Account doesn't exist", Toast.LENGTH_SHORT).show()
-                SignInState.WRONG_PASSWORD -> Toast.makeText(context, "Wrong password", Toast.LENGTH_SHORT).show()
-                SignInState.FAIL -> Toast.makeText(context, "Sign in failed", Toast.LENGTH_SHORT).show()
+                SignInState.NOT_EXISTING_ACCOUNT -> Toast.makeText(context, getString(R.string.account_doesnt_exist), Toast.LENGTH_SHORT).show()
+                SignInState.WRONG_PASSWORD -> Toast.makeText(context, getString(R.string.wrong_password), Toast.LENGTH_SHORT).show()
+                SignInState.FAIL -> Toast.makeText(context, getString(R.string.sign_in_failed), Toast.LENGTH_SHORT).show()
             }
+            progress_bar.visibility = View.VISIBLE
         })
     }
 
-    private fun observeNewPasswordEmailSentState() {
-        signInViewModel.newPassword.observe(viewLifecycleOwner, Observer { state ->
+    private fun observeNewPasswordSentState() {
+        signInViewModel.newNewPasswordSentState.observe(viewLifecycleOwner, Observer { state ->
             when (state) {
-                PasswordChangeEmailSentState.SUCCESS -> Toast.makeText(context, "Email with new password link was sent to Your email address", Toast.LENGTH_SHORT).show()
-                PasswordChangeEmailSentState.NOT_EXISTING_USER -> Toast.makeText(context, "Account doesn't exists", Toast.LENGTH_SHORT).show()
-                PasswordChangeEmailSentState.FAIL -> Toast.makeText(context, "Oops, something went wrong, cannot send the email", Toast.LENGTH_SHORT).show()
+                NewPasswordSentState.SUCCESS -> Toast.makeText(context, getString(R.string.new_password_email), Toast.LENGTH_SHORT).show()
+                NewPasswordSentState.NOT_EXISTING_ACCOUNT -> Toast.makeText(context, getString(R.string.account_doesnt_exist), Toast.LENGTH_SHORT).show()
+                NewPasswordSentState.FAIL -> Toast.makeText(context, getString(R.string.cannot_send_email), Toast.LENGTH_SHORT).show()
             }
         })
     }

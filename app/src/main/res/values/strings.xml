@@ -12,6 +12,21 @@
     <string name="confirm_password">Confirm password</string>
     <string name="forgotten_password">Forgot password?</string>
     <string name="loading">Loading</string>
+    <string name="field_empty">All fields must be filled</string>
+
+    <!--Sign In-->
+    <string name="account_doesnt_exist">Account doesn\'t exist</string>
+    <string name="wrong_password">Wrong password</string>
+    <string name="sign_in_failed">Sign in failed</string>
+    <string name="new_password_email">Email with new password link was sent to Your email address</string>
+    <string name="cannot_send_email">Oops, something went wrong, cannot send the email</string>
+
+    <!--Sign Up-->
+    <string name="short_password">Password too short</string>
+    <string name="email_already_registered">Email is already registered</string>
+    <string name="invalid_email">Invalid email address</string>
+    <string name="sign_up_failed">Sign up failed</string>
+    <string name="passwords_not_same">Passwords must be the same</string>
 
     <!-- Bottom navigation and options menu labels -->
     <string name="enemies">Enemies</string>

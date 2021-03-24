@@ -26,13 +26,14 @@ class SignUpFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         sign_up_button.setOnClickListener {
-            sign_up_progress_bar.visibility = View.VISIBLE
-            if (sign_up_password.text.toString() != confirmPasswordSignUp.text.toString()) {
-                Toast.makeText(context, "Confirm password isn't the same as password", Toast.LENGTH_SHORT).show()
-            } else if (inputEmpty()) {
-                Toast.makeText(context, "All fields must be filled", Toast.LENGTH_SHORT).show()
-            } else {
-                signUpViewModel.signUp(sign_up_username.text.toString().trim(), sign_up_email.text.toString().trim(), sign_up_password.text.toString().trim())
+            progress_bar.visibility = View.VISIBLE
+            when {
+                sign_up_password.text.toString() != confirmPasswordSignUp.text.toString() ->
+                    Toast.makeText(context, getString(R.string.passwords_not_same), Toast.LENGTH_SHORT).show()
+                inputEmpty() ->
+                    Toast.makeText(context, getString(R.string.field_empty), Toast.LENGTH_SHORT).show()
+                else ->
+                    signUpViewModel.signUp(sign_up_username.text.toString().trim(), sign_up_email.text.toString().trim(), sign_up_password.text.toString().trim())
             }
         }
         observeSignUpState()
@@ -51,15 +52,15 @@ class SignUpFragment : Fragment() {
         signUpViewModel.signUpState.observe(viewLifecycleOwner, Observer { state ->
             when (state) {
                 SignUpState.SUCCESS -> {
-                    Toast.makeText(context, "Sign up", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(context, getString(R.string.sign_up), Toast.LENGTH_SHORT).show()
                     (activity as LoginActivity).navigateToMainScreen()
                 }
-                SignUpState.WEAK_PASSWORD -> Toast.makeText(context, "Password too short", Toast.LENGTH_SHORT).show()
-                SignUpState.EMAIL_ALREADY_REGISTERED -> Toast.makeText(context, "Email is already registered", Toast.LENGTH_SHORT).show()
-                SignUpState.INVALID_EMAIL -> Toast.makeText(context, "Invalid email address", Toast.LENGTH_SHORT).show()
-                SignUpState.FAIL -> Toast.makeText(context, "Sign up failed", Toast.LENGTH_SHORT).show()
+                SignUpState.WEAK_PASSWORD -> Toast.makeText(context, getString(R.string.short_password), Toast.LENGTH_SHORT).show()
+                SignUpState.EMAIL_ALREADY_REGISTERED -> Toast.makeText(context, getString(R.string.email_already_registered), Toast.LENGTH_SHORT).show()
+                SignUpState.INVALID_EMAIL -> Toast.makeText(context, getString(R.string.invalid_email), Toast.LENGTH_SHORT).show()
+                SignUpState.FAIL -> Toast.makeText(context, getString(R.string.sign_up_failed), Toast.LENGTH_SHORT).show()
             }
-            sign_up_progress_bar.visibility = View.GONE
+            progress_bar.visibility = View.GONE
         })
     }
 }
