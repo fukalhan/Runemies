@@ -9,5 +9,6 @@ import cz.cvut.fukalhan.shared.DataWrapper
 interface IUserRepository {
     suspend fun getUser(userId: String): DataWrapper<User>
     suspend fun getUsers(): DataWrapper<ArrayList<User>>
+    suspend fun getEnemies(uid: String): DataWrapper<ArrayList<User>>
     suspend fun setProfileImage(uri: Uri, storageRef: StorageReference): ImageSet
 }

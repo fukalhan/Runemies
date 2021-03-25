@@ -10,10 +10,9 @@ import kotlinx.android.synthetic.main.fragment_profile.view.*
 import kotlinx.android.synthetic.main.item_enemy.view.*
 
 class EnemyViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-    var profileImage: ImageView = itemView.enemy_profile_image
-    var rank: TextView = itemView.rank
-    var username: TextView = itemView.enemy_username
-    var points: TextView = itemView.enemy_points
+    var profileImage: ImageView = itemView.profile_image
+    var username: TextView = itemView.username
+    var points: TextView = itemView.points
     var buttonPanel: LinearLayout = itemView.button_panel
     var showProfileButton: Button = itemView.profile_button
     var challengeButton: Button = itemView.challenge_button
