@@ -45,6 +45,7 @@ class EnemiesFragment : Fragment(), IChallengeUserListener {
                 else -> setAdapter(enemies.data)
             }
         })
+        enemiesViewModel.getEnemies()
     }
 
     private fun setAdapter(enemies: List<User>) {
@@ -64,7 +65,7 @@ class EnemiesFragment : Fragment(), IChallengeUserListener {
 
     fun challengeUser(opponentId: String, opponentUsername: String) {
         val dialog = ChallengeUserDialog(this as IChallengeUserListener, opponentId, opponentUsername)
-        dialog.show(requireFragmentManager(), "ChallengeUserDialog")
+        dialog.show(childFragmentManager, "ChallengeUserDialog")
     }
 
     override fun onDialogPositiveClick(dialog: DialogFragment, opponentId: String, opponentUsername: String) {

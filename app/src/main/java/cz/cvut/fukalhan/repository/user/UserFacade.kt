@@ -19,6 +19,10 @@ class UserFacade : IUserFacade, KoinComponent {
         return repository.getUsers()
     }
 
+    override suspend fun getEnemies(uid: String): DataWrapper<ArrayList<User>> {
+        return repository.getEnemies(uid)
+    }
+
     override suspend fun setProfileImage(uri: Uri, storageRef: StorageReference): ImageSet {
         return repository.setProfileImage(uri, storageRef)
     }

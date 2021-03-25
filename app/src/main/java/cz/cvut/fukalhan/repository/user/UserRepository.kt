@@ -5,6 +5,7 @@ import android.util.Log
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ktx.toObject
 import com.google.firebase.storage.StorageReference
+import cz.cvut.fukalhan.main.enemies.viewmodel.EnemiesComparator
 import cz.cvut.fukalhan.repository.entity.User
 import cz.cvut.fukalhan.repository.user.states.ImageSet
 import cz.cvut.fukalhan.shared.Constants
@@ -41,6 +42,24 @@ class UserRepository : IUserRepository {
         } catch (e: Exception) {
             e.printStackTrace()
             DataWrapper(users, true, e.message, e)
+        }
+    }
+
+    override suspend fun getEnemies(uid: String): DataWrapper<ArrayList<User>> {
+        val enemies: ArrayList<User> = ArrayList()
+        return try {
+            val snapshot = db.collection(Constants.USERS).get().await()
+            snapshot.documents.forEach { doc ->
+                val user = doc.toObject(User::class.java)
+                if (user != null && user.id != uid) {
+                    enemies.add(user)
+                }
+            }
+            enemies.sortWith(EnemiesComparator())
+            DataWrapper(enemies)
+        } catch (e: Exception) {
+            e.printStackTrace()
+            DataWrapper(enemies, true, e.message, e)
         }
     }
 
