@@ -20,7 +20,6 @@ import kotlinx.android.synthetic.main.fragment_completed_challenges.*
 
 class CompletedChallengesFragment : Fragment() {
     private lateinit var challengesViewModel: CompletedChallengesViewModel
-    private val user: FirebaseUser? = FirebaseAuth.getInstance().currentUser
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         challengesViewModel = ViewModelProvider(requireActivity()).get(CompletedChallengesViewModel::class.java)
@@ -30,7 +29,7 @@ class CompletedChallengesFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         observeChallenges()
-        user?.let { challengesViewModel.getChallenges(it.uid) }
+        challengesViewModel.getChallenges()
     }
 
     private fun observeChallenges() {
@@ -51,7 +50,7 @@ class CompletedChallengesFragment : Fragment() {
     }
 
     private fun setAdapter(challenges: List<Challenge>) {
-        val challengeAdapter = context?.let { context -> CompletedChallengesAdapter(requireContext(), challenges, context.resources) }
+        val challengeAdapter = CompletedChallengesAdapter(challenges)
         val viewManager = LinearLayoutManager(activity)
         completedChallengesRecyclerView.apply {
             setHasFixedSize(true)

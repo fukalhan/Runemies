@@ -12,7 +12,7 @@ import kotlinx.android.synthetic.main.activity_login.*
 import java.lang.IllegalStateException
 
 /**
- * Application login screen,
+ * Login screen,
  * implement navigation between sign in and sign up screens,
  * and navigation to main screen if user is successfully logged in
  */
@@ -29,14 +29,14 @@ class LoginActivity : AppCompatActivity(), ILoginNavigation {
         loginViewPager.adapter = LoginAdapter(this)
         TabLayoutMediator(loginTabLayout, loginViewPager) { tab, position ->
             tab.text = when (position) {
-                0 -> "SIGN IN"
-                1 -> "SIGN UP"
+                0 -> getString(R.string.sign_in)
+                1 -> getString(R.string.sign_up)
                 else -> throw IllegalStateException()
             }
         }.attach()
     }
 
-    /** On login screen if back pressed without sign in or sign up do nothing */
+    /** On login screen if back pressed without sign in or sign up, do nothing */
     override fun onBackPressed() {}
 
     override fun navigateToMainScreen() {

@@ -1,10 +1,7 @@
 package cz.cvut.fukalhan.main.challenges.adapter
 
-import android.content.Context
-import android.content.res.Resources
 import android.net.Uri
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
@@ -16,9 +13,9 @@ import cz.cvut.fukalhan.utils.TimeFormatter
 import cz.cvut.fukalhan.main.challenges.viewholder.ActiveChallengeViewHolder
 import cz.cvut.fukalhan.repository.entity.Challenge
 import cz.cvut.fukalhan.shared.Constants
-import kotlinx.android.synthetic.main.item_challenge_active.*
+import cz.cvut.fukalhan.utils.ViewVisibility
 
-class ActiveChallengesAdapter(private val context: Context, private val challenges: List<Challenge>, private val resources: Resources) : RecyclerView.Adapter<ActiveChallengeViewHolder>() {
+class ActiveChallengesAdapter(private val challenges: List<Challenge>) : RecyclerView.Adapter<ActiveChallengeViewHolder>() {
     private val storageRef: StorageReference = Firebase.storage.reference
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ActiveChallengeViewHolder {
@@ -31,23 +28,20 @@ class ActiveChallengesAdapter(private val context: Context, private val challeng
     }
 
     override fun onBindViewHolder(holder: ActiveChallengeViewHolder, position: Int) {
+        val context = holder.itemView.context
         val challenge = challenges[position]
-        holder.startDate.text = resources.getString(R.string.challenge_date, TimeFormatter.simpleDate.format(challenge.startDate))
+        holder.startDate.text = context.resources.getString(R.string.challenge_date, TimeFormatter.simpleDate.format(challenge.startDate))
         val imagePathRef = storageRef.child("${Constants.PROFILE_IMAGE_PATH}${challenge.opponentId}")
         imagePathRef.downloadUrl
             .addOnSuccessListener { uri: Uri ->
                 Glide.with(context).load(uri).into(holder.profileImage)
             }
-        holder.opponentUsername.text = resources.getString(R.string.against_user, challenge.opponentUsername)
+        holder.opponentUsername.text = context.resources.getString(R.string.against_user, challenge.opponentUsername)
         holder.itemView.setOnClickListener {
-            if (holder.resultPanel.visibility == View.GONE) {
-                holder.resultPanel.visibility = View.VISIBLE
-            } else {
-                holder.resultPanel.visibility = View.GONE
-            }
+            ViewVisibility.toggleVisibility(holder.resultPanel)
         }
-        holder.yourResult.text = resources.getString(R.string.your_result_n_1_s_km, challenge.challengerDistance.toString())
-        holder.opponentResult.text = resources.getString(R.string.waiting_for_result, challenge.opponentUsername)
+        holder.yourResult.text = context.resources.getString(R.string.your_result_n_1_s_km, challenge.challengerDistance.toString())
+        holder.opponentResult.text = context.resources.getString(R.string.waiting_for_result, challenge.opponentUsername)
     }
 
     override fun getItemId(position: Int): Long {

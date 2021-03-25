@@ -3,6 +3,8 @@ package cz.cvut.fukalhan.main.challenges.viewmodel
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.FirebaseUser
 import cz.cvut.fukalhan.repository.challenges.ChallengesFacade
 import cz.cvut.fukalhan.repository.entity.Challenge
 import cz.cvut.fukalhan.shared.DataWrapper
@@ -11,14 +13,17 @@ import org.koin.core.KoinComponent
 import org.koin.core.inject
 
 class CompletedChallengesViewModel : ViewModel(), KoinComponent {
+    private val user: FirebaseUser? = FirebaseAuth.getInstance().currentUser
     private val challengesFacade by inject<ChallengesFacade>()
     val challenges: MutableLiveData<DataWrapper<ArrayList<Challenge>>> by lazy { MutableLiveData<DataWrapper<ArrayList<Challenge>>>() }
 
-    fun getChallenges(userId: String) {
+    fun getChallenges() {
         viewModelScope.launch {
-            val completedChallenges = challengesFacade.getCompletedChallenges(userId)
-            completedChallenges.data?.sortWith(ChallengesDateComparator())
-            challenges.postValue(completedChallenges)
+            user?.let {
+                val completedChallenges = challengesFacade.getCompletedChallenges(it.uid)
+                completedChallenges.data?.sortWith(ChallengesDateComparator())
+                challenges.postValue(completedChallenges)
+            }
         }
     }
 }

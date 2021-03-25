@@ -1,7 +1,5 @@
 package cz.cvut.fukalhan.main.challenges.adapter
 
-import android.content.Context
-import android.content.res.Resources
 import android.net.Uri
 import android.view.LayoutInflater
 import android.view.View
@@ -18,8 +16,9 @@ import cz.cvut.fukalhan.main.challenges.viewholder.CompletedChallengeViewHolder
 import cz.cvut.fukalhan.repository.entity.Challenge
 import cz.cvut.fukalhan.shared.Constants
 import cz.cvut.fukalhan.utils.TimeFormatter
+import cz.cvut.fukalhan.utils.ViewVisibility
 
-class CompletedChallengesAdapter(private val context: Context, private val challenges: List<Challenge>, private val resources: Resources) : RecyclerView.Adapter<CompletedChallengeViewHolder>() {
+class CompletedChallengesAdapter(private val challenges: List<Challenge>) : RecyclerView.Adapter<CompletedChallengeViewHolder>() {
     private val user: FirebaseUser? = FirebaseAuth.getInstance().currentUser
     private val storageRef: StorageReference = Firebase.storage.reference
 
@@ -33,6 +32,7 @@ class CompletedChallengesAdapter(private val context: Context, private val chall
     }
 
     override fun onBindViewHolder(holder: CompletedChallengeViewHolder, position: Int) {
+        val context = holder.itemView.context
         val challenge = challenges[position]
         var userDistance: Double = 0.0
         var opponentId: String = ""
@@ -54,42 +54,38 @@ class CompletedChallengesAdapter(private val context: Context, private val chall
                 }
             }
         }
-        holder.startDate.text = resources.getString(R.string.challenge_date, TimeFormatter.simpleDate.format(challenge.startDate))
+        holder.startDate.text = context.resources.getString(R.string.challenge_date, TimeFormatter.simpleDate.format(challenge.startDate))
         val imagePathRef = storageRef.child("${Constants.PROFILE_IMAGE_PATH}$opponentId")
         imagePathRef.downloadUrl
             .addOnSuccessListener { uri: Uri ->
                 Glide.with(context).load(uri).into(holder.profileImage)
             }
-        holder.opponentUsername.text = resources.getString(R.string.against_user, opponentUsername)
+        holder.opponentUsername.text = context.resources.getString(R.string.against_user, opponentUsername)
         holder.itemView.setOnClickListener {
-            if (holder.resultLayout.visibility == View.GONE) {
-                holder.resultLayout.visibility = View.VISIBLE
-            } else {
-                holder.resultLayout.visibility = View.GONE
-            }
+            ViewVisibility.toggleVisibility(holder.resultLayout)
         }
-        holder.userDistance.text = resources.getString(R.string.challenge_distance, userDistance.toString())
-        holder.opponentResultUsername.text = resources.getString(R.string.opponent_username_result, opponentUsername)
-        holder.opponentDistance.text = resources.getString(R.string.challenge_distance, opponentDistance.toString())
+        holder.userDistance.text = context.resources.getString(R.string.challenge_distance, userDistance.toString())
+        holder.opponentResultUsername.text = context.resources.getString(R.string.opponent_username_result, opponentUsername)
+        holder.opponentDistance.text = context.resources.getString(R.string.challenge_distance, opponentDistance.toString())
 
         when {
             userDistance == opponentDistance -> {
-                holder.userResult.text = resources.getString(R.string.tie)
-                holder.userResult.setTextColor(resources.getColor(R.color.colorPrimaryDark))
-                holder.opponentResult.text = resources.getString(R.string.tie)
-                holder.opponentResult.setTextColor(resources.getColor(R.color.colorPrimaryDark))
+                holder.userResult.text = context.resources.getString(R.string.tie)
+                holder.userResult.setTextColor(context.resources.getColor(R.color.colorPrimaryDark))
+                holder.opponentResult.text = context.resources.getString(R.string.tie)
+                holder.opponentResult.setTextColor(context.resources.getColor(R.color.colorPrimaryDark))
             }
             userDistance > opponentDistance -> {
-                holder.userResult.text = resources.getString(R.string.winner)
-                holder.userResult.setTextColor(resources.getColor(R.color.green))
-                holder.opponentResult.text = resources.getString(R.string.looser)
-                holder.opponentResult.setTextColor(resources.getColor(R.color.red))
+                holder.userResult.text = context.resources.getString(R.string.winner)
+                holder.userResult.setTextColor(context.resources.getColor(R.color.green))
+                holder.opponentResult.text = context.resources.getString(R.string.looser)
+                holder.opponentResult.setTextColor(context.resources.getColor(R.color.red))
             }
             else -> {
-                holder.userResult.text = resources.getString(R.string.looser)
-                holder.userResult.setTextColor(resources.getColor(R.color.red))
-                holder.opponentResult.text = resources.getString(R.string.winner)
-                holder.opponentResult.setTextColor(resources.getColor(R.color.green))
+                holder.userResult.text = context.resources.getString(R.string.looser)
+                holder.userResult.setTextColor(context.resources.getColor(R.color.red))
+                holder.opponentResult.text = context.resources.getString(R.string.winner)
+                holder.opponentResult.setTextColor(context.resources.getColor(R.color.green))
             }
         }
     }

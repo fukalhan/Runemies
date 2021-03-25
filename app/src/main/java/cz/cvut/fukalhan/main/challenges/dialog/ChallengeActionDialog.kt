@@ -11,10 +11,10 @@ class ChallengeActionDialog(private val actionListener: IChallengeActionListener
             val builder = AlertDialog.Builder(it)
             builder.setMessage("Do you want to accept this challenge? ")
                 .setPositiveButton("Accept") { _, _ ->
-                    actionListener.onDialogPositiveClick(this, challengeId)
+                    actionListener.onDialogPositiveClick(challengeId)
                 }
                 .setNegativeButton("Decline") { _, _ ->
-                    actionListener.onDialogNegativeClick(this, challengeId, position)
+                    actionListener.onDialogNegativeClick(challengeId, position)
                 }
             // Create the AlertDialog object and return it
             builder.create()

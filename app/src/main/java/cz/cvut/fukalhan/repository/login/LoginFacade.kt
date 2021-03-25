@@ -1,6 +1,6 @@
 package cz.cvut.fukalhan.repository.login
 
-import cz.cvut.fukalhan.repository.login.states.PasswordChangeEmailSentState
+import cz.cvut.fukalhan.repository.login.states.NewPasswordSentState
 import cz.cvut.fukalhan.repository.login.states.SignInState
 import cz.cvut.fukalhan.repository.login.states.SignOutState
 import cz.cvut.fukalhan.repository.login.states.SignUpState
@@ -18,8 +18,8 @@ class LoginFacade : ILoginFacade, KoinComponent {
         return repository.signInUser(email, password)
     }
 
-    override suspend fun sendChangePasswordEmail(email: String): PasswordChangeEmailSentState {
-        return repository.sendChangePasswordEmail(email)
+    override suspend fun sendNewPasswordEmail(email: String): NewPasswordSentState {
+        return repository.sendNewPasswordEmail(email)
     }
 
     override suspend fun signOutUser(): SignOutState {

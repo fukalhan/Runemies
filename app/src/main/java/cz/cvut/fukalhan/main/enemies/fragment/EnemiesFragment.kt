@@ -22,7 +22,7 @@ import kotlinx.android.synthetic.main.fragment_enemies.*
 import kotlinx.android.synthetic.main.profile_user_info.*
 
 /**
- * A simple [Fragment] subclass.
+ * Fragment holding view of list of all users
  */
 class EnemiesFragment : Fragment(), IChallengeUserListener {
     private lateinit var enemiesViewModel: EnemiesViewModel
@@ -40,16 +40,15 @@ class EnemiesFragment : Fragment(), IChallengeUserListener {
     private fun getEnemies() {
         enemiesViewModel.enemies.observe(viewLifecycleOwner, Observer { enemies ->
             when {
-                enemies.error -> {
-                    Toast.makeText(context, "Something went wrong", Toast.LENGTH_SHORT).show()
-                }
-                enemies.data!!.isNotEmpty() -> setAdapter(enemies.data)
+                enemies.error -> Toast.makeText(context, "Something went wrong", Toast.LENGTH_SHORT).show()
+                enemies.data.isNullOrEmpty() -> Toast.makeText(context, "No enemies records", Toast.LENGTH_SHORT).show()
+                else -> setAdapter(enemies.data)
             }
         })
     }
 
     private fun setAdapter(enemies: List<User>) {
-        val enemiesAdapter = EnemiesAdapter(requireContext(), this, enemies)
+        val enemiesAdapter = EnemiesAdapter(this, enemies)
         val viewManager = LinearLayoutManager(activity)
         enemiesRecyclerView.apply {
             setHasFixedSize(true)

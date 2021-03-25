@@ -1,47 +1,35 @@
 package cz.cvut.fukalhan.main.runrecords.adapter
 
-import android.content.res.Resources
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
-import androidx.lifecycle.MutableLiveData
 import androidx.recyclerview.widget.RecyclerView
-
 import cz.cvut.fukalhan.R
-import cz.cvut.fukalhan.main.runrecords.fragment.RunRecordsFragment
+import cz.cvut.fukalhan.main.runrecords.viewholder.IDeleteButtonListener
 import cz.cvut.fukalhan.utils.TimeFormatter
 import cz.cvut.fukalhan.main.runrecords.viewholder.RunRecordViewHolder
 import cz.cvut.fukalhan.repository.entity.RunRecord
-import org.koin.core.KoinComponent
+import cz.cvut.fukalhan.utils.ViewVisibility
 
-class RunRecordsAdapter(private val runRecords: ArrayList<RunRecord>, private val resources: Resources, private val fragmentRun: RunRecordsFragment) : RecyclerView.Adapter<RunRecordViewHolder>(), KoinComponent {
-    val recordsCount: MutableLiveData<Int> by lazy { MutableLiveData<Int>() }
-    init {
-        recordsCount.postValue(runRecords.size)
-    }
+class RunRecordsAdapter(private val records: ArrayList<RunRecord>, private val deleteButtonListener: IDeleteButtonListener) : RecyclerView.Adapter<RunRecordViewHolder>() {
 
-    override fun getItemCount(): Int = runRecords.size
+    override fun getItemCount(): Int = records.size
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RunRecordViewHolder {
         val view = LayoutInflater.from(parent.context).inflate(R.layout.item_run_record, parent, false)
         return RunRecordViewHolder(view)
     }
 
-    override fun onBindViewHolder(holderRun: RunRecordViewHolder, position: Int) {
-        val record = runRecords[position]
-        holderRun.date.text = resources.getString(R.string.run_date, TimeFormatter.simpleDate.format(record.date))
-        holderRun.distance.text = resources.getString(R.string.distance_km, String.format("%.2f", record.distance))
-        holderRun.time.text = resources.getString(R.string.time, TimeFormatter.toHourMinSec(record.time))
-        holderRun.tempo.text = resources.getString(R.string.tempo_min_km, TimeFormatter.toMinSec(record.pace))
-        holderRun.itemView.setOnClickListener {
-            if (holderRun.deleteButton.visibility == View.GONE) {
-                holderRun.deleteButton.visibility = View.VISIBLE
-            } else {
-                holderRun.deleteButton.visibility = View.GONE
-            }
+    override fun onBindViewHolder(holder: RunRecordViewHolder, position: Int) {
+        val record = records[position]
+        holder.date.text = holder.itemView.resources.getString(R.string.run_date, TimeFormatter.simpleDate.format(record.date))
+        holder.distance.text = holder.itemView.resources.getString(R.string.distance_km, String.format("%.2f", record.distance))
+        holder.time.text = holder.itemView.resources.getString(R.string.time, TimeFormatter.toHourMinSec(record.time))
+        holder.tempo.text = holder.itemView.resources.getString(R.string.tempo_min_km, TimeFormatter.toMinSec(record.pace))
+        holder.itemView.setOnClickListener {
+            ViewVisibility.toggleVisibility(holder.deleteButton)
         }
-        holderRun.deleteButton.setOnClickListener {
-            fragmentRun.makeDeleteRecordDialog(record.id, position)
+        holder.deleteButton.setOnClickListener {
+            deleteButtonListener.onClick(record.id, position)
         }
     }
 
@@ -54,10 +42,9 @@ class RunRecordsAdapter(private val runRecords: ArrayList<RunRecord>, private va
     }
 
     fun deleteRecordOnPosition(position: Int) {
-        runRecords.removeAt(position)
+        records.removeAt(position)
         this.notifyItemRemoved(position)
-        this.notifyItemRangeChanged(position, runRecords.size)
+        this.notifyItemRangeChanged(position, records.size)
         this.notifyDataSetChanged()
-        recordsCount.postValue(runRecords.size)
     }
 }

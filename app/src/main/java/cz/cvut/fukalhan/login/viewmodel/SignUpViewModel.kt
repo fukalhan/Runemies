@@ -9,7 +9,6 @@ import kotlinx.coroutines.launch
 import org.koin.core.KoinComponent
 import org.koin.core.inject
 
-/** Communicate to the login facade and set the result to signUpState observable */
 class SignUpViewModel : ViewModel(), KoinComponent {
     val signUpState: MutableLiveData<SignUpState> by lazy { MutableLiveData<SignUpState>() }
     private val loginFacade by inject<LoginFacade>()
