@@ -1,5 +1,5 @@
 package cz.cvut.fukalhan.common
 
-interface IOnGpsListener {
+interface OnGpsListener {
     fun gpsStatus(isGpsEnabled: Boolean)
 }

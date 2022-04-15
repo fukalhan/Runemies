@@ -1,6 +1,6 @@
 package cz.cvut.fukalhan.common
 
-interface ILocationTracking {
+interface LocationTracking {
     fun startTracking()
     fun pauseTracking()
     fun continueTracking()
