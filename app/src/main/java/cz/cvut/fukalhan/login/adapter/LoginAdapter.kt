@@ -3,8 +3,8 @@ package cz.cvut.fukalhan.login.adapter
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
 import androidx.viewpager2.adapter.FragmentStateAdapter
-import cz.cvut.fukalhan.login.fragment.SignInFragment
-import cz.cvut.fukalhan.login.fragment.SignUpFragment
+import cz.cvut.fukalhan.login.signin.SignInFragment
+import cz.cvut.fukalhan.login.signup.SignUpFragment
 import java.lang.IllegalStateException
 
 /** Handle navigation between sign in and sign up screens */

@@ -1,6 +1,6 @@
 package cz.cvut.fukalhan.common
 
-interface ILoginNavigation {
+interface LoginNavigation {
     fun navigateToMainScreen() {}
 
     fun logOut() {}
